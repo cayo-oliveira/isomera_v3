@@ -1,7 +1,7 @@
 # Isomera v3
 
 <p align="center">
-  <strong>Find duplicate tables in data architectures by turning lineage into reproducible graph, tensor and neural evidence.</strong>
+  <strong>A reproducible workbench for finding duplicate tables from data lineage, graph evidence and trainable neural models.</strong>
 </p>
 
 <p align="center">
@@ -15,55 +15,67 @@
   <img src="main/docs/presentations/vmamba_mesh_assets/final_paper_figures/vmamba_mesh_dual_architecture.png" alt="Isomera VMamba-Mesh architecture" width="92%">
 </p>
 
-## The short version
+## Why Isomera exists
 
-Modern data platforms often contain the same analytical idea more than once: two domains recreate a customer summary, a sales aggregate, a reporting table or a semantic product with different names and slightly different lineage. Exact graph isomorphism catches only part of this. A useful governance tool needs to inspect lineage, compare candidate pairs, explain the decision and reproduce the result later.
+In a real data platform, the same business table can appear more than once. One team creates a customer summary. Another team creates a similar customer summary for a different dashboard. A third team builds a sales aggregate that already exists somewhere else, but with another name, another transformation path or another semantic layer.
 
-**Isomera v3** is the executable version of that workflow. It packages benchmark lineage graphs, deterministic graph baselines, trainable deep-learning models, model reports, interpretability artifacts and a Streamlit interface that lets a reviewer move from a table-pair suspicion to auditable evidence.
+At first, this looks like a naming problem. In practice, it is a lineage problem. To decide whether two tables are duplicates, we need to know where they came from, which transformations produced them, which layer they belong to and how their neighborhoods compare inside the data architecture.
 
-## What Isomera does
+**Isomera** was built for that inspection. It turns tables and transformations into lineage graphs, compares candidate duplicate pairs with deterministic and neural models, shows the evidence behind the decision and stores enough metadata to reproduce the result later.
 
-Isomera reads data-architecture scenarios as directed lineage graphs. Nodes represent operational sources, transformations and semantic products. Candidate duplicate tables are evaluated through several model families under the same app contract: each model receives graph evidence and returns duplicate-pair decisions, scores, metrics and reproducibility traces.
+For a data engineer, the practical question is:
 
-The VMamba-Mesh path converts a local graph context into a six-channel tensor:
+> "Can I take my lineage graph, run detectors over candidate table pairs, inspect why a pair was flagged, and reuse the model or the idea in my own environment?"
+
+Isomera v3 is the public executable package for that workflow.
+
+## The core idea
+
+Isomera represents a data architecture as a directed graph. In the packaged benchmarks, nodes usually appear as:
+
+- **SOR**, operational source or raw-system extract;
+- **SOT**, transformation or trusted intermediate table;
+- **SPEC**, semantic product or analytical table.
+
+Edges represent dependency: one table was created from, joined with, filtered from or aggregated from another table. Once the architecture is represented as a graph, duplicate-table detection becomes a pair problem: given two candidate nodes or subgraphs, decide whether they represent the same structural or semantic object.
 
 <p align="center">
   <img src="main/docs/presentations/vmamba_mesh_assets/final_paper_figures/sor16_lineage_graph.png" alt="SOR16 lineage graph" width="47%">
   <img src="main/docs/presentations/vmamba_mesh_assets/final_paper_figures/sor16_adjacency_matrix.png" alt="SOR16 adjacency matrix" width="47%">
 </p>
 
+This is where Isomera goes beyond a drawing tool. It can run exact graph baselines, graph neural baselines, deterministic VMamba-Mesh scoring and trainable PyTorch models over the same benchmark contract. The same pair can be inspected as a graph, as an adjacency matrix, as a six-channel tensor, as a model score and as an interpretability image.
+
+## From graph to model evidence
+
+The VMamba-Mesh representation converts each local lineage context into six channels:
+
+| Channel | Meaning |
+| --- | --- |
+| C0 | forward adjacency, preserving original edge direction |
+| C1 | reverse adjacency, allowing the model to read dependency in the opposite direction |
+| C2 | layer diagonal, marking SOR, SOT and SPEC positions |
+| C3 | degree fingerprint, exposing local connectivity and fan-in/fan-out |
+| C4 | lineage-route bias, helping the scan follow meaningful data-flow routes |
+| C5 | sparse mask, separating real graph cells from empty/padded cells |
+
 <p align="center">
   <img src="main/docs/presentations/vmamba_mesh_assets/final_paper_figures/sor16_tensor_channels_6ch.png" alt="Six tensor channels" width="92%">
 </p>
 
-The channels are: forward adjacency, reverse adjacency, layer diagonal, degree fingerprint, lineage-route bias and sparse mask. This makes the tensor more than an image of a graph: it preserves direction, layer, sparsity and governance structure before scoring or neural inference.
-
-## Model families included
-
-Isomera v3 includes executable routes for:
-
-| Family | Role in the app |
-| --- | --- |
-| VF2 | deterministic exact/near-exact graph matching baseline |
-| Node Match | deterministic node/edge matching baseline |
-| GNN/GIN | graph neural pair-classifier artifacts |
-| Vanilla VMamba | trainable tensor route using adjacency channels C0/C1 |
-| VMamba-Mesh adapter | deterministic six-channel structural score |
-| VMamba-T | PyTorch trainable model over C0/C1 |
-| VMamba-Mesh-T | PyTorch trainable model over the full C0-C5 tensor |
-
-For the trainable route, the decision path is:
+A deterministic model can use these channels to compute a structural score. A trainable model can read them through a neural pipeline inspired by VMamba and visual state-space models:
 
 ```text
 graph pair
 -> CanonSort
--> tensor channels
+-> C0-C5 tensor channels
 -> patch embedding
 -> VSS/SS2D-style blocks
 -> pooling
 -> neural pair head
 -> logit
 -> sigmoid
+-> duplicate score
 -> threshold
 -> duplicate / non-duplicate
 ```
@@ -72,22 +84,98 @@ graph pair
   <img src="main/docs/presentations/vmamba_mesh_assets/final_paper_figures/trainable_decision_pipeline.png" alt="Trainable duplicate decision pipeline" width="92%">
 </p>
 
+That means the output is not only a label. The app can show the score, the threshold, the model family, the device used, the benchmark scenario, the files generated and, when available, saliency maps showing which tensor regions affected the local decision.
+
+## What you can do with Isomera
+
+Isomera is organized as one Streamlit workspace. The main capabilities are:
+
+| Area | What it does |
+| --- | --- |
+| **Home** | Gives the starting point for benchmark execution, scenario design, model study and administration. |
+| **Benchmark & Examples** | Runs curated benchmark datasets, compares algorithms, inspects scenarios, checks metrics and opens the Article Reproducibility flow. |
+| **Scenario Studio** | Loads or creates custom graph scenarios, validates labels, inspects table pairs, trains model artifacts and publishes curated scenarios into the benchmark area. |
+| **Study Lab** | Explains model families, VMamba/VMamba-Mesh concepts, tensor channels, deep-learning workflows, model reports and interpretability packages. |
+| **Deep Learning Workbench** | Lets the user select benchmark, scenario, pair and model family, then compare model behavior with lightweight parameter changes. |
+| **Model Reports** | Opens stored campaign reports, including deterministic adapters, VMamba-T, VMamba-Mesh-T, CPU/MPS comparisons and ablation evidence. |
+| **Model Interpretability** | Loads a selected scenario/pair and renders graph, adjacency matrix, tensor channels, score, threshold, decision and saliency artifacts. |
+| **Model Lab** | Lists available detectors and `.pkl` model artifacts, validates pickles and shows benchmark-to-model routing. |
+| **Research Reports** | Opens generated CSV, JSON, Markdown, figures, manifests and reproduction packages from previous runs. |
+| **Admin** | Shows backend status, scenario warehouse information, model artifacts, connection profiles and runtime settings. |
+| **Logs** | Displays structured app and terminal logs for debugging and audit. |
+| **Help** | Shows the VMamba-Mesh presentation and the technical documentation hub inside the app. |
+| **About** | Documents version, authorship, research context and feature notes. |
+
+In short, Isomera can be used to:
+
+- inspect lineage graphs and adjacency matrices;
+- run duplicate-table detection benchmarks;
+- compare VF2, Node Match, GNN/GIN, Vanilla VMamba, VMamba-Mesh, VMamba-T and VMamba-Mesh-T;
+- validate and route stored `.pkl` model artifacts;
+- train or inspect model campaigns when the required dependencies are available;
+- open benchmark reports and reproducibility manifests;
+- generate or inspect graph tensors and channel maps;
+- inspect local interpretability through input-gradient saliency;
+- compare quality metrics such as Jaccard and efficiency metrics such as SF-Jaccard;
+- save outputs as CSV, JSON, Markdown, figures and manifests;
+- use the packaged examples as a template for applying the same idea to a company lineage environment.
+
+## Model families included
+
+| Family | What it is useful for |
+| --- | --- |
+| **VF2** | Exact or near-exact graph matching. Good as an auditable deterministic baseline. |
+| **Node Match** | Rule-based node and edge comparison. Useful when labels and local structure are reliable. |
+| **GNN/GIN** | Graph neural pair classification artifacts. Useful for learned graph embeddings under imbalance. |
+| **Vanilla VMamba** | Neural tensor route using adjacency channels C0/C1. Useful as the closer comparison to image-like VMamba input. |
+| **VMamba-Mesh adapter** | Deterministic six-channel score. Fast and easy to audit. Useful as a first-pass operational detector. |
+| **VMamba-T** | Trainable PyTorch model using C0/C1. Useful for testing whether neural learning helps beyond deterministic scoring. |
+| **VMamba-Mesh-T** | Trainable PyTorch model using C0-C5. Useful for the full lineage-aware neural path with saliency support. |
+
+The public package includes stored model artifacts and reports. A user can inspect the pickles, load the same benchmark routing and adapt the architecture for another lineage source.
+
+## Applying the idea in another environment
+
+A company does not need to copy the benchmark exactly. The important contract is simple:
+
+1. Export lineage as a graph: tables are nodes, dependencies are directed edges.
+2. Define candidate pairs: which tables should be compared.
+3. Label a small set of known duplicate and non-duplicate pairs for validation or training.
+4. Convert each pair context into an ordered matrix or C0-C5 tensor.
+5. Run a deterministic detector, a stored pickle or a trainable model.
+6. Review score, threshold, predicted label and interpretability artifacts.
+7. Save the run manifest so the decision can be repeated later.
+
+Inside this repository, the implementation points are:
+
+```text
+main/core/                             graph, benchmark, persistence and model logic
+main/core/algorithms/                  detector implementations and model wrappers
+main/data/architectures/               packaged benchmark graphs, labels and artifacts
+main/data/research_reports/            stored campaign outputs surfaced by the UI
+main/docs/tech_hub/                    technical documentation for adapting the system
+```
+
+If your environment already has lineage metadata from a catalog, orchestration tool or warehouse audit logs, the practical adaptation is to map that metadata into Isomera-style graph files and then reuse the model interface or the tensorization idea.
+
 ## What you can reproduce
 
-The public repository is designed so a professor, reviewer or researcher can run the app and inspect the same kind of evidence used in the final report:
+The public repository packages evidence for the final VMamba-Mesh study:
 
 - benchmark scenarios for SPEC v2 and Full Lineage;
-- stored model artifacts and manifests;
 - deterministic and trainable model reports;
+- stored model artifacts and manifests;
 - score, threshold and decision traces;
 - tensor-channel visualizations;
-- input-gradient saliency for a selected SOR16-D1 pair;
-- CSV, JSON and Markdown reports generated by the reproducibility workflow.
+- input-gradient saliency for the SOR16-D1 example;
+- CSV, JSON and Markdown outputs generated by the reproducibility flow.
 
 <p align="center">
   <img src="main/docs/presentations/vmamba_mesh_assets/final_paper_figures/spec_v2_jaccard_comparison.png" alt="SPEC v2 Jaccard comparison" width="47%">
   <img src="main/docs/presentations/vmamba_mesh_assets/final_paper_figures/spec_v2_sf_jaccard_comparison.png" alt="SPEC v2 SF-Jaccard comparison" width="47%">
 </p>
+
+Jaccard measures quality over predicted duplicate pairs. SF-Jaccard combines correct duplicate identification with runtime, so it is useful when the operational question is not only "which model is more accurate?" but also "which model can scan more candidates per second?".
 
 ## Quick start
 
@@ -114,27 +202,18 @@ On macOS, you can also use:
 
 The launcher checks the virtual environment, dependencies, Streamlit process state and local database services before opening the app.
 
-## Recommended demo path
+## Suggested first walkthrough
 
-Inside the app, follow this path for a compact review:
+After opening the app:
 
-```text
-Help -> VMamba-Mesh Presentation
-Study Lab -> Deep Learning Workbench
-Study Lab -> Model Reports
-Study Lab -> Model Interpretability
-Benchmark & Examples -> Article Reproducibility
-Research Reports
-```
-
-A practical first walkthrough:
-
-1. Open `Help -> VMamba-Mesh Presentation` to see the problem, architecture and result story.
-2. Open `Study Lab -> Deep Learning Workbench`, select `tpc_ds_genai_spec_v2` and inspect `graph_SOR16_D1_seed42`.
-3. Compare `Vanilla VMamba baseline` with `VMamba-Mesh Isomera adapter`.
-4. Open `Study Lab -> Model Reports` to inspect stored VMamba-T and VMamba-Mesh-T campaigns.
-5. Open `Study Lab -> Model Interpretability` to load SOR16-D1, inspect graph, matrix, channels, score, threshold and saliency.
-6. Open `Benchmark & Examples -> Article Reproducibility` to run the packaged reproducibility workflow.
+1. Go to `Help -> VMamba-Mesh Presentation` for the problem, architecture and result story.
+2. Go to `Study Lab -> Deep Learning Workbench` and select `tpc_ds_genai_spec_v2`.
+3. Inspect `graph_SOR16_D1_seed42`.
+4. Compare `Vanilla VMamba baseline` and `VMamba-Mesh Isomera adapter`.
+5. Open `Study Lab -> Model Reports` and inspect stored VMamba-T / VMamba-Mesh-T campaigns.
+6. Open `Study Lab -> Model Interpretability`, select the SOR16-D1 pair and inspect graph, matrix, C0-C5 channels, score, threshold and saliency.
+7. Open `Benchmark & Examples -> Article Reproducibility` and run the packaged reproduction flow.
+8. Open `Research Reports` to inspect saved outputs.
 
 <p align="center">
   <img src="main/docs/presentations/vmamba_mesh_assets/final_paper_figures/sor16_neural_saliency.png" alt="SOR16 neural saliency" width="78%">
@@ -155,7 +234,7 @@ main/docs/                             Public technical documentation and presen
 .github/knowledge_bases/               Knowledge base files shown in Study Lab help
 ```
 
-This repository intentionally excludes the private research workspace, notebooks, manuscript work directories, local virtual environments, runtime logs and caches. The goal is to keep the public package runnable and reviewable.
+This public repository intentionally excludes the private research workspace, notebooks, manuscript work directories, local virtual environments, runtime logs and caches. The goal is to keep the package runnable, reviewable and easier to reuse.
 
 ## Requirements
 
