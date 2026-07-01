@@ -1,0 +1,110 @@
+{
+  "benchmark_name": "tpc_ds_genai_full_lineage",
+  "display_name": "TPC-DS GenAI Full Lineage",
+  "description": "Full lineage benchmark across SOR, SOT, and SPEC candidates. Positives are the union of default TPC-DS labels and GenAI SPEC labels.",
+  "benchmark_kind": "article_benchmark",
+  "candidate_scope": "all",
+  "scenarios": {
+    "graph_SOR2_D1_seed42": {
+      "gml_path": "/Users/cayofel/Documents/GitHub/isomera_v2/main/data/architectures/tpc_ds_genai_full_lineage/gml/graph_SOR2_D1_seed42.gml",
+      "labels_path": "/Users/cayofel/Documents/GitHub/isomera_v2/main/data/architectures/tpc_ds_genai_full_lineage/real_pairs/graph_SOR2_D1_seed42.json",
+      "source_benchmark": "tpc_ds + tpc_ds_genai_spec"
+    },
+    "graph_SOR2_D2_seed42": {
+      "gml_path": "/Users/cayofel/Documents/GitHub/isomera_v2/main/data/architectures/tpc_ds_genai_full_lineage/gml/graph_SOR2_D2_seed42.gml",
+      "labels_path": "/Users/cayofel/Documents/GitHub/isomera_v2/main/data/architectures/tpc_ds_genai_full_lineage/real_pairs/graph_SOR2_D2_seed42.json",
+      "source_benchmark": "tpc_ds + tpc_ds_genai_spec"
+    },
+    "graph_SOR2_D3_seed42": {
+      "gml_path": "/Users/cayofel/Documents/GitHub/isomera_v2/main/data/architectures/tpc_ds_genai_full_lineage/gml/graph_SOR2_D3_seed42.gml",
+      "labels_path": "/Users/cayofel/Documents/GitHub/isomera_v2/main/data/architectures/tpc_ds_genai_full_lineage/real_pairs/graph_SOR2_D3_seed42.json",
+      "source_benchmark": "tpc_ds + tpc_ds_genai_spec"
+    },
+    "graph_SOR2_D4_seed42": {
+      "gml_path": "/Users/cayofel/Documents/GitHub/isomera_v2/main/data/architectures/tpc_ds_genai_full_lineage/gml/graph_SOR2_D4_seed42.gml",
+      "labels_path": "/Users/cayofel/Documents/GitHub/isomera_v2/main/data/architectures/tpc_ds_genai_full_lineage/real_pairs/graph_SOR2_D4_seed42.json",
+      "source_benchmark": "tpc_ds + tpc_ds_genai_spec"
+    },
+    "graph_SOR2_D5_seed42": {
+      "gml_path": "/Users/cayofel/Documents/GitHub/isomera_v2/main/data/architectures/tpc_ds_genai_full_lineage/gml/graph_SOR2_D5_seed42.gml",
+      "labels_path": "/Users/cayofel/Documents/GitHub/isomera_v2/main/data/architectures/tpc_ds_genai_full_lineage/real_pairs/graph_SOR2_D5_seed42.json",
+      "source_benchmark": "tpc_ds + tpc_ds_genai_spec"
+    },
+    "graph_SOR4_D1_seed42": {
+      "gml_path": "/Users/cayofel/Documents/GitHub/isomera_v2/main/data/architectures/tpc_ds_genai_full_lineage/gml/graph_SOR4_D1_seed42.gml",
+      "labels_path": "/Users/cayofel/Documents/GitHub/isomera_v2/main/data/architectures/tpc_ds_genai_full_lineage/real_pairs/graph_SOR4_D1_seed42.json",
+      "source_benchmark": "tpc_ds + tpc_ds_genai_spec"
+    },
+    "graph_SOR4_D2_seed42": {
+      "gml_path": "/Users/cayofel/Documents/GitHub/isomera_v2/main/data/architectures/tpc_ds_genai_full_lineage/gml/graph_SOR4_D2_seed42.gml",
+      "labels_path": "/Users/cayofel/Documents/GitHub/isomera_v2/main/data/architectures/tpc_ds_genai_full_lineage/real_pairs/graph_SOR4_D2_seed42.json",
+      "source_benchmark": "tpc_ds + tpc_ds_genai_spec"
+    },
+    "graph_SOR4_D3_seed42": {
+      "gml_path": "/Users/cayofel/Documents/GitHub/isomera_v2/main/data/architectures/tpc_ds_genai_full_lineage/gml/graph_SOR4_D3_seed42.gml",
+      "labels_path": "/Users/cayofel/Documents/GitHub/isomera_v2/main/data/architectures/tpc_ds_genai_full_lineage/real_pairs/graph_SOR4_D3_seed42.json",
+      "source_benchmark": "tpc_ds + tpc_ds_genai_spec"
+    },
+    "graph_SOR4_D4_seed42": {
+      "gml_path": "/Users/cayofel/Documents/GitHub/isomera_v2/main/data/architectures/tpc_ds_genai_full_lineage/gml/graph_SOR4_D4_seed42.gml",
+      "labels_path": "/Users/cayofel/Documents/GitHub/isomera_v2/main/data/architectures/tpc_ds_genai_full_lineage/real_pairs/graph_SOR4_D4_seed42.json",
+      "source_benchmark": "tpc_ds + tpc_ds_genai_spec"
+    },
+    "graph_SOR4_D5_seed42": {
+      "gml_path": "/Users/cayofel/Documents/GitHub/isomera_v2/main/data/architectures/tpc_ds_genai_full_lineage/gml/graph_SOR4_D5_seed42.gml",
+      "labels_path": "/Users/cayofel/Documents/GitHub/isomera_v2/main/data/architectures/tpc_ds_genai_full_lineage/real_pairs/graph_SOR4_D5_seed42.json",
+      "source_benchmark": "tpc_ds + tpc_ds_genai_spec"
+    },
+    "graph_SOR8_D1_seed42": {
+      "gml_path": "/Users/cayofel/Documents/GitHub/isomera_v2/main/data/architectures/tpc_ds_genai_full_lineage/gml/graph_SOR8_D1_seed42.gml",
+      "labels_path": "/Users/cayofel/Documents/GitHub/isomera_v2/main/data/architectures/tpc_ds_genai_full_lineage/real_pairs/graph_SOR8_D1_seed42.json",
+      "source_benchmark": "tpc_ds + tpc_ds_genai_spec"
+    },
+    "graph_SOR8_D2_seed42": {
+      "gml_path": "/Users/cayofel/Documents/GitHub/isomera_v2/main/data/architectures/tpc_ds_genai_full_lineage/gml/graph_SOR8_D2_seed42.gml",
+      "labels_path": "/Users/cayofel/Documents/GitHub/isomera_v2/main/data/architectures/tpc_ds_genai_full_lineage/real_pairs/graph_SOR8_D2_seed42.json",
+      "source_benchmark": "tpc_ds + tpc_ds_genai_spec"
+    },
+    "graph_SOR8_D3_seed42": {
+      "gml_path": "/Users/cayofel/Documents/GitHub/isomera_v2/main/data/architectures/tpc_ds_genai_full_lineage/gml/graph_SOR8_D3_seed42.gml",
+      "labels_path": "/Users/cayofel/Documents/GitHub/isomera_v2/main/data/architectures/tpc_ds_genai_full_lineage/real_pairs/graph_SOR8_D3_seed42.json",
+      "source_benchmark": "tpc_ds + tpc_ds_genai_spec"
+    },
+    "graph_SOR8_D4_seed42": {
+      "gml_path": "/Users/cayofel/Documents/GitHub/isomera_v2/main/data/architectures/tpc_ds_genai_full_lineage/gml/graph_SOR8_D4_seed42.gml",
+      "labels_path": "/Users/cayofel/Documents/GitHub/isomera_v2/main/data/architectures/tpc_ds_genai_full_lineage/real_pairs/graph_SOR8_D4_seed42.json",
+      "source_benchmark": "tpc_ds + tpc_ds_genai_spec"
+    },
+    "graph_SOR8_D5_seed42": {
+      "gml_path": "/Users/cayofel/Documents/GitHub/isomera_v2/main/data/architectures/tpc_ds_genai_full_lineage/gml/graph_SOR8_D5_seed42.gml",
+      "labels_path": "/Users/cayofel/Documents/GitHub/isomera_v2/main/data/architectures/tpc_ds_genai_full_lineage/real_pairs/graph_SOR8_D5_seed42.json",
+      "source_benchmark": "tpc_ds + tpc_ds_genai_spec"
+    },
+    "graph_SOR16_D1_seed42": {
+      "gml_path": "/Users/cayofel/Documents/GitHub/isomera_v2/main/data/architectures/tpc_ds_genai_full_lineage/gml/graph_SOR16_D1_seed42.gml",
+      "labels_path": "/Users/cayofel/Documents/GitHub/isomera_v2/main/data/architectures/tpc_ds_genai_full_lineage/real_pairs/graph_SOR16_D1_seed42.json",
+      "source_benchmark": "tpc_ds + tpc_ds_genai_spec"
+    },
+    "graph_SOR16_D2_seed42": {
+      "gml_path": "/Users/cayofel/Documents/GitHub/isomera_v2/main/data/architectures/tpc_ds_genai_full_lineage/gml/graph_SOR16_D2_seed42.gml",
+      "labels_path": "/Users/cayofel/Documents/GitHub/isomera_v2/main/data/architectures/tpc_ds_genai_full_lineage/real_pairs/graph_SOR16_D2_seed42.json",
+      "source_benchmark": "tpc_ds + tpc_ds_genai_spec"
+    },
+    "graph_SOR16_D3_seed42": {
+      "gml_path": "/Users/cayofel/Documents/GitHub/isomera_v2/main/data/architectures/tpc_ds_genai_full_lineage/gml/graph_SOR16_D3_seed42.gml",
+      "labels_path": "/Users/cayofel/Documents/GitHub/isomera_v2/main/data/architectures/tpc_ds_genai_full_lineage/real_pairs/graph_SOR16_D3_seed42.json",
+      "source_benchmark": "tpc_ds + tpc_ds_genai_spec"
+    },
+    "graph_SOR16_D4_seed42": {
+      "gml_path": "/Users/cayofel/Documents/GitHub/isomera_v2/main/data/architectures/tpc_ds_genai_full_lineage/gml/graph_SOR16_D4_seed42.gml",
+      "labels_path": "/Users/cayofel/Documents/GitHub/isomera_v2/main/data/architectures/tpc_ds_genai_full_lineage/real_pairs/graph_SOR16_D4_seed42.json",
+      "source_benchmark": "tpc_ds + tpc_ds_genai_spec"
+    },
+    "graph_SOR16_D5_seed42": {
+      "gml_path": "/Users/cayofel/Documents/GitHub/isomera_v2/main/data/architectures/tpc_ds_genai_full_lineage/gml/graph_SOR16_D5_seed42.gml",
+      "labels_path": "/Users/cayofel/Documents/GitHub/isomera_v2/main/data/architectures/tpc_ds_genai_full_lineage/real_pairs/graph_SOR16_D5_seed42.json",
+      "source_benchmark": "tpc_ds + tpc_ds_genai_spec"
+    }
+  },
+  "updated_at": "2026-04-18 15:42:18"
+}

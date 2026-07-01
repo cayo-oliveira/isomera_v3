@@ -1,0 +1,3 @@
+algorithm,jaccard_delta_mps_minus_cpu,sf_jaccard_delta_mps_minus_cpu,ET_delta_mps_minus_cpu,accuracy_delta_mps_minus_cpu
+VMamba-T,-0.00925925925925919,-49.7264554119931,0.0505099794999424,0.006680584551148172
+VMamba-Mesh-T,-0.0721303504409001,-58.722535139676665,0.051530999999982896,-0.07766179540709806

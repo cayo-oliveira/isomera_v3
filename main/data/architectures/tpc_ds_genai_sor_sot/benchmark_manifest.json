@@ -1,0 +1,110 @@
+{
+  "benchmark_name": "tpc_ds_genai_sor_sot",
+  "display_name": "TPC-DS GenAI SOR + SOT",
+  "description": "Operational-layer benchmark over SOR and SOT candidates. Positives come from the default curated TPC-DS duplicate contract and are scoped at metric time.",
+  "benchmark_kind": "article_benchmark",
+  "candidate_scope": "sor_sot",
+  "scenarios": {
+    "graph_SOR2_D1_seed42": {
+      "gml_path": "/Users/cayofel/Documents/GitHub/isomera_v2/main/data/architectures/tpc_ds_genai_sor_sot/gml/graph_SOR2_D1_seed42.gml",
+      "labels_path": "/Users/cayofel/Documents/GitHub/isomera_v2/main/data/architectures/tpc_ds_genai_sor_sot/real_pairs/graph_SOR2_D1_seed42.json",
+      "source_benchmark": "tpc_ds"
+    },
+    "graph_SOR2_D2_seed42": {
+      "gml_path": "/Users/cayofel/Documents/GitHub/isomera_v2/main/data/architectures/tpc_ds_genai_sor_sot/gml/graph_SOR2_D2_seed42.gml",
+      "labels_path": "/Users/cayofel/Documents/GitHub/isomera_v2/main/data/architectures/tpc_ds_genai_sor_sot/real_pairs/graph_SOR2_D2_seed42.json",
+      "source_benchmark": "tpc_ds"
+    },
+    "graph_SOR2_D3_seed42": {
+      "gml_path": "/Users/cayofel/Documents/GitHub/isomera_v2/main/data/architectures/tpc_ds_genai_sor_sot/gml/graph_SOR2_D3_seed42.gml",
+      "labels_path": "/Users/cayofel/Documents/GitHub/isomera_v2/main/data/architectures/tpc_ds_genai_sor_sot/real_pairs/graph_SOR2_D3_seed42.json",
+      "source_benchmark": "tpc_ds"
+    },
+    "graph_SOR2_D4_seed42": {
+      "gml_path": "/Users/cayofel/Documents/GitHub/isomera_v2/main/data/architectures/tpc_ds_genai_sor_sot/gml/graph_SOR2_D4_seed42.gml",
+      "labels_path": "/Users/cayofel/Documents/GitHub/isomera_v2/main/data/architectures/tpc_ds_genai_sor_sot/real_pairs/graph_SOR2_D4_seed42.json",
+      "source_benchmark": "tpc_ds"
+    },
+    "graph_SOR2_D5_seed42": {
+      "gml_path": "/Users/cayofel/Documents/GitHub/isomera_v2/main/data/architectures/tpc_ds_genai_sor_sot/gml/graph_SOR2_D5_seed42.gml",
+      "labels_path": "/Users/cayofel/Documents/GitHub/isomera_v2/main/data/architectures/tpc_ds_genai_sor_sot/real_pairs/graph_SOR2_D5_seed42.json",
+      "source_benchmark": "tpc_ds"
+    },
+    "graph_SOR4_D1_seed42": {
+      "gml_path": "/Users/cayofel/Documents/GitHub/isomera_v2/main/data/architectures/tpc_ds_genai_sor_sot/gml/graph_SOR4_D1_seed42.gml",
+      "labels_path": "/Users/cayofel/Documents/GitHub/isomera_v2/main/data/architectures/tpc_ds_genai_sor_sot/real_pairs/graph_SOR4_D1_seed42.json",
+      "source_benchmark": "tpc_ds"
+    },
+    "graph_SOR4_D2_seed42": {
+      "gml_path": "/Users/cayofel/Documents/GitHub/isomera_v2/main/data/architectures/tpc_ds_genai_sor_sot/gml/graph_SOR4_D2_seed42.gml",
+      "labels_path": "/Users/cayofel/Documents/GitHub/isomera_v2/main/data/architectures/tpc_ds_genai_sor_sot/real_pairs/graph_SOR4_D2_seed42.json",
+      "source_benchmark": "tpc_ds"
+    },
+    "graph_SOR4_D3_seed42": {
+      "gml_path": "/Users/cayofel/Documents/GitHub/isomera_v2/main/data/architectures/tpc_ds_genai_sor_sot/gml/graph_SOR4_D3_seed42.gml",
+      "labels_path": "/Users/cayofel/Documents/GitHub/isomera_v2/main/data/architectures/tpc_ds_genai_sor_sot/real_pairs/graph_SOR4_D3_seed42.json",
+      "source_benchmark": "tpc_ds"
+    },
+    "graph_SOR4_D4_seed42": {
+      "gml_path": "/Users/cayofel/Documents/GitHub/isomera_v2/main/data/architectures/tpc_ds_genai_sor_sot/gml/graph_SOR4_D4_seed42.gml",
+      "labels_path": "/Users/cayofel/Documents/GitHub/isomera_v2/main/data/architectures/tpc_ds_genai_sor_sot/real_pairs/graph_SOR4_D4_seed42.json",
+      "source_benchmark": "tpc_ds"
+    },
+    "graph_SOR4_D5_seed42": {
+      "gml_path": "/Users/cayofel/Documents/GitHub/isomera_v2/main/data/architectures/tpc_ds_genai_sor_sot/gml/graph_SOR4_D5_seed42.gml",
+      "labels_path": "/Users/cayofel/Documents/GitHub/isomera_v2/main/data/architectures/tpc_ds_genai_sor_sot/real_pairs/graph_SOR4_D5_seed42.json",
+      "source_benchmark": "tpc_ds"
+    },
+    "graph_SOR8_D1_seed42": {
+      "gml_path": "/Users/cayofel/Documents/GitHub/isomera_v2/main/data/architectures/tpc_ds_genai_sor_sot/gml/graph_SOR8_D1_seed42.gml",
+      "labels_path": "/Users/cayofel/Documents/GitHub/isomera_v2/main/data/architectures/tpc_ds_genai_sor_sot/real_pairs/graph_SOR8_D1_seed42.json",
+      "source_benchmark": "tpc_ds"
+    },
+    "graph_SOR8_D2_seed42": {
+      "gml_path": "/Users/cayofel/Documents/GitHub/isomera_v2/main/data/architectures/tpc_ds_genai_sor_sot/gml/graph_SOR8_D2_seed42.gml",
+      "labels_path": "/Users/cayofel/Documents/GitHub/isomera_v2/main/data/architectures/tpc_ds_genai_sor_sot/real_pairs/graph_SOR8_D2_seed42.json",
+      "source_benchmark": "tpc_ds"
+    },
+    "graph_SOR8_D3_seed42": {
+      "gml_path": "/Users/cayofel/Documents/GitHub/isomera_v2/main/data/architectures/tpc_ds_genai_sor_sot/gml/graph_SOR8_D3_seed42.gml",
+      "labels_path": "/Users/cayofel/Documents/GitHub/isomera_v2/main/data/architectures/tpc_ds_genai_sor_sot/real_pairs/graph_SOR8_D3_seed42.json",
+      "source_benchmark": "tpc_ds"
+    },
+    "graph_SOR8_D4_seed42": {
+      "gml_path": "/Users/cayofel/Documents/GitHub/isomera_v2/main/data/architectures/tpc_ds_genai_sor_sot/gml/graph_SOR8_D4_seed42.gml",
+      "labels_path": "/Users/cayofel/Documents/GitHub/isomera_v2/main/data/architectures/tpc_ds_genai_sor_sot/real_pairs/graph_SOR8_D4_seed42.json",
+      "source_benchmark": "tpc_ds"
+    },
+    "graph_SOR8_D5_seed42": {
+      "gml_path": "/Users/cayofel/Documents/GitHub/isomera_v2/main/data/architectures/tpc_ds_genai_sor_sot/gml/graph_SOR8_D5_seed42.gml",
+      "labels_path": "/Users/cayofel/Documents/GitHub/isomera_v2/main/data/architectures/tpc_ds_genai_sor_sot/real_pairs/graph_SOR8_D5_seed42.json",
+      "source_benchmark": "tpc_ds"
+    },
+    "graph_SOR16_D1_seed42": {
+      "gml_path": "/Users/cayofel/Documents/GitHub/isomera_v2/main/data/architectures/tpc_ds_genai_sor_sot/gml/graph_SOR16_D1_seed42.gml",
+      "labels_path": "/Users/cayofel/Documents/GitHub/isomera_v2/main/data/architectures/tpc_ds_genai_sor_sot/real_pairs/graph_SOR16_D1_seed42.json",
+      "source_benchmark": "tpc_ds"
+    },
+    "graph_SOR16_D2_seed42": {
+      "gml_path": "/Users/cayofel/Documents/GitHub/isomera_v2/main/data/architectures/tpc_ds_genai_sor_sot/gml/graph_SOR16_D2_seed42.gml",
+      "labels_path": "/Users/cayofel/Documents/GitHub/isomera_v2/main/data/architectures/tpc_ds_genai_sor_sot/real_pairs/graph_SOR16_D2_seed42.json",
+      "source_benchmark": "tpc_ds"
+    },
+    "graph_SOR16_D3_seed42": {
+      "gml_path": "/Users/cayofel/Documents/GitHub/isomera_v2/main/data/architectures/tpc_ds_genai_sor_sot/gml/graph_SOR16_D3_seed42.gml",
+      "labels_path": "/Users/cayofel/Documents/GitHub/isomera_v2/main/data/architectures/tpc_ds_genai_sor_sot/real_pairs/graph_SOR16_D3_seed42.json",
+      "source_benchmark": "tpc_ds"
+    },
+    "graph_SOR16_D4_seed42": {
+      "gml_path": "/Users/cayofel/Documents/GitHub/isomera_v2/main/data/architectures/tpc_ds_genai_sor_sot/gml/graph_SOR16_D4_seed42.gml",
+      "labels_path": "/Users/cayofel/Documents/GitHub/isomera_v2/main/data/architectures/tpc_ds_genai_sor_sot/real_pairs/graph_SOR16_D4_seed42.json",
+      "source_benchmark": "tpc_ds"
+    },
+    "graph_SOR16_D5_seed42": {
+      "gml_path": "/Users/cayofel/Documents/GitHub/isomera_v2/main/data/architectures/tpc_ds_genai_sor_sot/gml/graph_SOR16_D5_seed42.gml",
+      "labels_path": "/Users/cayofel/Documents/GitHub/isomera_v2/main/data/architectures/tpc_ds_genai_sor_sot/real_pairs/graph_SOR16_D5_seed42.json",
+      "source_benchmark": "tpc_ds"
+    }
+  },
+  "updated_at": "2026-04-18 15:40:55"
+}

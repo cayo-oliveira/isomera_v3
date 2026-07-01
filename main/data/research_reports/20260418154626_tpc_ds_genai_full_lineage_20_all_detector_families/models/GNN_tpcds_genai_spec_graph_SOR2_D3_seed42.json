@@ -1,0 +1,76 @@
+{
+  "model_path": "/Users/cayofel/Documents/GitHub/isomera_v2/main/data/architectures/tpc_ds_genai_spec/models/GNN_tpcds_genai_spec_graph_SOR2_D3_seed42.pkl",
+  "scenarios": [
+    "graph_SOR2_D3_seed42"
+  ],
+  "dataset_summary": [
+    {
+      "scenario": "graph_SOR2_D3_seed42",
+      "positive_pairs": 6,
+      "negative_pairs": 9,
+      "dataset_rows": 15,
+      "skipped_rows": 0,
+      "dataset_source": "supervised_validation_dataset"
+    }
+  ],
+  "epochs": 1,
+  "learning_rate": 0.005,
+  "hidden_channels": 16,
+  "dropout": 0.1,
+  "negative_ratio": 1,
+  "train_ratio": 0.8,
+  "test_ratio": 0.2,
+  "balance_strategy": "class_weighted_loss",
+  "balance_strategy_label": "Weight duplicate class in the loss (torch.nn.BCEWithLogitsLoss(pos_weight))",
+  "balance_summary": {
+    "strategy": "class_weighted_loss",
+    "before": {
+      "positive_pairs": 4,
+      "negative_pairs": 7,
+      "dataset_rows": 11
+    },
+    "after": {
+      "positive_pairs": 4,
+      "negative_pairs": 7,
+      "dataset_rows": 11
+    },
+    "operation": "kept_original_training_rows"
+  },
+  "seed": 42,
+  "optimizer": "adam",
+  "optimizer_label": "Adaptive gradient optimizer (torch.optim.Adam)",
+  "optimizer_name": "torch.optim.Adam",
+  "configured_loss": "bce_with_logits",
+  "configured_loss_label": "Binary cross entropy on logits (torch.nn.BCEWithLogitsLoss)",
+  "loss": {
+    "loss_key": "weighted_bce_with_logits",
+    "loss_name": "torch.nn.BCEWithLogitsLoss(pos_weight)",
+    "loss_label": "Weighted binary cross entropy (torch.nn.BCEWithLogitsLoss(pos_weight))",
+    "formula": "L = -[pos_weight * y log(sigmoid(z)) + (1-y) log(1-sigmoid(z))]",
+    "pos_weight": 1.75
+  },
+  "loss_name": "torch.nn.BCEWithLogitsLoss(pos_weight)",
+  "train_distribution": {
+    "positive_pairs": 4,
+    "negative_pairs": 7,
+    "dataset_rows": 11
+  },
+  "val_distribution": {
+    "positive_pairs": 2,
+    "negative_pairs": 2,
+    "dataset_rows": 4
+  },
+  "history": [
+    {
+      "epoch": 1,
+      "train_loss": 0.962189,
+      "train_accuracy": 0.363636,
+      "val_loss": 0.947919,
+      "val_accuracy": 0.5,
+      "epoch_seconds": 0.011013
+    }
+  ],
+  "train_size": 11,
+  "val_size": 4,
+  "status": "completed"
+}

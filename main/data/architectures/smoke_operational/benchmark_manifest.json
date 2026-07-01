@@ -1,0 +1,36 @@
+{
+  "benchmark_name": "smoke_operational",
+  "display_name": "Smoke Operational",
+  "description": "Operational smoke benchmark automatically maintained by Isomera. It is intentionally small and should be used only to validate that benchmark execution, model routing, plots, and reports are working.",
+  "benchmark_kind": "smoke_example",
+  "candidate_scope": "all",
+  "scenarios": {
+    "graph_SOR2_D1_seed42": {
+      "gml_path": "/Users/cayofel/Documents/GitHub/isomera_v2/main/data/architectures/smoke_operational/gml/graph_SOR2_D1_seed42.gml",
+      "labels_path": "/Users/cayofel/Documents/GitHub/isomera_v2/main/data/architectures/smoke_operational/real_pairs/graph_SOR2_D1_seed42.json",
+      "source_benchmark": "tpc_ds"
+    },
+    "graph_SOR2_D2_seed42": {
+      "gml_path": "/Users/cayofel/Documents/GitHub/isomera_v2/main/data/architectures/smoke_operational/gml/graph_SOR2_D2_seed42.gml",
+      "labels_path": "/Users/cayofel/Documents/GitHub/isomera_v2/main/data/architectures/smoke_operational/real_pairs/graph_SOR2_D2_seed42.json",
+      "source_benchmark": "tpc_ds"
+    }
+  },
+  "model_clusters": {
+    "GNN TPC-DS v1 cluster": {
+      "source": "baseline_tpcds_pickle_dir",
+      "route_policy": "explicit_map",
+      "routes": {
+        "graph_SOR2_D1_seed42": {
+          "pickle_path": "/Users/cayofel/Documents/GitHub/isomera_v2/main/core/algorithms/pickle/gin_gnn/modelos_gnn_separados/graph_SOR2_D1_seed42.pkl",
+          "artifact_role": "baseline_tpcds_pickle"
+        },
+        "graph_SOR2_D2_seed42": {
+          "pickle_path": "/Users/cayofel/Documents/GitHub/isomera_v2/main/core/algorithms/pickle/gin_gnn/modelos_gnn_separados/graph_SOR2_D2_seed42.pkl",
+          "artifact_role": "baseline_tpcds_pickle"
+        }
+      }
+    }
+  },
+  "updated_at": "2026-04-18 10:36:59"
+}

@@ -1,0 +1,7 @@
+Isomera v3
+
+Developed by Cayo Oliveira in the context of graduate research at Centro de Informática da Universidade Federal de Pernambuco (CIn/UFPE), with academic supervision and collaboration from the research group.
+
+This public repository contains the executable Isomera application, selected benchmark data, trained model artifacts and reproducibility evidence required to run the public demo. It intentionally excludes private notebooks, manuscript drafts, TeXLab workspaces and exploratory research material.
+
+Institutional names are used for academic attribution. The software is provided under the MIT License without warranty.

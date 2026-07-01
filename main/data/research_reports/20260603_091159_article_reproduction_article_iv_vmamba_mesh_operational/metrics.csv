@@ -1,0 +1,5 @@
+benchmark,algorithm,metric,expected,actual,status
+tpc_ds_genai_spec_v2,Vanilla VMamba baseline,jaccard,0.255548,0.255548,match
+tpc_ds_genai_spec_v2,VMamba-Mesh Isomera adapter,jaccard,0.274798,0.274798,match
+tpc_ds_genai_full_lineage,Vanilla VMamba baseline,jaccard,0.111757,0.111757,match
+tpc_ds_genai_full_lineage,VMamba-Mesh Isomera adapter,jaccard,0.090915,0.090915,match

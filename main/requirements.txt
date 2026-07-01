@@ -1,0 +1,14 @@
+matplotlib
+networkx
+numpy
+tabulate
+scipy
+pandas
+plotly
+kaleido
+streamlit
+sqlalchemy
+psycopg[binary]
+pymysql
+torch
+torch-geometric

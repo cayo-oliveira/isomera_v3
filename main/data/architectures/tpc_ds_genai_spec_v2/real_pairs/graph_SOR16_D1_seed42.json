@@ -1,0 +1,14 @@
+[
+  [
+    "SPEC_customer_summary_D1",
+    "SPEC_store_sales_summary_D1"
+  ],
+  [
+    "SPEC_customer_summary_D1",
+    "SPEC_warehouse_logistics_D1"
+  ],
+  [
+    "SPEC_store_sales_summary_D1",
+    "SPEC_warehouse_logistics_D1"
+  ]
+]

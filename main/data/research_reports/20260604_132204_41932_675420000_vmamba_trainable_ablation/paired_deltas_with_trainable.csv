@@ -1,0 +1,2 @@
+left_algorithm,right_algorithm,scenarios,mean_delta_jaccard,mean_delta_jaccard_ci_low,mean_delta_jaccard_ci_high,mean_delta_sf_jaccard,mean_delta_sf_jaccard_ci_low,mean_delta_sf_jaccard_ci_high,wins_right_on_jaccard,wins_right_on_sf_jaccard
+VMamba-Mesh Isomera adapter,VMamba-Mesh-T (llmhardneg-smoke),1,-0.3333336666666667,-0.3333336666666667,-0.3333336666666667,-9558.884309684818,-9558.884309684818,-9558.884309684818,0,0

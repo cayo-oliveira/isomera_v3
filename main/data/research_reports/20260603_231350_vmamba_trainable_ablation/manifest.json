@@ -1,0 +1,69 @@
+{
+  "created_at": "20260603_231350",
+  "model_version": "vmamba_trainable_tensor_v0.1",
+  "benchmark": "tpc_ds_genai_spec",
+  "scenarios": [
+    "graph_SOR2_D1_seed42"
+  ],
+  "variants": [
+    "vmamba_t",
+    "vmamba_mesh_t"
+  ],
+  "epochs": 2,
+  "hidden_dim": [
+    16
+  ],
+  "resolution": [
+    16
+  ],
+  "learning_rate": 0.001,
+  "negative_ratio": 2,
+  "artifacts": [
+    {
+      "benchmark": "tpc_ds_genai_spec",
+      "scenario": "graph_SOR2_D1_seed42",
+      "family": "VMamba-T",
+      "variant": "vmamba_t",
+      "resolution": 16,
+      "hidden_dim": 16,
+      "epochs": 2,
+      "learning_rate": 0.001,
+      "loss": "weighted_bce",
+      "optimizer": "adamw",
+      "threshold": 0.1,
+      "elapsed_seconds": 0.0014902919999999487,
+      "sf_jaccard": 671.0094397608217,
+      "pickle_path": "/Users/cayofel/Documents/GitHub/isomera_v2/main/data/architectures/tpc_ds_genai_spec/models/vmamba_t/VMambaT_graph_SOR2_D1_seed42_r16_h16_seed42.pkl",
+      "metadata_path": "/Users/cayofel/Documents/GitHub/isomera_v2/main/data/architectures/tpc_ds_genai_spec/models/vmamba_t/VMambaT_graph_SOR2_D1_seed42_r16_h16_seed42.json",
+      "tp": 1,
+      "fp": 0,
+      "fn": 0,
+      "jaccard": 1.0,
+      "precision": 1.0,
+      "recall": 1.0
+    },
+    {
+      "benchmark": "tpc_ds_genai_spec",
+      "scenario": "graph_SOR2_D1_seed42",
+      "family": "VMamba-Mesh-T",
+      "variant": "vmamba_mesh_t",
+      "resolution": 16,
+      "hidden_dim": 16,
+      "epochs": 2,
+      "learning_rate": 0.001,
+      "loss": "weighted_bce",
+      "optimizer": "adamw",
+      "threshold": 0.1,
+      "elapsed_seconds": 0.0015087499999999476,
+      "sf_jaccard": 662.8003314001887,
+      "pickle_path": "/Users/cayofel/Documents/GitHub/isomera_v2/main/data/architectures/tpc_ds_genai_spec/models/vmamba_mesh_t/VMambaMeshT_graph_SOR2_D1_seed42_r16_h16_seed42.pkl",
+      "metadata_path": "/Users/cayofel/Documents/GitHub/isomera_v2/main/data/architectures/tpc_ds_genai_spec/models/vmamba_mesh_t/VMambaMeshT_graph_SOR2_D1_seed42_r16_h16_seed42.json",
+      "tp": 1,
+      "fp": 0,
+      "fn": 0,
+      "jaccard": 1.0,
+      "precision": 1.0,
+      "recall": 1.0
+    }
+  ]
+}

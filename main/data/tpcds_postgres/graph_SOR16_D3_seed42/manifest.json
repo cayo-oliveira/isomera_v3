@@ -1,0 +1,1000 @@
+{
+  "scenario": "graph_SOR16_D3_seed42",
+  "schema": "scenario_sor16_d3_seed42",
+  "domains": {
+    "2": {
+      "name": "location_store",
+      "tables": [
+        {
+          "node": "SOR_call_center_D2",
+          "type": "SOR",
+          "raw_name": "call_center",
+          "semantic_name": "call_center",
+          "table_name": "d2_sor_call_center"
+        },
+        {
+          "node": "SOR_extra_10_D2",
+          "type": "SOR",
+          "raw_name": "extra_10",
+          "semantic_name": "regional_office",
+          "table_name": "d2_sor_regional_office"
+        },
+        {
+          "node": "SOR_extra_11_D2",
+          "type": "SOR",
+          "raw_name": "extra_11",
+          "semantic_name": "store_format",
+          "table_name": "d2_sor_store_format"
+        },
+        {
+          "node": "SOR_extra_12_D2",
+          "type": "SOR",
+          "raw_name": "extra_12",
+          "semantic_name": "location_segment",
+          "table_name": "d2_sor_location_segment"
+        },
+        {
+          "node": "SOR_extra_1_D2",
+          "type": "SOR",
+          "raw_name": "extra_1",
+          "semantic_name": "district",
+          "table_name": "d2_sor_district"
+        },
+        {
+          "node": "SOR_extra_2_D2",
+          "type": "SOR",
+          "raw_name": "extra_2",
+          "semantic_name": "market",
+          "table_name": "d2_sor_market"
+        },
+        {
+          "node": "SOR_extra_3_D2",
+          "type": "SOR",
+          "raw_name": "extra_3",
+          "semantic_name": "territory",
+          "table_name": "d2_sor_territory"
+        },
+        {
+          "node": "SOR_extra_4_D2",
+          "type": "SOR",
+          "raw_name": "extra_4",
+          "semantic_name": "store_zone",
+          "table_name": "d2_sor_store_zone"
+        },
+        {
+          "node": "SOR_extra_5_D2",
+          "type": "SOR",
+          "raw_name": "extra_5",
+          "semantic_name": "location_bridge",
+          "table_name": "d2_sor_location_bridge"
+        },
+        {
+          "node": "SOR_extra_6_D2",
+          "type": "SOR",
+          "raw_name": "extra_6",
+          "semantic_name": "operating_unit",
+          "table_name": "d2_sor_operating_unit"
+        },
+        {
+          "node": "SOR_extra_7_D2",
+          "type": "SOR",
+          "raw_name": "extra_7",
+          "semantic_name": "geo_cluster",
+          "table_name": "d2_sor_geo_cluster"
+        },
+        {
+          "node": "SOR_extra_8_D2",
+          "type": "SOR",
+          "raw_name": "extra_8",
+          "semantic_name": "service_area",
+          "table_name": "d2_sor_service_area"
+        },
+        {
+          "node": "SOR_extra_9_D2",
+          "type": "SOR",
+          "raw_name": "extra_9",
+          "semantic_name": "trade_area",
+          "table_name": "d2_sor_trade_area"
+        },
+        {
+          "node": "SOR_nation_D2",
+          "type": "SOR",
+          "raw_name": "nation",
+          "semantic_name": "nation",
+          "table_name": "d2_sor_nation"
+        },
+        {
+          "node": "SOR_region_D2",
+          "type": "SOR",
+          "raw_name": "region",
+          "semantic_name": "region",
+          "table_name": "d2_sor_region"
+        },
+        {
+          "node": "SOR_store_D2",
+          "type": "SOR",
+          "raw_name": "store",
+          "semantic_name": "store",
+          "table_name": "d2_sor_store"
+        },
+        {
+          "node": "SOT_catalog_sales_D2",
+          "type": "SOT",
+          "raw_name": "catalog_sales",
+          "semantic_name": "catalog_sales",
+          "table_name": "d2_sot_catalog_sales"
+        },
+        {
+          "node": "SOT_customer_attr_D2",
+          "type": "SOT",
+          "raw_name": "customer_attr",
+          "semantic_name": "customer_attr",
+          "table_name": "d2_sot_customer_attr"
+        },
+        {
+          "node": "SOT_customer_orders_D2",
+          "type": "SOT",
+          "raw_name": "customer_orders",
+          "semantic_name": "customer_orders",
+          "table_name": "d2_sot_customer_orders"
+        },
+        {
+          "node": "SOT_store_sales_D2",
+          "type": "SOT",
+          "raw_name": "store_sales",
+          "semantic_name": "store_sales",
+          "table_name": "d2_sot_store_sales"
+        },
+        {
+          "node": "SOT_time_sales_D2",
+          "type": "SOT",
+          "raw_name": "time_sales",
+          "semantic_name": "time_sales",
+          "table_name": "d2_sot_time_sales"
+        },
+        {
+          "node": "SOT_warehouse_stock_D2",
+          "type": "SOT",
+          "raw_name": "warehouse_stock",
+          "semantic_name": "warehouse_stock",
+          "table_name": "d2_sot_warehouse_stock"
+        },
+        {
+          "node": "SOT_web_sales_D2",
+          "type": "SOT",
+          "raw_name": "web_sales",
+          "semantic_name": "web_sales",
+          "table_name": "d2_sot_web_sales"
+        },
+        {
+          "node": "SPEC_catalog_performance_D2",
+          "type": "SPEC",
+          "raw_name": "catalog_performance",
+          "semantic_name": "catalog_performance",
+          "table_name": "d2_spec_catalog_performance"
+        },
+        {
+          "node": "SPEC_customer_summary_D2",
+          "type": "SPEC",
+          "raw_name": "customer_summary",
+          "semantic_name": "customer_summary",
+          "table_name": "d2_spec_customer_summary"
+        },
+        {
+          "node": "SPEC_store_sales_summary_D2",
+          "type": "SPEC",
+          "raw_name": "store_sales_summary",
+          "semantic_name": "store_sales_summary",
+          "table_name": "d2_spec_store_sales_summary"
+        },
+        {
+          "node": "SPEC_time_analysis_D2",
+          "type": "SPEC",
+          "raw_name": "time_analysis",
+          "semantic_name": "time_analysis",
+          "table_name": "d2_spec_time_analysis"
+        },
+        {
+          "node": "SPEC_warehouse_logistics_D2",
+          "type": "SPEC",
+          "raw_name": "warehouse_logistics",
+          "semantic_name": "warehouse_logistics",
+          "table_name": "d2_spec_warehouse_logistics"
+        },
+        {
+          "node": "SPEC_web_sales_summary_D2",
+          "type": "SPEC",
+          "raw_name": "web_sales_summary",
+          "semantic_name": "web_sales_summary",
+          "table_name": "d2_spec_web_sales_summary"
+        }
+      ]
+    },
+    "1": {
+      "name": "customer",
+      "tables": [
+        {
+          "node": "SOR_customer_D1",
+          "type": "SOR",
+          "raw_name": "customer",
+          "semantic_name": "customer",
+          "table_name": "d1_sor_customer"
+        },
+        {
+          "node": "SOR_customer_address_D1",
+          "type": "SOR",
+          "raw_name": "customer_address",
+          "semantic_name": "customer_address",
+          "table_name": "d1_sor_customer_address"
+        },
+        {
+          "node": "SOR_customer_demographics_D1",
+          "type": "SOR",
+          "raw_name": "customer_demographics",
+          "semantic_name": "customer_demographics",
+          "table_name": "d1_sor_customer_demographics"
+        },
+        {
+          "node": "SOR_extra_10_D1",
+          "type": "SOR",
+          "raw_name": "extra_10",
+          "semantic_name": "engagement_signal",
+          "table_name": "d1_sor_engagement_signal"
+        },
+        {
+          "node": "SOR_extra_11_D1",
+          "type": "SOR",
+          "raw_name": "extra_11",
+          "semantic_name": "customer_tier",
+          "table_name": "d1_sor_customer_tier"
+        },
+        {
+          "node": "SOR_extra_12_D1",
+          "type": "SOR",
+          "raw_name": "extra_12",
+          "semantic_name": "channel_preference",
+          "table_name": "d1_sor_channel_preference"
+        },
+        {
+          "node": "SOR_extra_13_D1",
+          "type": "SOR",
+          "raw_name": "extra_13",
+          "semantic_name": "identity_resolution",
+          "table_name": "d1_sor_identity_resolution"
+        },
+        {
+          "node": "SOR_extra_1_D1",
+          "type": "SOR",
+          "raw_name": "extra_1",
+          "semantic_name": "loyalty_profile",
+          "table_name": "d1_sor_loyalty_profile"
+        },
+        {
+          "node": "SOR_extra_2_D1",
+          "type": "SOR",
+          "raw_name": "extra_2",
+          "semantic_name": "household_profile",
+          "table_name": "d1_sor_household_profile"
+        },
+        {
+          "node": "SOR_extra_3_D1",
+          "type": "SOR",
+          "raw_name": "extra_3",
+          "semantic_name": "customer_touchpoint",
+          "table_name": "d1_sor_customer_touchpoint"
+        },
+        {
+          "node": "SOR_extra_4_D1",
+          "type": "SOR",
+          "raw_name": "extra_4",
+          "semantic_name": "support_case",
+          "table_name": "d1_sor_support_case"
+        },
+        {
+          "node": "SOR_extra_5_D1",
+          "type": "SOR",
+          "raw_name": "extra_5",
+          "semantic_name": "digital_identity",
+          "table_name": "d1_sor_digital_identity"
+        },
+        {
+          "node": "SOR_extra_6_D1",
+          "type": "SOR",
+          "raw_name": "extra_6",
+          "semantic_name": "preference_cluster",
+          "table_name": "d1_sor_preference_cluster"
+        },
+        {
+          "node": "SOR_extra_7_D1",
+          "type": "SOR",
+          "raw_name": "extra_7",
+          "semantic_name": "consent_registry",
+          "table_name": "d1_sor_consent_registry"
+        },
+        {
+          "node": "SOR_extra_8_D1",
+          "type": "SOR",
+          "raw_name": "extra_8",
+          "semantic_name": "household_income_proxy",
+          "table_name": "d1_sor_household_income_proxy"
+        },
+        {
+          "node": "SOR_extra_9_D1",
+          "type": "SOR",
+          "raw_name": "extra_9",
+          "semantic_name": "service_subscription",
+          "table_name": "d1_sor_service_subscription"
+        },
+        {
+          "node": "SOT_catalog_sales_D1",
+          "type": "SOT",
+          "raw_name": "catalog_sales",
+          "semantic_name": "catalog_sales",
+          "table_name": "d1_sot_catalog_sales"
+        },
+        {
+          "node": "SOT_customer_attr_D1",
+          "type": "SOT",
+          "raw_name": "customer_attr",
+          "semantic_name": "customer_attr",
+          "table_name": "d1_sot_customer_attr"
+        },
+        {
+          "node": "SOT_customer_orders_D1",
+          "type": "SOT",
+          "raw_name": "customer_orders",
+          "semantic_name": "customer_orders",
+          "table_name": "d1_sot_customer_orders"
+        },
+        {
+          "node": "SOT_store_sales_D1",
+          "type": "SOT",
+          "raw_name": "store_sales",
+          "semantic_name": "store_sales",
+          "table_name": "d1_sot_store_sales"
+        },
+        {
+          "node": "SOT_time_sales_D1",
+          "type": "SOT",
+          "raw_name": "time_sales",
+          "semantic_name": "time_sales",
+          "table_name": "d1_sot_time_sales"
+        },
+        {
+          "node": "SOT_warehouse_stock_D1",
+          "type": "SOT",
+          "raw_name": "warehouse_stock",
+          "semantic_name": "warehouse_stock",
+          "table_name": "d1_sot_warehouse_stock"
+        },
+        {
+          "node": "SOT_web_sales_D1",
+          "type": "SOT",
+          "raw_name": "web_sales",
+          "semantic_name": "web_sales",
+          "table_name": "d1_sot_web_sales"
+        },
+        {
+          "node": "SPEC_catalog_performance_D1",
+          "type": "SPEC",
+          "raw_name": "catalog_performance",
+          "semantic_name": "catalog_performance",
+          "table_name": "d1_spec_catalog_performance"
+        },
+        {
+          "node": "SPEC_customer_summary_D1",
+          "type": "SPEC",
+          "raw_name": "customer_summary",
+          "semantic_name": "customer_summary",
+          "table_name": "d1_spec_customer_summary"
+        },
+        {
+          "node": "SPEC_store_sales_summary_D1",
+          "type": "SPEC",
+          "raw_name": "store_sales_summary",
+          "semantic_name": "store_sales_summary",
+          "table_name": "d1_spec_store_sales_summary"
+        },
+        {
+          "node": "SPEC_time_analysis_D1",
+          "type": "SPEC",
+          "raw_name": "time_analysis",
+          "semantic_name": "time_analysis",
+          "table_name": "d1_spec_time_analysis"
+        },
+        {
+          "node": "SPEC_warehouse_logistics_D1",
+          "type": "SPEC",
+          "raw_name": "warehouse_logistics",
+          "semantic_name": "warehouse_logistics",
+          "table_name": "d1_spec_warehouse_logistics"
+        },
+        {
+          "node": "SPEC_web_sales_summary_D1",
+          "type": "SPEC",
+          "raw_name": "web_sales_summary",
+          "semantic_name": "web_sales_summary",
+          "table_name": "d1_spec_web_sales_summary"
+        }
+      ]
+    },
+    "3": {
+      "name": "product_catalog",
+      "tables": [
+        {
+          "node": "SOR_extra_10_D3",
+          "type": "SOR",
+          "raw_name": "extra_10",
+          "semantic_name": "merchandising_theme",
+          "table_name": "d3_sor_merchandising_theme"
+        },
+        {
+          "node": "SOR_extra_11_D3",
+          "type": "SOR",
+          "raw_name": "extra_11",
+          "semantic_name": "return_policy",
+          "table_name": "d3_sor_return_policy"
+        },
+        {
+          "node": "SOR_extra_12_D3",
+          "type": "SOR",
+          "raw_name": "extra_12",
+          "semantic_name": "catalog_slot",
+          "table_name": "d3_sor_catalog_slot"
+        },
+        {
+          "node": "SOR_extra_13_D3",
+          "type": "SOR",
+          "raw_name": "extra_13",
+          "semantic_name": "demand_signal",
+          "table_name": "d3_sor_demand_signal"
+        },
+        {
+          "node": "SOR_extra_1_D3",
+          "type": "SOR",
+          "raw_name": "extra_1",
+          "semantic_name": "brand",
+          "table_name": "d3_sor_brand"
+        },
+        {
+          "node": "SOR_extra_2_D3",
+          "type": "SOR",
+          "raw_name": "extra_2",
+          "semantic_name": "category",
+          "table_name": "d3_sor_category"
+        },
+        {
+          "node": "SOR_extra_3_D3",
+          "type": "SOR",
+          "raw_name": "extra_3",
+          "semantic_name": "supplier",
+          "table_name": "d3_sor_supplier"
+        },
+        {
+          "node": "SOR_extra_4_D3",
+          "type": "SOR",
+          "raw_name": "extra_4",
+          "semantic_name": "inventory_snapshot",
+          "table_name": "d3_sor_inventory_snapshot"
+        },
+        {
+          "node": "SOR_extra_5_D3",
+          "type": "SOR",
+          "raw_name": "extra_5",
+          "semantic_name": "assortment",
+          "table_name": "d3_sor_assortment"
+        },
+        {
+          "node": "SOR_extra_6_D3",
+          "type": "SOR",
+          "raw_name": "extra_6",
+          "semantic_name": "item_taxonomy",
+          "table_name": "d3_sor_item_taxonomy"
+        },
+        {
+          "node": "SOR_extra_7_D3",
+          "type": "SOR",
+          "raw_name": "extra_7",
+          "semantic_name": "product_bundle",
+          "table_name": "d3_sor_product_bundle"
+        },
+        {
+          "node": "SOR_extra_8_D3",
+          "type": "SOR",
+          "raw_name": "extra_8",
+          "semantic_name": "vendor_program",
+          "table_name": "d3_sor_vendor_program"
+        },
+        {
+          "node": "SOR_extra_9_D3",
+          "type": "SOR",
+          "raw_name": "extra_9",
+          "semantic_name": "price_band",
+          "table_name": "d3_sor_price_band"
+        },
+        {
+          "node": "SOR_item_D3",
+          "type": "SOR",
+          "raw_name": "item",
+          "semantic_name": "item",
+          "table_name": "d3_sor_item"
+        },
+        {
+          "node": "SOR_promotion_D3",
+          "type": "SOR",
+          "raw_name": "promotion",
+          "semantic_name": "promotion",
+          "table_name": "d3_sor_promotion"
+        },
+        {
+          "node": "SOR_reason_D3",
+          "type": "SOR",
+          "raw_name": "reason",
+          "semantic_name": "reason",
+          "table_name": "d3_sor_reason"
+        },
+        {
+          "node": "SOT_catalog_sales_D3",
+          "type": "SOT",
+          "raw_name": "catalog_sales",
+          "semantic_name": "catalog_sales",
+          "table_name": "d3_sot_catalog_sales"
+        },
+        {
+          "node": "SOT_customer_attr_D3",
+          "type": "SOT",
+          "raw_name": "customer_attr",
+          "semantic_name": "customer_attr",
+          "table_name": "d3_sot_customer_attr"
+        },
+        {
+          "node": "SOT_customer_orders_D3",
+          "type": "SOT",
+          "raw_name": "customer_orders",
+          "semantic_name": "customer_orders",
+          "table_name": "d3_sot_customer_orders"
+        },
+        {
+          "node": "SOT_store_sales_D3",
+          "type": "SOT",
+          "raw_name": "store_sales",
+          "semantic_name": "store_sales",
+          "table_name": "d3_sot_store_sales"
+        },
+        {
+          "node": "SOT_time_sales_D3",
+          "type": "SOT",
+          "raw_name": "time_sales",
+          "semantic_name": "time_sales",
+          "table_name": "d3_sot_time_sales"
+        },
+        {
+          "node": "SOT_warehouse_stock_D3",
+          "type": "SOT",
+          "raw_name": "warehouse_stock",
+          "semantic_name": "warehouse_stock",
+          "table_name": "d3_sot_warehouse_stock"
+        },
+        {
+          "node": "SOT_web_sales_D3",
+          "type": "SOT",
+          "raw_name": "web_sales",
+          "semantic_name": "web_sales",
+          "table_name": "d3_sot_web_sales"
+        },
+        {
+          "node": "SPEC_catalog_performance_D3",
+          "type": "SPEC",
+          "raw_name": "catalog_performance",
+          "semantic_name": "catalog_performance",
+          "table_name": "d3_spec_catalog_performance"
+        },
+        {
+          "node": "SPEC_customer_summary_D3",
+          "type": "SPEC",
+          "raw_name": "customer_summary",
+          "semantic_name": "customer_summary",
+          "table_name": "d3_spec_customer_summary"
+        },
+        {
+          "node": "SPEC_store_sales_summary_D3",
+          "type": "SPEC",
+          "raw_name": "store_sales_summary",
+          "semantic_name": "store_sales_summary",
+          "table_name": "d3_spec_store_sales_summary"
+        },
+        {
+          "node": "SPEC_time_analysis_D3",
+          "type": "SPEC",
+          "raw_name": "time_analysis",
+          "semantic_name": "time_analysis",
+          "table_name": "d3_spec_time_analysis"
+        },
+        {
+          "node": "SPEC_warehouse_logistics_D3",
+          "type": "SPEC",
+          "raw_name": "warehouse_logistics",
+          "semantic_name": "warehouse_logistics",
+          "table_name": "d3_spec_warehouse_logistics"
+        },
+        {
+          "node": "SPEC_web_sales_summary_D3",
+          "type": "SPEC",
+          "raw_name": "web_sales_summary",
+          "semantic_name": "web_sales_summary",
+          "table_name": "d3_spec_web_sales_summary"
+        }
+      ]
+    }
+  },
+  "edges": [
+    {
+      "from": "SOT_time_sales_D1",
+      "to": "SOR_extra_1_D1"
+    },
+    {
+      "from": "SOT_time_sales_D1",
+      "to": "SOR_extra_8_D1"
+    },
+    {
+      "from": "SOT_customer_attr_D1",
+      "to": "SOR_customer_D1"
+    },
+    {
+      "from": "SOT_customer_attr_D1",
+      "to": "SOR_customer_address_D1"
+    },
+    {
+      "from": "SOT_warehouse_stock_D1",
+      "to": "SOR_customer_demographics_D1"
+    },
+    {
+      "from": "SOT_warehouse_stock_D1",
+      "to": "SOR_extra_7_D1"
+    },
+    {
+      "from": "SOT_store_sales_D1",
+      "to": "SOR_extra_11_D1"
+    },
+    {
+      "from": "SOT_store_sales_D1",
+      "to": "SOR_customer_D1"
+    },
+    {
+      "from": "SOT_web_sales_D1",
+      "to": "SOR_customer_D1"
+    },
+    {
+      "from": "SOT_web_sales_D1",
+      "to": "SOR_customer_address_D1"
+    },
+    {
+      "from": "SOT_catalog_sales_D1",
+      "to": "SOR_extra_4_D1"
+    },
+    {
+      "from": "SOT_catalog_sales_D1",
+      "to": "SOR_extra_1_D1"
+    },
+    {
+      "from": "SOT_customer_orders_D1",
+      "to": "SOR_customer_D1"
+    },
+    {
+      "from": "SOT_customer_orders_D1",
+      "to": "SOR_extra_6_D1"
+    },
+    {
+      "from": "SOT_customer_orders_D2",
+      "to": "SOR_store_D2"
+    },
+    {
+      "from": "SOT_customer_orders_D2",
+      "to": "SOR_extra_9_D2"
+    },
+    {
+      "from": "SOT_time_sales_D2",
+      "to": "SOR_extra_2_D2"
+    },
+    {
+      "from": "SOT_time_sales_D2",
+      "to": "SOR_extra_8_D2"
+    },
+    {
+      "from": "SOT_web_sales_D2",
+      "to": "SOR_extra_10_D2"
+    },
+    {
+      "from": "SOT_web_sales_D2",
+      "to": "SOR_extra_2_D2"
+    },
+    {
+      "from": "SOT_catalog_sales_D2",
+      "to": "SOR_extra_5_D2"
+    },
+    {
+      "from": "SOT_catalog_sales_D2",
+      "to": "SOR_nation_D2"
+    },
+    {
+      "from": "SOT_customer_attr_D2",
+      "to": "SOR_extra_3_D2"
+    },
+    {
+      "from": "SOT_customer_attr_D2",
+      "to": "SOR_extra_9_D2"
+    },
+    {
+      "from": "SOT_warehouse_stock_D2",
+      "to": "SOR_extra_7_D2"
+    },
+    {
+      "from": "SOT_warehouse_stock_D2",
+      "to": "SOR_region_D2"
+    },
+    {
+      "from": "SOT_store_sales_D2",
+      "to": "SOR_store_D2"
+    },
+    {
+      "from": "SOT_store_sales_D2",
+      "to": "SOR_region_D2"
+    },
+    {
+      "from": "SOT_customer_attr_D3",
+      "to": "SOR_extra_12_D3"
+    },
+    {
+      "from": "SOT_customer_attr_D3",
+      "to": "SOR_extra_6_D3"
+    },
+    {
+      "from": "SOT_catalog_sales_D3",
+      "to": "SOR_item_D3"
+    },
+    {
+      "from": "SOT_catalog_sales_D3",
+      "to": "SOR_promotion_D3"
+    },
+    {
+      "from": "SOT_warehouse_stock_D3",
+      "to": "SOR_extra_1_D3"
+    },
+    {
+      "from": "SOT_warehouse_stock_D3",
+      "to": "SOR_extra_12_D3"
+    },
+    {
+      "from": "SOT_store_sales_D3",
+      "to": "SOR_extra_10_D3"
+    },
+    {
+      "from": "SOT_store_sales_D3",
+      "to": "SOR_promotion_D3"
+    },
+    {
+      "from": "SOT_customer_orders_D3",
+      "to": "SOR_extra_7_D3"
+    },
+    {
+      "from": "SOT_customer_orders_D3",
+      "to": "SOR_extra_11_D3"
+    },
+    {
+      "from": "SOT_time_sales_D3",
+      "to": "SOR_extra_9_D3"
+    },
+    {
+      "from": "SOT_time_sales_D3",
+      "to": "SOR_extra_7_D3"
+    },
+    {
+      "from": "SOT_web_sales_D3",
+      "to": "SOR_extra_4_D3"
+    },
+    {
+      "from": "SOT_web_sales_D3",
+      "to": "SOR_extra_9_D3"
+    },
+    {
+      "from": "SPEC_customer_summary_D1",
+      "to": "SOT_customer_attr_D1"
+    },
+    {
+      "from": "SPEC_customer_summary_D1",
+      "to": "SOT_customer_orders_D1"
+    },
+    {
+      "from": "SPEC_warehouse_logistics_D1",
+      "to": "SOT_warehouse_stock_D1"
+    },
+    {
+      "from": "SPEC_warehouse_logistics_D1",
+      "to": "SOT_store_sales_D1"
+    },
+    {
+      "from": "SPEC_store_sales_summary_D1",
+      "to": "SOT_store_sales_D1"
+    },
+    {
+      "from": "SPEC_store_sales_summary_D1",
+      "to": "SOT_customer_orders_D1"
+    },
+    {
+      "from": "SPEC_store_sales_summary_D1",
+      "to": "SPEC_customer_summary_D1"
+    },
+    {
+      "from": "SPEC_web_sales_summary_D1",
+      "to": "SOT_web_sales_D1"
+    },
+    {
+      "from": "SPEC_web_sales_summary_D1",
+      "to": "SOT_customer_orders_D1"
+    },
+    {
+      "from": "SPEC_web_sales_summary_D1",
+      "to": "SPEC_customer_summary_D1"
+    },
+    {
+      "from": "SPEC_time_analysis_D1",
+      "to": "SOT_time_sales_D3"
+    },
+    {
+      "from": "SPEC_time_analysis_D1",
+      "to": "SOT_web_sales_D3"
+    },
+    {
+      "from": "SPEC_time_analysis_D1",
+      "to": "SOT_catalog_sales_D3"
+    },
+    {
+      "from": "SPEC_catalog_performance_D1",
+      "to": "SOT_catalog_sales_D3"
+    },
+    {
+      "from": "SPEC_catalog_performance_D1",
+      "to": "SOT_customer_attr_D3"
+    },
+    {
+      "from": "SPEC_catalog_performance_D1",
+      "to": "SOT_store_sales_D3"
+    },
+    {
+      "from": "SPEC_warehouse_logistics_D2",
+      "to": "SOT_warehouse_stock_D2"
+    },
+    {
+      "from": "SPEC_warehouse_logistics_D2",
+      "to": "SOT_store_sales_D2"
+    },
+    {
+      "from": "SPEC_customer_summary_D2",
+      "to": "SOT_customer_attr_D1"
+    },
+    {
+      "from": "SPEC_customer_summary_D2",
+      "to": "SOT_customer_orders_D1"
+    },
+    {
+      "from": "SPEC_customer_summary_D2",
+      "to": "SPEC_store_sales_summary_D1"
+    },
+    {
+      "from": "SPEC_customer_summary_D2",
+      "to": "SPEC_catalog_performance_D1"
+    },
+    {
+      "from": "SPEC_store_sales_summary_D2",
+      "to": "SOT_store_sales_D2"
+    },
+    {
+      "from": "SPEC_store_sales_summary_D2",
+      "to": "SOT_customer_orders_D2"
+    },
+    {
+      "from": "SPEC_store_sales_summary_D2",
+      "to": "SPEC_customer_summary_D2"
+    },
+    {
+      "from": "SPEC_catalog_performance_D2",
+      "to": "SOT_catalog_sales_D2"
+    },
+    {
+      "from": "SPEC_catalog_performance_D2",
+      "to": "SOT_customer_attr_D2"
+    },
+    {
+      "from": "SPEC_catalog_performance_D2",
+      "to": "SOT_store_sales_D2"
+    },
+    {
+      "from": "SPEC_time_analysis_D2",
+      "to": "SOT_time_sales_D2"
+    },
+    {
+      "from": "SPEC_time_analysis_D2",
+      "to": "SOT_web_sales_D2"
+    },
+    {
+      "from": "SPEC_time_analysis_D2",
+      "to": "SOT_catalog_sales_D2"
+    },
+    {
+      "from": "SPEC_web_sales_summary_D2",
+      "to": "SOT_web_sales_D1"
+    },
+    {
+      "from": "SPEC_web_sales_summary_D2",
+      "to": "SOT_customer_orders_D1"
+    },
+    {
+      "from": "SPEC_web_sales_summary_D2",
+      "to": "SPEC_customer_summary_D1"
+    },
+    {
+      "from": "SPEC_catalog_performance_D3",
+      "to": "SOT_catalog_sales_D2"
+    },
+    {
+      "from": "SPEC_catalog_performance_D3",
+      "to": "SOT_customer_attr_D2"
+    },
+    {
+      "from": "SPEC_catalog_performance_D3",
+      "to": "SOT_store_sales_D2"
+    },
+    {
+      "from": "SPEC_web_sales_summary_D3",
+      "to": "SOT_web_sales_D3"
+    },
+    {
+      "from": "SPEC_web_sales_summary_D3",
+      "to": "SOT_customer_orders_D3"
+    },
+    {
+      "from": "SPEC_warehouse_logistics_D3",
+      "to": "SOT_warehouse_stock_D3"
+    },
+    {
+      "from": "SPEC_warehouse_logistics_D3",
+      "to": "SOT_store_sales_D3"
+    },
+    {
+      "from": "SPEC_customer_summary_D3",
+      "to": "SOT_customer_attr_D3"
+    },
+    {
+      "from": "SPEC_customer_summary_D3",
+      "to": "SOT_customer_orders_D3"
+    },
+    {
+      "from": "SPEC_customer_summary_D3",
+      "to": "SPEC_catalog_performance_D3"
+    },
+    {
+      "from": "SPEC_time_analysis_D3",
+      "to": "SOT_time_sales_D1"
+    },
+    {
+      "from": "SPEC_time_analysis_D3",
+      "to": "SOT_web_sales_D1"
+    },
+    {
+      "from": "SPEC_time_analysis_D3",
+      "to": "SOT_catalog_sales_D1"
+    },
+    {
+      "from": "SPEC_store_sales_summary_D3",
+      "to": "SOT_store_sales_D3"
+    },
+    {
+      "from": "SPEC_store_sales_summary_D3",
+      "to": "SOT_customer_orders_D3"
+    },
+    {
+      "from": "SPEC_store_sales_summary_D3",
+      "to": "SPEC_customer_summary_D3"
+    }
+  ]
+}

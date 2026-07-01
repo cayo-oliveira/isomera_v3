@@ -1,0 +1,37 @@
+{
+  "model_path": "/Users/cayofel/Documents/GitHub/isomera_v2/main/data/architectures/mysql_validation_demo/models/mysql_validation_demo_gnn.pkl",
+  "scenarios": [
+    "graph_SOR2_D5_seed42"
+  ],
+  "dataset_summary": [
+    {
+      "scenario": "graph_SOR2_D5_seed42",
+      "positive_pairs": 17,
+      "negative_pairs": 17,
+      "dataset_rows": 34
+    }
+  ],
+  "epochs": 1,
+  "learning_rate": 0.005,
+  "hidden_channels": 16,
+  "dropout": 0.2,
+  "negative_ratio": 1,
+  "train_ratio": 0.8,
+  "test_ratio": 0.2,
+  "balance_strategy": "negative_sampling",
+  "seed": 42,
+  "optimizer": "adam",
+  "history": [
+    {
+      "epoch": 1,
+      "train_loss": 0.744712,
+      "train_accuracy": 0.592593,
+      "val_loss": 0.727581,
+      "val_accuracy": 0.142857,
+      "epoch_seconds": 0.103674
+    }
+  ],
+  "train_size": 27,
+  "val_size": 7,
+  "status": "completed"
+}

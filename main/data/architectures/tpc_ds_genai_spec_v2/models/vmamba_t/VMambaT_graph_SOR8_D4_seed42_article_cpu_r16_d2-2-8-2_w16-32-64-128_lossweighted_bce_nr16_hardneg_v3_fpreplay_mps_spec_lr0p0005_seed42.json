@@ -1,0 +1,836 @@
+{
+  "model_name": "VMambaT_graph_SOR8_D4_seed42_article_cpu_r16_d2-2-8-2_w16-32-64-128_lossweighted_bce_nr16_hardneg_v3_fpreplay_mps_spec_lr0p0005_seed42",
+  "model_family": "VMamba-T",
+  "model_family_name": "VMamba-T",
+  "model_version": "vmamba_trainable_tensor_v0.1",
+  "pickle_module": "core.algorithms.vmamba_trainable",
+  "pickle_path": "/Users/cayofel/Documents/GitHub/isomera_v2/main/data/architectures/tpc_ds_genai_spec_v2/models/vmamba_t/VMambaT_graph_SOR8_D4_seed42_article_cpu_r16_d2-2-8-2_w16-32-64-128_lossweighted_bce_nr16_hardneg_v3_fpreplay_mps_spec_lr0p0005_seed42.pkl",
+  "benchmark_name": "tpc_ds_genai_spec_v2",
+  "scenarios": [
+    "graph_SOR8_D4_seed42"
+  ],
+  "source_scenarios": [
+    "graph_SOR8_D4_seed42"
+  ],
+  "source_graph_path": "/Users/cayofel/Documents/GitHub/isomera_v2/main/data/architectures/tpc_ds_genai_spec_v2/gml/graph_SOR8_D4_seed42.gml",
+  "source_labels_path": "/Users/cayofel/Documents/GitHub/isomera_v2/main/data/architectures/tpc_ds_genai_spec_v2/real_pairs/graph_SOR8_D4_seed42.json",
+  "created_at": "2026-06-04 15:27:32",
+  "elapsed_seconds": 13.793006250000019,
+  "config": {
+    "variant": "vmamba_t",
+    "scope_layers": [
+      "SPEC"
+    ],
+    "resolution": 16,
+    "channels": [
+      "C0",
+      "C1"
+    ],
+    "architecture": "vss_torch",
+    "preset": "article_cpu",
+    "patch_size": 2,
+    "depths": [
+      2,
+      2,
+      8,
+      2
+    ],
+    "dims": [
+      16,
+      32,
+      64,
+      128
+    ],
+    "hidden_dim": 128,
+    "embedding_dim": 128,
+    "mlp_ratio": 4.0,
+    "dropout": 0.1,
+    "drop_path_rate": 0.15,
+    "threshold": 0.375,
+    "negative_ratio": 16,
+    "hard_negative_mining": true,
+    "hard_negative_strategy": "structural_plus_llm_manifest",
+    "hard_negative_agent": "codex_gpt5_llm_hard_negative_reviewer",
+    "hard_negative_manifest_path": "research/vmamba/manifests/llm_hard_negatives_article_iv_20260604.json",
+    "hard_negative_manifest_id": "llm_hard_negatives_article_iv_20260604",
+    "false_positive_replay_rounds": 1,
+    "false_positive_replay_top_k": 0,
+    "false_positive_replay_weight": 3,
+    "false_positive_replay_epochs": 2,
+    "batch_size": 16,
+    "inference_batch_size": 4096,
+    "encoder_batch_size": 64,
+    "auxiliary_features": true,
+    "auxiliary_feature_names": [
+      "same_layer",
+      "same_domain",
+      "name_token_jaccard",
+      "context_node_similarity",
+      "context_edge_similarity",
+      "layer_hist_jaccard",
+      "domain_hist_jaccard",
+      "parent_signature_jaccard",
+      "child_signature_jaccard",
+      "exact_parent_jaccard",
+      "exact_child_jaccard",
+      "canonsort_route_alignment",
+      "diag_fingerprint_similarity",
+      "meshss2d_route_similarity",
+      "hierarchical_context_match",
+      "sparse_density_similarity"
+    ],
+    "seed": 42,
+    "epochs": 10,
+    "learning_rate": 0.0005,
+    "train_ratio": 0.8,
+    "loss_name": "weighted_bce",
+    "threshold_policy": "precision_guard",
+    "threshold_precision_floor": 0.5,
+    "optimizer_name": "adamw",
+    "weight_decay": 0.05,
+    "forward_type": "v05",
+    "device": "mps",
+    "notes": "Trainable VMamba-style tensor pair model for Isomera."
+  },
+  "training_summary": {
+    "model_version": "vmamba_trainable_tensor_v0.1",
+    "variant": "vmamba_t",
+    "dataset": {
+      "rows": 276,
+      "positive": 62,
+      "negative": 214
+    },
+    "dataset_sampling": {
+      "negative_sampling": "hard_negative_mining",
+      "hard_negative_mining": true,
+      "hard_negative_strategy": "structural_plus_llm_manifest",
+      "hard_negative_agent": "codex_gpt5_llm_hard_negative_reviewer",
+      "hard_negative_manifest_path": "research/vmamba/manifests/llm_hard_negatives_article_iv_20260604.json",
+      "hard_negative_manifest_id": "llm_hard_negatives_article_iv_20260604",
+      "hard_negative_manifest_error": null,
+      "hard_negative_manifest_agent": "Codex",
+      "hard_negative_manifest_model": "GPT-5",
+      "hard_negative_manifest_pairs_available": 20,
+      "positive_pairs": 62,
+      "candidate_negatives": 214,
+      "selected_negatives": 214,
+      "negative_ratio": 16,
+      "selected_negative_preview": [
+        {
+          "node_a": "SPEC_store_sales_summary_D3",
+          "node_b": "SPEC_web_sales_summary_D3",
+          "hardness_score": 0.717734,
+          "llm_suggested": true,
+          "llm_priority": 0.822565,
+          "llm_reason": "same layer SPEC; same domain D3; similar name tokens (0.50); similar local degree (0.50); high structural similarity (0.74)"
+        },
+        {
+          "node_a": "SPEC_catalog_performance_D2",
+          "node_b": "SPEC_time_analysis_D2",
+          "hardness_score": 0.8725,
+          "llm_suggested": true,
+          "llm_priority": 0.752089,
+          "llm_reason": "same layer SPEC; same domain D2; similar local degree (1.00); high structural similarity (0.86)"
+        },
+        {
+          "node_a": "SPEC_warehouse_logistics_D2",
+          "node_b": "SPEC_web_sales_summary_D2",
+          "hardness_score": 0.812811,
+          "llm_suggested": true,
+          "llm_priority": 0.742562,
+          "llm_reason": "same layer SPEC; same domain D2; similar local degree (1.00); high structural similarity (0.81)"
+        },
+        {
+          "node_a": "SPEC_customer_summary_D3",
+          "node_b": "SPEC_web_sales_summary_D3",
+          "hardness_score": 0.765724,
+          "llm_suggested": true,
+          "llm_priority": 0.741147,
+          "llm_reason": "same layer SPEC; same domain D3; similar name tokens (0.25); similar local degree (0.50); high structural similarity (0.77)"
+        },
+        {
+          "node_a": "SPEC_time_analysis_D4",
+          "node_b": "SPEC_web_sales_summary_D4",
+          "hardness_score": 0.788092,
+          "llm_suggested": true,
+          "llm_priority": 0.736815,
+          "llm_reason": "same layer SPEC; same domain D4; similar local degree (1.00); high structural similarity (0.78)"
+        },
+        {
+          "node_a": "SPEC_catalog_performance_D3",
+          "node_b": "SPEC_store_sales_summary_D3",
+          "hardness_score": 0.778862,
+          "llm_suggested": true,
+          "llm_priority": 0.735772,
+          "llm_reason": "same layer SPEC; same domain D3; similar local degree (1.00); high structural similarity (0.78)"
+        },
+        {
+          "node_a": "SPEC_store_sales_summary_D4",
+          "node_b": "SPEC_time_analysis_D4",
+          "hardness_score": 0.777789,
+          "llm_suggested": true,
+          "llm_priority": 0.734219,
+          "llm_reason": "same layer SPEC; same domain D4; similar local degree (1.00); high structural similarity (0.77)"
+        },
+        {
+          "node_a": "SPEC_catalog_performance_D2",
+          "node_b": "SPEC_warehouse_logistics_D2",
+          "hardness_score": 0.701356,
+          "llm_suggested": true,
+          "llm_priority": 0.718664,
+          "llm_reason": "same layer SPEC; same domain D2; similar local degree (1.00); high structural similarity (0.69)"
+        },
+        {
+          "node_a": "SPEC_time_analysis_D2",
+          "node_b": "SPEC_warehouse_logistics_D2",
+          "hardness_score": 0.688856,
+          "llm_suggested": true,
+          "llm_priority": 0.716834,
+          "llm_reason": "same layer SPEC; same domain D2; similar local degree (1.00); high structural similarity (0.68)"
+        },
+        {
+          "node_a": "SPEC_time_analysis_D1",
+          "node_b": "SPEC_web_sales_summary_D1",
+          "hardness_score": 0.682351,
+          "llm_suggested": true,
+          "llm_priority": 0.715801,
+          "llm_reason": "same layer SPEC; same domain D1; similar local degree (1.00); high structural similarity (0.68)"
+        },
+        {
+          "node_a": "SPEC_store_sales_summary_D1",
+          "node_b": "SPEC_time_analysis_D1",
+          "hardness_score": 0.666503,
+          "llm_suggested": true,
+          "llm_priority": 0.712798,
+          "llm_reason": "same layer SPEC; same domain D1; similar local degree (1.00); high structural similarity (0.66)"
+        },
+        {
+          "node_a": "SPEC_time_analysis_D2",
+          "node_b": "SPEC_web_sales_summary_D2",
+          "hardness_score": 0.663963,
+          "llm_suggested": true,
+          "llm_priority": 0.712089,
+          "llm_reason": "same layer SPEC; same domain D2; similar local degree (1.00); high structural similarity (0.66)"
+        },
+        {
+          "node_a": "SPEC_catalog_performance_D2",
+          "node_b": "SPEC_web_sales_summary_D2",
+          "hardness_score": 0.651463,
+          "llm_suggested": true,
+          "llm_priority": 0.710293,
+          "llm_reason": "same layer SPEC; same domain D2; similar local degree (1.00); high structural similarity (0.65)"
+        },
+        {
+          "node_a": "SPEC_catalog_performance_D1",
+          "node_b": "SPEC_time_analysis_D1",
+          "hardness_score": 0.616996,
+          "llm_suggested": true,
+          "llm_priority": 0.704738,
+          "llm_reason": "same layer SPEC; same domain D1; similar local degree (1.00); high structural similarity (0.62)"
+        },
+        {
+          "node_a": "SPEC_time_analysis_D3",
+          "node_b": "SPEC_warehouse_logistics_D3",
+          "hardness_score": 0.625706,
+          "llm_suggested": true,
+          "llm_priority": 0.704472,
+          "llm_reason": "same layer SPEC; same domain D3; similar local degree (1.00); high structural similarity (0.62)"
+        },
+        {
+          "node_a": "SPEC_catalog_performance_D4",
+          "node_b": "SPEC_time_analysis_D4",
+          "hardness_score": 0.616996,
+          "llm_suggested": true,
+          "llm_priority": 0.703801,
+          "llm_reason": "same layer SPEC; same domain D4; similar local degree (1.00); high structural similarity (0.62)"
+        },
+        {
+          "node_a": "SPEC_customer_summary_D3",
+          "node_b": "SPEC_warehouse_logistics_D3",
+          "hardness_score": 0.813994,
+          "llm_suggested": true,
+          "llm_priority": 0.703502,
+          "llm_reason": "same layer SPEC; same domain D3; similar local degree (0.75); high structural similarity (0.82)"
+        },
+        {
+          "node_a": "SPEC_catalog_performance_D4",
+          "node_b": "SPEC_store_sales_summary_D4",
+          "hardness_score": 0.60836,
+          "llm_suggested": true,
+          "llm_priority": 0.70348,
+          "llm_reason": "same layer SPEC; same domain D4; similar local degree (1.00); high structural similarity (0.62)"
+        },
+        {
+          "node_a": "SPEC_catalog_performance_D4",
+          "node_b": "SPEC_web_sales_summary_D4",
+          "hardness_score": 0.603055,
+          "llm_suggested": true,
+          "llm_priority": 0.700611,
+          "llm_reason": "same layer SPEC; same domain D4; similar local degree (1.00); high structural similarity (0.60)"
+        },
+        {
+          "node_a": "SPEC_catalog_performance_D1",
+          "node_b": "SPEC_web_sales_summary_D1",
+          "hardness_score": 0.551555,
+          "llm_suggested": true,
+          "llm_priority": 0.691114,
+          "llm_reason": "same layer SPEC; same domain D1; similar local degree (1.00); high structural similarity (0.56)"
+        },
+        {
+          "node_a": "SPEC_time_analysis_D1",
+          "node_b": "SPEC_warehouse_logistics_D1",
+          "hardness_score": 0.819508,
+          "llm_suggested": false,
+          "llm_priority": null,
+          "llm_reason": null
+        },
+        {
+          "node_a": "SPEC_time_analysis_D4",
+          "node_b": "SPEC_warehouse_logistics_D4",
+          "hardness_score": 0.791888,
+          "llm_suggested": false,
+          "llm_priority": null,
+          "llm_reason": null
+        },
+        {
+          "node_a": "SPEC_store_sales_summary_D4",
+          "node_b": "SPEC_warehouse_logistics_D4",
+          "hardness_score": 0.750661,
+          "llm_suggested": false,
+          "llm_priority": null,
+          "llm_reason": null
+        },
+        {
+          "node_a": "SPEC_warehouse_logistics_D3",
+          "node_b": "SPEC_web_sales_summary_D3",
+          "hardness_score": 0.745359,
+          "llm_suggested": false,
+          "llm_priority": null,
+          "llm_reason": null
+        },
+        {
+          "node_a": "SPEC_warehouse_logistics_D4",
+          "node_b": "SPEC_web_sales_summary_D4",
+          "hardness_score": 0.721191,
+          "llm_suggested": false,
+          "llm_priority": null,
+          "llm_reason": null
+        },
+        {
+          "node_a": "SPEC_catalog_performance_D2",
+          "node_b": "SPEC_time_analysis_D3",
+          "hardness_score": 0.691667,
+          "llm_suggested": false,
+          "llm_priority": null,
+          "llm_reason": null
+        },
+        {
+          "node_a": "SPEC_customer_summary_D4",
+          "node_b": "SPEC_warehouse_logistics_D4",
+          "hardness_score": 0.66699,
+          "llm_suggested": false,
+          "llm_priority": null,
+          "llm_reason": null
+        },
+        {
+          "node_a": "SPEC_catalog_performance_D3",
+          "node_b": "SPEC_web_sales_summary_D3",
+          "hardness_score": 0.659097,
+          "llm_suggested": false,
+          "llm_priority": null,
+          "llm_reason": null
+        },
+        {
+          "node_a": "SPEC_store_sales_summary_D1",
+          "node_b": "SPEC_warehouse_logistics_D1",
+          "hardness_score": 0.654096,
+          "llm_suggested": false,
+          "llm_priority": null,
+          "llm_reason": null
+        },
+        {
+          "node_a": "SPEC_customer_summary_D4",
+          "node_b": "SPEC_time_analysis_D4",
+          "hardness_score": 0.649195,
+          "llm_suggested": false,
+          "llm_priority": null,
+          "llm_reason": null
+        },
+        {
+          "node_a": "SPEC_warehouse_logistics_D1",
+          "node_b": "SPEC_web_sales_summary_D1",
+          "hardness_score": 0.641819,
+          "llm_suggested": false,
+          "llm_priority": null,
+          "llm_reason": null
+        },
+        {
+          "node_a": "SPEC_catalog_performance_D3",
+          "node_b": "SPEC_warehouse_logistics_D3",
+          "hardness_score": 0.63688,
+          "llm_suggested": false,
+          "llm_priority": null,
+          "llm_reason": null
+        },
+        {
+          "node_a": "SPEC_catalog_performance_D4",
+          "node_b": "SPEC_web_sales_summary_D3",
+          "hardness_score": 0.630005,
+          "llm_suggested": false,
+          "llm_priority": null,
+          "llm_reason": null
+        },
+        {
+          "node_a": "SPEC_catalog_performance_D1",
+          "node_b": "SPEC_web_sales_summary_D3",
+          "hardness_score": 0.630005,
+          "llm_suggested": false,
+          "llm_priority": null,
+          "llm_reason": null
+        },
+        {
+          "node_a": "SPEC_catalog_performance_D4",
+          "node_b": "SPEC_warehouse_logistics_D3",
+          "hardness_score": 0.618621,
+          "llm_suggested": false,
+          "llm_priority": null,
+          "llm_reason": null
+        },
+        {
+          "node_a": "SPEC_catalog_performance_D1",
+          "node_b": "SPEC_warehouse_logistics_D3",
+          "hardness_score": 0.618621,
+          "llm_suggested": false,
+          "llm_priority": null,
+          "llm_reason": null
+        },
+        {
+          "node_a": "SPEC_catalog_performance_D1",
+          "node_b": "SPEC_warehouse_logistics_D1",
+          "hardness_score": 0.600317,
+          "llm_suggested": false,
+          "llm_priority": null,
+          "llm_reason": null
+        },
+        {
+          "node_a": "SPEC_customer_summary_D3",
+          "node_b": "SPEC_time_analysis_D3",
+          "hardness_score": 0.597402,
+          "llm_suggested": false,
+          "llm_priority": null,
+          "llm_reason": null
+        },
+        {
+          "node_a": "SPEC_time_analysis_D3",
+          "node_b": "SPEC_web_sales_summary_D3",
+          "hardness_score": 0.59735,
+          "llm_suggested": false,
+          "llm_priority": null,
+          "llm_reason": null
+        },
+        {
+          "node_a": "SPEC_catalog_performance_D4",
+          "node_b": "SPEC_warehouse_logistics_D4",
+          "hardness_score": 0.59285,
+          "llm_suggested": false,
+          "llm_priority": null,
+          "llm_reason": null
+        },
+        {
+          "node_a": "SPEC_time_analysis_D3",
+          "node_b": "SPEC_warehouse_logistics_D2",
+          "hardness_score": 0.559116,
+          "llm_suggested": false,
+          "llm_priority": null,
+          "llm_reason": null
+        },
+        {
+          "node_a": "SPEC_catalog_performance_D1",
+          "node_b": "SPEC_store_sales_summary_D1",
+          "hardness_score": 0.549546,
+          "llm_suggested": false,
+          "llm_priority": null,
+          "llm_reason": null
+        },
+        {
+          "node_a": "SPEC_store_sales_summary_D1",
+          "node_b": "SPEC_web_sales_summary_D2",
+          "hardness_score": 0.546884,
+          "llm_suggested": false,
+          "llm_priority": null,
+          "llm_reason": null
+        },
+        {
+          "node_a": "SPEC_time_analysis_D3",
+          "node_b": "SPEC_web_sales_summary_D2",
+          "hardness_score": 0.537452,
+          "llm_suggested": false,
+          "llm_priority": null,
+          "llm_reason": null
+        },
+        {
+          "node_a": "SPEC_warehouse_logistics_D2",
+          "node_b": "SPEC_web_sales_summary_D4",
+          "hardness_score": 0.535124,
+          "llm_suggested": false,
+          "llm_priority": null,
+          "llm_reason": null
+        },
+        {
+          "node_a": "SPEC_catalog_performance_D2",
+          "node_b": "SPEC_customer_summary_D2",
+          "hardness_score": 0.534559,
+          "llm_suggested": false,
+          "llm_priority": null,
+          "llm_reason": null
+        },
+        {
+          "node_a": "SPEC_warehouse_logistics_D2",
+          "node_b": "SPEC_web_sales_summary_D1",
+          "hardness_score": 0.530024,
+          "llm_suggested": false,
+          "llm_priority": null,
+          "llm_reason": null
+        },
+        {
+          "node_a": "SPEC_store_sales_summary_D1",
+          "node_b": "SPEC_warehouse_logistics_D2",
+          "hardness_score": 0.527513,
+          "llm_suggested": false,
+          "llm_priority": null,
+          "llm_reason": null
+        },
+        {
+          "node_a": "SPEC_store_sales_summary_D2",
+          "node_b": "SPEC_warehouse_logistics_D4",
+          "hardness_score": 0.523661,
+          "llm_suggested": false,
+          "llm_priority": null,
+          "llm_reason": null
+        },
+        {
+          "node_a": "SPEC_customer_summary_D2",
+          "node_b": "SPEC_time_analysis_D2",
+          "hardness_score": 0.522059,
+          "llm_suggested": false,
+          "llm_priority": null,
+          "llm_reason": null
+        }
+      ]
+    },
+    "train": {
+      "rows": 427,
+      "positive": 49,
+      "negative": 378
+    },
+    "validation": {
+      "rows": 56,
+      "positive": 13,
+      "negative": 43
+    },
+    "selected_threshold": 0.375,
+    "selected_metrics": {
+      "threshold": 0.375,
+      "tp": 5,
+      "fp": 3,
+      "fn": 8,
+      "tn": 40,
+      "jaccard": 0.3125,
+      "precision": 0.625,
+      "recall": 0.38461538461538464,
+      "f1": 0.4761904761904762,
+      "accuracy": 0.8035714285714286
+    },
+    "threshold_candidates": [
+      0.1,
+      0.125,
+      0.15,
+      0.175,
+      0.2,
+      0.225,
+      0.25,
+      0.275,
+      0.3,
+      0.325,
+      0.35,
+      0.375,
+      0.4,
+      0.425,
+      0.45,
+      0.475,
+      0.5,
+      0.525,
+      0.55,
+      0.575,
+      0.6,
+      0.625,
+      0.65,
+      0.675,
+      0.7,
+      0.725,
+      0.75,
+      0.775,
+      0.8,
+      0.825,
+      0.85,
+      0.875,
+      0.9
+    ],
+    "threshold_selection": {
+      "policy": "precision_guard",
+      "precision_floor": 0.5,
+      "eligible_thresholds": 4,
+      "fallback_to_all_thresholds": false
+    },
+    "history": [
+      {
+        "epoch": 1,
+        "train_loss": 1.075858,
+        "train_accuracy": 0.418182,
+        "val_jaccard_at_0_5": 0.0,
+        "val_accuracy_at_0_5": 0.767857
+      },
+      {
+        "epoch": 2,
+        "train_loss": 1.087595,
+        "train_accuracy": 0.586364,
+        "val_jaccard_at_0_5": 0.142857,
+        "val_accuracy_at_0_5": 0.678571
+      },
+      {
+        "epoch": 3,
+        "train_loss": 0.907122,
+        "train_accuracy": 0.65,
+        "val_jaccard_at_0_5": 0.25,
+        "val_accuracy_at_0_5": 0.410714
+      },
+      {
+        "epoch": 4,
+        "train_loss": 0.891997,
+        "train_accuracy": 0.663636,
+        "val_jaccard_at_0_5": 0.294118,
+        "val_accuracy_at_0_5": 0.571429
+      },
+      {
+        "epoch": 5,
+        "train_loss": 0.801413,
+        "train_accuracy": 0.7,
+        "val_jaccard_at_0_5": 0.392857,
+        "val_accuracy_at_0_5": 0.696429
+      },
+      {
+        "epoch": 6,
+        "train_loss": 0.70296,
+        "train_accuracy": 0.731818,
+        "val_jaccard_at_0_5": 0.275862,
+        "val_accuracy_at_0_5": 0.625
+      },
+      {
+        "epoch": 7,
+        "train_loss": 0.743272,
+        "train_accuracy": 0.731818,
+        "val_jaccard_at_0_5": 0.366667,
+        "val_accuracy_at_0_5": 0.660714
+      },
+      {
+        "epoch": 8,
+        "train_loss": 0.64638,
+        "train_accuracy": 0.745455,
+        "val_jaccard_at_0_5": 0.32,
+        "val_accuracy_at_0_5": 0.696429
+      },
+      {
+        "epoch": 9,
+        "train_loss": 0.685117,
+        "train_accuracy": 0.768182,
+        "val_jaccard_at_0_5": 0.347826,
+        "val_accuracy_at_0_5": 0.732143
+      },
+      {
+        "epoch": 10,
+        "train_loss": 0.658405,
+        "train_accuracy": 0.790909,
+        "val_jaccard_at_0_5": 0.384615,
+        "val_accuracy_at_0_5": 0.714286
+      },
+      {
+        "epoch": 11,
+        "replay_round": 1,
+        "train_loss": 0.815808,
+        "train_accuracy": 0.789227,
+        "val_jaccard_at_0_5": 0.0,
+        "val_accuracy_at_0_5": 0.0
+      },
+      {
+        "epoch": 12,
+        "replay_round": 1,
+        "train_loss": 0.791874,
+        "train_accuracy": 0.887588,
+        "val_jaccard_at_0_5": 0.0,
+        "val_accuracy_at_0_5": 0.0
+      }
+    ],
+    "false_positive_replay": {
+      "rounds": 1,
+      "top_k": 0,
+      "weight": 3,
+      "epochs_per_round": 2,
+      "history": [
+        {
+          "round": 1,
+          "selected_pairs": 69,
+          "reinforced_rows": 207,
+          "max_negative_score": 0.867799,
+          "min_selected_score": 0.504902,
+          "preview": [
+            {
+              "node_a": "SPEC_catalog_performance_D2",
+              "node_b": "SPEC_time_analysis_D4",
+              "score": 0.867799
+            },
+            {
+              "node_a": "SPEC_catalog_performance_D2",
+              "node_b": "SPEC_time_analysis_D2",
+              "score": 0.856166
+            },
+            {
+              "node_a": "SPEC_catalog_performance_D2",
+              "node_b": "SPEC_time_analysis_D3",
+              "score": 0.84732
+            },
+            {
+              "node_a": "SPEC_customer_summary_D2",
+              "node_b": "SPEC_web_sales_summary_D4",
+              "score": 0.799288
+            },
+            {
+              "node_a": "SPEC_warehouse_logistics_D1",
+              "node_b": "SPEC_web_sales_summary_D4",
+              "score": 0.786998
+            },
+            {
+              "node_a": "SPEC_warehouse_logistics_D2",
+              "node_b": "SPEC_web_sales_summary_D4",
+              "score": 0.768207
+            },
+            {
+              "node_a": "SPEC_customer_summary_D2",
+              "node_b": "SPEC_warehouse_logistics_D4",
+              "score": 0.752928
+            },
+            {
+              "node_a": "SPEC_store_sales_summary_D1",
+              "node_b": "SPEC_warehouse_logistics_D4",
+              "score": 0.746536
+            },
+            {
+              "node_a": "SPEC_warehouse_logistics_D4",
+              "node_b": "SPEC_web_sales_summary_D4",
+              "score": 0.742441
+            },
+            {
+              "node_a": "SPEC_customer_summary_D2",
+              "node_b": "SPEC_store_sales_summary_D3",
+              "score": 0.732446
+            }
+          ]
+        }
+      ]
+    },
+    "loss": {
+      "loss_name": "torch.nn.BCEWithLogitsLoss(pos_weight)",
+      "pos_weight": 3.489795918367347
+    },
+    "device": {
+      "requested_device": "mps",
+      "resolved_device": "mps",
+      "torch_version": "2.8.0",
+      "python_version": "3.9.6",
+      "platform": "macOS-26.2-arm64-arm-64bit",
+      "mps_built": true,
+      "mps_available": true,
+      "mps_device_count": 1,
+      "fallback_reason": null
+    },
+    "architecture": {
+      "architecture": "vss_torch",
+      "preset": "article_cpu",
+      "patch_size": 2,
+      "depths": [
+        2,
+        2,
+        8,
+        2
+      ],
+      "dims": [
+        16,
+        32,
+        64,
+        128
+      ],
+      "mlp_ratio": 4.0,
+      "drop_path_rate": 0.15,
+      "forward_type": "v05",
+      "batch_size": 16,
+      "inference_batch_size": 4096,
+      "encoder_batch_size": 64,
+      "auxiliary_features": true,
+      "auxiliary_feature_names": [
+        "same_layer",
+        "same_domain",
+        "name_token_jaccard",
+        "context_node_similarity",
+        "context_edge_similarity",
+        "layer_hist_jaccard",
+        "domain_hist_jaccard",
+        "parent_signature_jaccard",
+        "child_signature_jaccard",
+        "exact_parent_jaccard",
+        "exact_child_jaccard",
+        "canonsort_route_alignment",
+        "diag_fingerprint_similarity",
+        "meshss2d_route_similarity",
+        "hierarchical_context_match",
+        "sparse_density_similarity"
+      ]
+    },
+    "input_contract": {
+      "pipeline": [
+        "CanonSort context ordering",
+        "six-channel lineage tensorization when VMamba-Mesh-T is selected",
+        "patch embedding",
+        "staged VSS-style blocks",
+        "bidirectional row/column SS2D-style scans",
+        "auditable pair-feature calibration vector",
+        "global pooling",
+        "pair head over left/right/absolute-difference/product features",
+        "sigmoid score",
+        "calibrated threshold"
+      ],
+      "channels": {
+        "C0": {
+          "name": "Forward adjacency",
+          "role": "canonical directed lineage edges"
+        },
+        "C1": {
+          "name": "Reverse adjacency",
+          "role": "reverse lineage edges for bidirectional structural context"
+        }
+      }
+    },
+    "elapsed_seconds": 13.553447,
+    "contract": "predict_pairs(graph)",
+    "note": "Trainable VMamba-like VSS/SS2D-style tensor model implemented in native PyTorch; official CUDA/Triton kernels remain the external VMamba reference."
+  },
+  "benchmark_contract": {
+    "input": "networkx.DiGraph",
+    "output": "list[tuple[str, str]] predicted duplicate pairs",
+    "comparison_metrics": [
+      "jaccard",
+      "sf_jaccard",
+      "accuracy",
+      "ET"
+    ],
+    "neural_input": "C x R x R lineage tensor built before the VMamba-style backbone"
+  }
+}

@@ -1,0 +1,4 @@
+left_algorithm,right_algorithm,scenarios,mean_delta_jaccard,mean_delta_jaccard_ci_low,mean_delta_jaccard_ci_high,mean_delta_sf_jaccard,mean_delta_sf_jaccard_ci_low,mean_delta_sf_jaccard_ci_high,wins_right_on_jaccard,wins_right_on_sf_jaccard
+Vanilla VMamba graph-image proxy,VMamba-T (llmhardneg-mps-spec),20,0.049833788095624096,-0.04254320196527249,0.13433892958108354,-4769.878098520037,-6746.953901931261,-2963.212229523739,12,0
+VMamba-Mesh Isomera adapter,VMamba-Mesh-T (llmhardneg-mps-spec),20,0.0824846917347356,-0.00044760210106615237,0.16601491825498335,-5057.500304173651,-7192.888269454246,-3100.1414615548774,16,0
+VMamba-T (llmhardneg-mps-spec),VMamba-Mesh-T (llmhardneg-mps-spec),20,0.0567367036391115,0.006436045140627192,0.11379944138227552,100.31789754638426,38.7190996095006,171.6688781268589,11,17

@@ -1,0 +1,30 @@
+{
+  "benchmark": "tpc_ds_genai_spec_v2",
+  "scenario": "graph_SOR2_D1_seed42",
+  "benchmark_root": "/Users/cayofel/Documents/GitHub/isomera_v2/main/data/architectures/tpc_ds_genai_spec_v2",
+  "graph_path": "/Users/cayofel/Documents/GitHub/isomera_v2/main/data/architectures/tpc_ds_genai_spec_v2/gml/graph_SOR2_D1_seed42.gml",
+  "labels_path": "/Users/cayofel/Documents/GitHub/isomera_v2/main/data/architectures/tpc_ds_genai_spec_v2/real_pairs/graph_SOR2_D1_seed42.json",
+  "devices": [
+    "cpu"
+  ],
+  "train_batches": [
+    1,
+    4
+  ],
+  "inference_batches": [
+    16
+  ],
+  "epochs": 1,
+  "torch_mps_probe": {
+    "requested_device": "mps",
+    "resolved_device": "cpu",
+    "torch_version": "2.8.0",
+    "python_version": "3.9.6",
+    "platform": "macOS-26.2-arm64-arm-64bit",
+    "mps_built": true,
+    "mps_available": false,
+    "mps_device_count": 0,
+    "fallback_reason": "torch.backends.mps.is_available() returned False"
+  },
+  "csv": "/Users/cayofel/Documents/GitHub/isomera_v2/main/data/research_reports/20260604_112826_39215_760070000_batched_execution_probe/batched_execution_probe.csv"
+}

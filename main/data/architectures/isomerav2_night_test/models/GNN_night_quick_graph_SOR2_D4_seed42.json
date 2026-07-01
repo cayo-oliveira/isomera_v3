@@ -1,0 +1,37 @@
+{
+  "model_path": "/Users/cayofel/Documents/GitHub/isomera_v2/main/data/architectures/isomerav2_night_test/models/GNN_night_quick_graph_SOR2_D4_seed42.pkl",
+  "scenarios": [
+    "graph_SOR2_D4_seed42"
+  ],
+  "dataset_summary": [
+    {
+      "scenario": "graph_SOR2_D4_seed42",
+      "positive_pairs": 7,
+      "negative_pairs": 7,
+      "dataset_rows": 14
+    }
+  ],
+  "epochs": 1,
+  "learning_rate": 0.005,
+  "hidden_channels": 8,
+  "dropout": 0.1,
+  "negative_ratio": 1,
+  "train_ratio": 0.8,
+  "test_ratio": 0.2,
+  "balance_strategy": "negative_sampling",
+  "seed": 77,
+  "optimizer": "adam",
+  "history": [
+    {
+      "epoch": 1,
+      "train_loss": 0.72833,
+      "train_accuracy": 0.363636,
+      "val_loss": 0.667626,
+      "val_accuracy": 0.666667,
+      "epoch_seconds": 0.027039
+    }
+  ],
+  "train_size": 11,
+  "val_size": 3,
+  "status": "completed"
+}

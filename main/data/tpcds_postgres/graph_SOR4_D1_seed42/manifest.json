@@ -1,0 +1,153 @@
+{
+  "scenario": "graph_SOR4_D1_seed42",
+  "schema": "scenario_sor4_d1_seed42",
+  "domains": {
+    "1": {
+      "name": "customer",
+      "tables": [
+        {
+          "node": "SOR_customer_D1",
+          "type": "SOR",
+          "raw_name": "customer",
+          "semantic_name": "customer",
+          "table_name": "d1_sor_customer"
+        },
+        {
+          "node": "SOR_customer_address_D1",
+          "type": "SOR",
+          "raw_name": "customer_address",
+          "semantic_name": "customer_address",
+          "table_name": "d1_sor_customer_address"
+        },
+        {
+          "node": "SOR_customer_demographics_D1",
+          "type": "SOR",
+          "raw_name": "customer_demographics",
+          "semantic_name": "customer_demographics",
+          "table_name": "d1_sor_customer_demographics"
+        },
+        {
+          "node": "SOR_extra_1_D1",
+          "type": "SOR",
+          "raw_name": "extra_1",
+          "semantic_name": "loyalty_profile",
+          "table_name": "d1_sor_loyalty_profile"
+        },
+        {
+          "node": "SOT_customer_attr_D1",
+          "type": "SOT",
+          "raw_name": "customer_attr",
+          "semantic_name": "customer_attr",
+          "table_name": "d1_sot_customer_attr"
+        },
+        {
+          "node": "SOT_store_sales_D1",
+          "type": "SOT",
+          "raw_name": "store_sales",
+          "semantic_name": "store_sales",
+          "table_name": "d1_sot_store_sales"
+        },
+        {
+          "node": "SOT_time_sales_D1",
+          "type": "SOT",
+          "raw_name": "time_sales",
+          "semantic_name": "time_sales",
+          "table_name": "d1_sot_time_sales"
+        },
+        {
+          "node": "SOT_warehouse_stock_D1",
+          "type": "SOT",
+          "raw_name": "warehouse_stock",
+          "semantic_name": "warehouse_stock",
+          "table_name": "d1_sot_warehouse_stock"
+        },
+        {
+          "node": "SPEC_catalog_performance_D1",
+          "type": "SPEC",
+          "raw_name": "catalog_performance",
+          "semantic_name": "catalog_performance",
+          "table_name": "d1_spec_catalog_performance"
+        },
+        {
+          "node": "SPEC_customer_summary_D1",
+          "type": "SPEC",
+          "raw_name": "customer_summary",
+          "semantic_name": "customer_summary",
+          "table_name": "d1_spec_customer_summary"
+        },
+        {
+          "node": "SPEC_time_analysis_D1",
+          "type": "SPEC",
+          "raw_name": "time_analysis",
+          "semantic_name": "time_analysis",
+          "table_name": "d1_spec_time_analysis"
+        },
+        {
+          "node": "SPEC_warehouse_logistics_D1",
+          "type": "SPEC",
+          "raw_name": "warehouse_logistics",
+          "semantic_name": "warehouse_logistics",
+          "table_name": "d1_spec_warehouse_logistics"
+        }
+      ]
+    }
+  },
+  "edges": [
+    {
+      "from": "SOT_time_sales_D1",
+      "to": "SOR_customer_address_D1"
+    },
+    {
+      "from": "SOT_time_sales_D1",
+      "to": "SOR_customer_D1"
+    },
+    {
+      "from": "SOT_customer_attr_D1",
+      "to": "SOR_customer_D1"
+    },
+    {
+      "from": "SOT_customer_attr_D1",
+      "to": "SOR_customer_address_D1"
+    },
+    {
+      "from": "SOT_warehouse_stock_D1",
+      "to": "SOR_customer_address_D1"
+    },
+    {
+      "from": "SOT_warehouse_stock_D1",
+      "to": "SOR_customer_demographics_D1"
+    },
+    {
+      "from": "SOT_store_sales_D1",
+      "to": "SOR_customer_D1"
+    },
+    {
+      "from": "SOT_store_sales_D1",
+      "to": "SOR_customer_demographics_D1"
+    },
+    {
+      "from": "SPEC_warehouse_logistics_D1",
+      "to": "SOT_warehouse_stock_D1"
+    },
+    {
+      "from": "SPEC_warehouse_logistics_D1",
+      "to": "SOT_store_sales_D1"
+    },
+    {
+      "from": "SPEC_time_analysis_D1",
+      "to": "SOT_time_sales_D1"
+    },
+    {
+      "from": "SPEC_customer_summary_D1",
+      "to": "SOT_customer_attr_D1"
+    },
+    {
+      "from": "SPEC_catalog_performance_D1",
+      "to": "SOT_customer_attr_D1"
+    },
+    {
+      "from": "SPEC_catalog_performance_D1",
+      "to": "SOT_store_sales_D1"
+    }
+  ]
+}

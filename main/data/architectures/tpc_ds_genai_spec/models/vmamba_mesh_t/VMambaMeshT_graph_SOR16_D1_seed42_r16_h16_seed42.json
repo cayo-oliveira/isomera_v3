@@ -1,0 +1,145 @@
+{
+  "model_name": "VMambaMeshT_graph_SOR16_D1_seed42_r16_h16_seed42",
+  "model_family": "VMamba-Mesh-T",
+  "model_family_name": "VMamba-Mesh-T",
+  "model_version": "vmamba_trainable_tensor_v0.1",
+  "pickle_module": "core.algorithms.vmamba_trainable",
+  "pickle_path": "/Users/cayofel/Documents/GitHub/isomera_v2/main/data/architectures/tpc_ds_genai_spec/models/vmamba_mesh_t/VMambaMeshT_graph_SOR16_D1_seed42_r16_h16_seed42.pkl",
+  "benchmark_name": "tpc_ds_genai_spec",
+  "scenarios": [
+    "graph_SOR16_D1_seed42"
+  ],
+  "source_scenarios": [
+    "graph_SOR16_D1_seed42"
+  ],
+  "source_graph_path": "/Users/cayofel/Documents/GitHub/isomera_v2/main/data/architectures/tpc_ds_genai_spec/gml/graph_SOR16_D1_seed42.gml",
+  "source_labels_path": "/Users/cayofel/Documents/GitHub/isomera_v2/main/data/architectures/tpc_ds_genai_spec/real_pairs/graph_SOR16_D1_seed42.json",
+  "created_at": "2026-06-03 23:13:59",
+  "elapsed_seconds": 0.05366899999999997,
+  "config": {
+    "variant": "vmamba_mesh_t",
+    "scope_layers": [
+      "SPEC"
+    ],
+    "resolution": 16,
+    "channels": [
+      "C0",
+      "C1",
+      "C2",
+      "C3",
+      "C4",
+      "C5"
+    ],
+    "hidden_dim": 16,
+    "embedding_dim": 16,
+    "dropout": 0.1,
+    "threshold": 0.1,
+    "negative_ratio": 2,
+    "seed": 42,
+    "epochs": 2,
+    "learning_rate": 0.001,
+    "train_ratio": 0.8,
+    "loss_name": "weighted_bce",
+    "optimizer_name": "adamw",
+    "notes": "Trainable VMamba-style tensor pair model for Isomera."
+  },
+  "training_summary": {
+    "model_version": "vmamba_trainable_tensor_v0.1",
+    "variant": "vmamba_mesh_t",
+    "dataset": {
+      "rows": 9,
+      "positive": 3,
+      "negative": 6
+    },
+    "train": {
+      "rows": 6,
+      "positive": 2,
+      "negative": 4
+    },
+    "validation": {
+      "rows": 3,
+      "positive": 1,
+      "negative": 2
+    },
+    "selected_threshold": 0.1,
+    "selected_metrics": {
+      "threshold": 0.1,
+      "tp": 1,
+      "fp": 2,
+      "fn": 0,
+      "tn": 0,
+      "jaccard": 0.3333333333333333,
+      "precision": 0.3333333333333333,
+      "recall": 1.0,
+      "accuracy": 0.3333333333333333
+    },
+    "threshold_candidates": [
+      0.1,
+      0.125,
+      0.15,
+      0.175,
+      0.2,
+      0.225,
+      0.25,
+      0.275,
+      0.3,
+      0.325,
+      0.35,
+      0.375,
+      0.4,
+      0.425,
+      0.45,
+      0.475,
+      0.5,
+      0.525,
+      0.55,
+      0.575,
+      0.6,
+      0.625,
+      0.65,
+      0.675,
+      0.7,
+      0.725,
+      0.75,
+      0.775,
+      0.8,
+      0.825,
+      0.85,
+      0.875,
+      0.9
+    ],
+    "history": [
+      {
+        "epoch": 1,
+        "train_loss": 0.923154,
+        "train_accuracy": 0.666667,
+        "val_jaccard_at_0_5": 0.0,
+        "val_accuracy_at_0_5": 0.666667
+      },
+      {
+        "epoch": 2,
+        "train_loss": 0.928786,
+        "train_accuracy": 0.666667,
+        "val_jaccard_at_0_5": 0.0,
+        "val_accuracy_at_0_5": 0.666667
+      }
+    ],
+    "loss": {
+      "loss_name": "torch.nn.BCEWithLogitsLoss(pos_weight)",
+      "pos_weight": 2.0
+    },
+    "elapsed_seconds": 0.044812,
+    "contract": "predict_pairs(graph)",
+    "note": "Trainable CPU-friendly VSS-style tensor model; not the official CUDA/Triton VMamba checkpoint."
+  },
+  "benchmark_contract": {
+    "input": "networkx.DiGraph",
+    "output": "list[tuple[str, str]] predicted duplicate pairs",
+    "comparison_metrics": [
+      "jaccard",
+      "sf_jaccard",
+      "accuracy",
+      "ET"
+    ]
+  }
+}

@@ -1,0 +1,7 @@
+algorithm,sf_jaccard,jaccard,ET,accuracy,sf_accuracy,N_pairs,tp,fp,fn,tn,scenarios,runs,inference_threshold,aggregation
+VF2,546.68133,0.184177,0.021766,0.461795,1014.57474,2395,291,1041,248,815,20,10,0.5,SF is computed per scenario as score * N_pairs / ET and averaged across scenarios.
+Node Match,0.0,0.0,0.015128,0.774948,2392.417281,2395,0,0,539,1856,20,10,0.5,SF is computed per scenario as score * N_pairs / ET and averaged across scenarios.
+GNN TPC-DS v1 cluster,333.638259,0.112849,0.011789,0.668476,3577.80624,2395,101,356,438,1500,20,10,0.5,SF is computed per scenario as score * N_pairs / ET and averaged across scenarios.
+GNN GenAI v2 Weighted BCE,1348.314155,0.218391,0.011076,0.375365,2529.888857,2395,418,1375,121,481,20,10,0.5,SF is computed per scenario as score * N_pairs / ET and averaged across scenarios.
+GNN GenAI v2 Focal Loss,119.832235,0.001855,0.010926,0.775365,4140.570209,2395,1,0,538,1856,20,10,0.5,SF is computed per scenario as score * N_pairs / ET and averaged across scenarios.
+GNN GenAI v2 Hard Negatives,271.83637,0.009225,0.010884,0.775783,4174.801035,2395,5,3,534,1853,20,10,0.5,SF is computed per scenario as score * N_pairs / ET and averaged across scenarios.

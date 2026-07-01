@@ -1,0 +1,44 @@
+[
+  {
+    "algorithm":"VF2",
+    "tp":1,
+    "fp":2,
+    "fn":0,
+    "tn":12,
+    "precision":0.3333333333,
+    "recall":1.0,
+    "f1":0.5,
+    "accuracy":0.8666666667,
+    "ET":0.000391625,
+    "jaccard":0.3333333333,
+    "sf_jaccard":12767.3156718798
+  },
+  {
+    "algorithm":"Node Match (Custom)",
+    "tp":1,
+    "fp":1,
+    "fn":0,
+    "tn":13,
+    "precision":0.5,
+    "recall":1.0,
+    "f1":0.6666666667,
+    "accuracy":0.9333333333,
+    "ET":0.00038275,
+    "jaccard":0.5,
+    "sf_jaccard":19595.0359242332
+  },
+  {
+    "algorithm":"GIN\/GNN (Pickle)",
+    "tp":1,
+    "fp":0,
+    "fn":0,
+    "tn":14,
+    "precision":1.0,
+    "recall":1.0,
+    "f1":1.0,
+    "accuracy":1.0,
+    "ET":0.000451708,
+    "jaccard":1.0,
+    "sf_jaccard":33207.2932071205
+  }
+]

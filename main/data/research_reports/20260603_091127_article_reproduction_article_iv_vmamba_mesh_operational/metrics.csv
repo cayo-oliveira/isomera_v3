@@ -1,0 +1,2 @@
+benchmark,scenario,algorithm,runs,tp,fp,fn,tn,accuracy,precision,recall,f1,jaccard,ET,sf_jaccard,N_pairs,status
+tpc_ds_genai_spec_v2,graph_SOR2_D1_seed42,Vanilla VMamba baseline,1,1,0,0,14,1.0,1.0,1.0,1.0,1.0,0.0008548330000017756,17547.287013918325,15,match

@@ -1,0 +1,40 @@
+{
+  "benchmark_name": "cayo_v1",
+  "display_name": "cayo_v1",
+  "scenarios": {
+    "graph_SOR2_D1_seed42": {
+      "gml_path": "/Users/cayofel/Documents/GitHub/isomera_v2/main/data/architectures/cayo_v1/gml/graph_SOR2_D1_seed42.gml",
+      "labels_path": "/Users/cayofel/Documents/GitHub/isomera_v2/main/data/architectures/cayo_v1/real_pairs/graph_SOR2_D1_seed42.json",
+      "source_path": "/Users/cayofel/Documents/GitHub/isomera_v2/main/data/architectures/tpc_ds/gml/graph_SOR2_D1_seed42.gml",
+      "total_pairs": null,
+      "candidate_pairs": null,
+      "reviewed_pairs": 1,
+      "duplicate_pairs": 1,
+      "saved_at": "2026-04-13 20:45:37"
+    },
+    "graph_SOR2_D2_seed42": {
+      "gml_path": "/Users/cayofel/Documents/GitHub/isomera_v2/main/data/architectures/cayo_v1/gml/graph_SOR2_D2_seed42.gml",
+      "labels_path": "/Users/cayofel/Documents/GitHub/isomera_v2/main/data/architectures/cayo_v1/real_pairs/graph_SOR2_D2_seed42.json",
+      "source_path": "/Users/cayofel/Documents/GitHub/isomera_v2/main/data/architectures/tpc_ds/gml/graph_SOR2_D2_seed42.gml",
+      "total_pairs": null,
+      "candidate_pairs": null,
+      "reviewed_pairs": 3,
+      "duplicate_pairs": 3,
+      "saved_at": "2026-04-13 20:45:38"
+    }
+  },
+  "models": {
+    "cayo_v1_gnn": {
+      "pickle_path": "/Users/cayofel/Documents/GitHub/isomera_v2/main/data/architectures/cayo_v1/models/cayo_v1_gnn.pkl",
+      "metadata_path": "/Users/cayofel/Documents/GitHub/isomera_v2/main/data/architectures/cayo_v1/models/cayo_v1_gnn.json",
+      "source_scenarios": [
+        "graph_SOR2_D1_seed42",
+        "graph_SOR2_D2_seed42"
+      ],
+      "model_version": "cayo_v1_gnn:cayo_v1_gnn.pkl",
+      "saved_at": "2026-04-13 20:45:43",
+      "active": true
+    }
+  },
+  "updated_at": "2026-04-13 20:45:43"
+}

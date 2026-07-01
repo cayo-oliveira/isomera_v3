@@ -1,0 +1,79 @@
+{
+  "scenario": "graph_SOR2_D1_seed42",
+  "schema": "scenario_sor2_d1_seed42",
+  "domains": {
+    "1": {
+      "name": "customer",
+      "tables": [
+        {
+          "node": "SOR_customer_D1",
+          "type": "SOR",
+          "raw_name": "customer",
+          "semantic_name": "customer",
+          "table_name": "d1_sor_customer"
+        },
+        {
+          "node": "SOR_customer_demographics_D1",
+          "type": "SOR",
+          "raw_name": "customer_demographics",
+          "semantic_name": "customer_demographics",
+          "table_name": "d1_sor_customer_demographics"
+        },
+        {
+          "node": "SOT_customer_attr_D1",
+          "type": "SOT",
+          "raw_name": "customer_attr",
+          "semantic_name": "customer_attr",
+          "table_name": "d1_sot_customer_attr"
+        },
+        {
+          "node": "SOT_time_sales_D1",
+          "type": "SOT",
+          "raw_name": "time_sales",
+          "semantic_name": "time_sales",
+          "table_name": "d1_sot_time_sales"
+        },
+        {
+          "node": "SPEC_store_sales_summary_D1",
+          "type": "SPEC",
+          "raw_name": "store_sales_summary",
+          "semantic_name": "store_sales_summary",
+          "table_name": "d1_spec_store_sales_summary"
+        },
+        {
+          "node": "SPEC_warehouse_logistics_D1",
+          "type": "SPEC",
+          "raw_name": "warehouse_logistics",
+          "semantic_name": "warehouse_logistics",
+          "table_name": "d1_spec_warehouse_logistics"
+        }
+      ]
+    }
+  },
+  "edges": [
+    {
+      "from": "SOT_customer_attr_D1",
+      "to": "SOR_customer_D1"
+    },
+    {
+      "from": "SOT_customer_attr_D1",
+      "to": "SOR_customer_demographics_D1"
+    },
+    {
+      "from": "SOT_time_sales_D1",
+      "to": "SOR_customer_D1"
+    },
+    {
+      "from": "SOT_time_sales_D1",
+      "to": "SOR_customer_demographics_D1"
+    },
+    {
+      "from": "SPEC_store_sales_summary_D1",
+      "to": "SOT_customer_attr_D1"
+    },
+    {
+      "from": "SPEC_warehouse_logistics_D1",
+      "to": "SPEC_store_sales_summary_D1"
+    }
+  ]
+}

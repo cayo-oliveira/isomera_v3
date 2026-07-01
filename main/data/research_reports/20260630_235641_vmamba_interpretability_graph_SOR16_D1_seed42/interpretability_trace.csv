@@ -1,0 +1,9 @@
+step,value
+load_report,manual
+load_graph,/Users/cayofel/Documents/GitHub/isomera_v2/main/data/architectures/tpc_ds/gml/graph_SOR16_D1_seed42.gml
+load_labels,/Users/cayofel/Documents/GitHub/isomera_v2/main/data/architectures/tpc_ds/real_pairs/graph_SOR16_D1_seed42.json
+selected_pair,SPEC_customer_summary_D1 <-> SPEC_store_sales_summary_D1
+mode,structural
+score,0.475208
+threshold,0.5
+decision,not_duplicate

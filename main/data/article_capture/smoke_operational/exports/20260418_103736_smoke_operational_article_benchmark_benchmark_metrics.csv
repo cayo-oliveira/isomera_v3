@@ -1,0 +1,11 @@
+algorithm,sf_jaccard,jaccard,ET,accuracy,sf_accuracy,N_pairs,tp,fp,fn,tn,scenarios,runs,aggregation
+VF2,7182.410783,0.130435,0.00107,0.753086,27981.765079,81,3,19,1,58,2,10,SF is computed per scenario as score * N_pairs / ET and averaged across scenarios.
+Node Match,11372.528184,0.166667,0.000974,0.814815,33313.746403,81,3,14,1,63,2,10,SF is computed per scenario as score * N_pairs / ET and averaged across scenarios.
+GNN TPC-DS v1 cluster,3234.238471,0.166667,0.001161,0.938272,28741.983881,81,1,2,3,75,2,10,SF is computed per scenario as score * N_pairs / ET and averaged across scenarios.
+GNN GenAI SPEC v1 cluster,7069.318771,0.3,0.001558,0.91358,21612.437464,81,3,6,1,71,2,10,SF is computed per scenario as score * N_pairs / ET and averaged across scenarios.
+GNN GenAI SPEC Protocol rank 1,6348.867682,0.25,0.001555,0.962963,22680.510976,81,1,0,3,77,2,10,SF is computed per scenario as score * N_pairs / ET and averaged across scenarios.
+GNN GenAI SPEC Protocol rank 2,6085.387573,0.3,0.002097,0.91358,17557.856972,81,3,6,1,71,2,10,SF is computed per scenario as score * N_pairs / ET and averaged across scenarios.
+GNN GenAI SPEC Protocol rank 3,8782.152292,0.3,0.001234,0.91358,26408.358287,81,3,6,1,71,2,10,SF is computed per scenario as score * N_pairs / ET and averaged across scenarios.
+GNN GenAI SPEC Protocol rank 4,8035.858289,0.3,0.001351,0.91358,24389.942931,81,3,6,1,71,2,10,SF is computed per scenario as score * N_pairs / ET and averaged across scenarios.
+GNN GenAI SPEC Protocol rank 5,15896.277633,0.375,0.001197,0.938272,28586.404369,81,3,4,1,73,2,10,SF is computed per scenario as score * N_pairs / ET and averaged across scenarios.
+GNN Best-of-all cluster selector,15896.277633,0.375,0.001197,0.938272,28586.404369,81,3,4,1,73,2,10,SF is computed per scenario as score * N_pairs / ET and averaged across scenarios.

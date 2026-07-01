@@ -1,0 +1,21 @@
+{
+  "name": "isomerav2_night_test",
+  "display_name": "Isomera v2 Night Routing Test",
+  "scenarios": {
+    "graph_SOR2_D5_seed42": {
+      "gml_path": "/Users/cayofel/Documents/GitHub/isomera_v2/main/data/architectures/isomerav2_night_test/gml/graph_SOR2_D5_seed42.gml",
+      "labels_path": "/Users/cayofel/Documents/GitHub/isomera_v2/main/data/architectures/isomerav2_night_test/real_pairs/graph_SOR2_D5_seed42.json"
+    },
+    "graph_SOR8_D5_seed42": {
+      "gml_path": "/Users/cayofel/Documents/GitHub/isomera_v2/main/data/architectures/isomerav2_night_test/gml/graph_SOR8_D5_seed42.gml",
+      "labels_path": "/Users/cayofel/Documents/GitHub/isomera_v2/main/data/architectures/isomerav2_night_test/real_pairs/graph_SOR8_D5_seed42.json"
+    },
+    "graph_SOR2_D4_seed42": {
+      "gml_path": "/Users/cayofel/Documents/GitHub/isomera_v2/main/data/architectures/isomerav2_night_test/gml/graph_SOR2_D4_seed42.gml",
+      "labels_path": "/Users/cayofel/Documents/GitHub/isomera_v2/main/data/architectures/isomerav2_night_test/real_pairs/graph_SOR2_D4_seed42.json"
+    }
+  },
+  "models": {},
+  "model_clusters": {},
+  "updated_at": "2026-04-16 03:30:29"
+}

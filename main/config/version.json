@@ -1,0 +1,10 @@
+{
+  "product": "Isomera",
+  "version": "2.5.0",
+  "codename": "Trainable Mesh Workbench",
+  "release_date": "2026-06-10",
+  "author": "Cayo Oliveira",
+  "email": "cflo@cin.ufpe.br",
+  "license": "Research prototype",
+  "summary": "Isomera release with Deep Learning Workbench, Model Interpretability, Article IV reproducibility, VMamba-T and VMamba-Mesh-T trainable models, CPU/MPS execution controls, hard-negative ablations, research reports, presentation assets, and v2_t article materials."
+}

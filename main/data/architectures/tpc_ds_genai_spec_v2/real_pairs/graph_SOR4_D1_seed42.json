@@ -1,0 +1,14 @@
+[
+  [
+    "SPEC_catalog_performance_D1",
+    "SPEC_customer_summary_D1"
+  ],
+  [
+    "SPEC_catalog_performance_D1",
+    "SPEC_warehouse_logistics_D1"
+  ],
+  [
+    "SPEC_customer_summary_D1",
+    "SPEC_time_analysis_D1"
+  ]
+]

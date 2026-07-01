@@ -1,0 +1,21 @@
+{
+  "name": "20260428_232836_smoke_vmamba_mesh_benchmark",
+  "created_at": "2026-04-28 23:28:36",
+  "report_type": "vmamba_mesh_smoke_benchmark",
+  "benchmark_name": "smoke_operational",
+  "scenario": "graph_SOR2_D1_seed42",
+  "pickle_path": "main/data/architectures/smoke_operational/models/vmamba_mesh/VMambaMesh_graph_SOR2_D1_seed42.pkl",
+  "pickle_module": "core.algorithms.vmamba_mesh",
+  "study_package": {
+    "package_dir": "main/data/research_reports/20260428_232836_graph_SOR2_D1_seed42_vmamba_mesh_study",
+    "manifest": "main/data/research_reports/20260428_232836_graph_SOR2_D1_seed42_vmamba_mesh_study/package_manifest.json",
+    "markdown": "main/data/research_reports/20260428_232836_graph_SOR2_D1_seed42_vmamba_mesh_study/20260428_232836_graph_SOR2_D1_seed42_vmamba_mesh_study.md",
+    "tex": "main/data/research_reports/20260428_232836_graph_SOR2_D1_seed42_vmamba_mesh_study/20260428_232836_graph_SOR2_D1_seed42_vmamba_mesh_study.tex",
+    "pdf": "",
+    "zip": "main/data/research_reports/20260428_232836_graph_SOR2_D1_seed42_vmamba_mesh_study.zip"
+  },
+  "metrics_csv": "main/data/research_reports/20260428_232836_smoke_vmamba_mesh_benchmark/benchmark_metrics.csv",
+  "metrics_json": "main/data/research_reports/20260428_232836_smoke_vmamba_mesh_benchmark/benchmark_metrics.json",
+  "markdown": "main/data/research_reports/20260428_232836_smoke_vmamba_mesh_benchmark/20260428_232836_smoke_vmamba_mesh_benchmark.md",
+  "tex": "main/data/research_reports/20260428_232836_smoke_vmamba_mesh_benchmark/20260428_232836_smoke_vmamba_mesh_benchmark.tex"
+}

@@ -1,0 +1,113 @@
+{
+  "model_path": "/Users/cayofel/Documents/GitHub/isomera_v2/main/data/architectures/tpc_ds_genai_spec_protocol/screening_models/hard_negatives_lr0p005_h16_d0p0_t0p6/graph_SOR8_D5_seed42.pkl",
+  "scenarios": [
+    "graph_SOR8_D5_seed42"
+  ],
+  "dataset_summary": [
+    {
+      "scenario": "graph_SOR8_D5_seed42",
+      "positive_pairs": 93,
+      "negative_pairs": 342,
+      "dataset_rows": 435,
+      "skipped_rows": 0,
+      "dataset_source": "supervised_validation_dataset"
+    }
+  ],
+  "epochs": 5,
+  "learning_rate": 0.005,
+  "hidden_channels": 16,
+  "dropout": 0.0,
+  "negative_ratio": 2,
+  "train_ratio": 0.8,
+  "test_ratio": 0.2,
+  "balance_strategy": "hard_negative_mining",
+  "balance_strategy_label": "Prefer difficult non-duplicates (hard negative mining)",
+  "balance_summary": {
+    "strategy": "hard_negative_mining",
+    "before": {
+      "positive_pairs": 74,
+      "negative_pairs": 273,
+      "dataset_rows": 347
+    },
+    "after": {
+      "positive_pairs": 74,
+      "negative_pairs": 148,
+      "dataset_rows": 222
+    },
+    "operation": "kept_148_structurally_similar_negatives"
+  },
+  "seed": 42,
+  "optimizer": "adam",
+  "optimizer_label": "Adaptive gradient optimizer (torch.optim.Adam)",
+  "optimizer_name": "torch.optim.Adam",
+  "configured_loss": "bce_with_logits",
+  "configured_loss_label": "Binary cross entropy on logits (torch.nn.BCEWithLogitsLoss)",
+  "loss": {
+    "loss_key": "bce_with_logits",
+    "loss_name": "torch.nn.BCEWithLogitsLoss",
+    "loss_label": "Binary cross entropy on logits (torch.nn.BCEWithLogitsLoss)",
+    "formula": "L = -[y log(sigmoid(z)) + (1-y) log(1-sigmoid(z))]",
+    "pos_weight": null
+  },
+  "loss_name": "torch.nn.BCEWithLogitsLoss",
+  "train_distribution": {
+    "positive_pairs": 74,
+    "negative_pairs": 148,
+    "dataset_rows": 222
+  },
+  "val_distribution": {
+    "positive_pairs": 19,
+    "negative_pairs": 69,
+    "dataset_rows": 88
+  },
+  "history": [
+    {
+      "epoch": 1,
+      "train_loss": 0.652447,
+      "train_accuracy": 0.662162,
+      "val_loss": 0.551407,
+      "val_accuracy": 0.784091,
+      "epoch_seconds": 0.237833
+    },
+    {
+      "epoch": 2,
+      "train_loss": 0.646769,
+      "train_accuracy": 0.653153,
+      "val_loss": 0.535927,
+      "val_accuracy": 0.784091,
+      "epoch_seconds": 0.220166
+    },
+    {
+      "epoch": 3,
+      "train_loss": 0.639715,
+      "train_accuracy": 0.666667,
+      "val_loss": 0.509774,
+      "val_accuracy": 0.784091,
+      "epoch_seconds": 0.207023
+    },
+    {
+      "epoch": 4,
+      "train_loss": 0.621704,
+      "train_accuracy": 0.675676,
+      "val_loss": 0.535913,
+      "val_accuracy": 0.75,
+      "epoch_seconds": 0.211097
+    },
+    {
+      "epoch": 5,
+      "train_loss": 0.609738,
+      "train_accuracy": 0.707207,
+      "val_loss": 0.513642,
+      "val_accuracy": 0.75,
+      "epoch_seconds": 0.263893
+    }
+  ],
+  "train_size": 222,
+  "val_size": 88,
+  "status": "completed",
+  "config_id": "hard_negatives_lr0p005_h16_d0p0_t0p6",
+  "protocol_stage": "screening",
+  "inference_threshold": 0.6,
+  "wall_seconds": 1.186994,
+  "model_family": "GNN GenAI Spec Protocol Hard Negatives"
+}

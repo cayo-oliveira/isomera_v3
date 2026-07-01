@@ -1,0 +1,115 @@
+{
+  "model_path": "/Users/cayofel/Documents/GitHub/isomera_v2/main/data/architectures/tpc_ds_genai_spec_protocol/screening_models/focal_loss_lr0p01_h32_d0p1_t0p6/graph_SOR16_D3_seed42.pkl",
+  "scenarios": [
+    "graph_SOR16_D3_seed42"
+  ],
+  "dataset_summary": [
+    {
+      "scenario": "graph_SOR16_D3_seed42",
+      "positive_pairs": 33,
+      "negative_pairs": 120,
+      "dataset_rows": 153,
+      "skipped_rows": 0,
+      "dataset_source": "supervised_validation_dataset"
+    }
+  ],
+  "epochs": 5,
+  "learning_rate": 0.01,
+  "hidden_channels": 32,
+  "dropout": 0.1,
+  "negative_ratio": 1,
+  "train_ratio": 0.8,
+  "test_ratio": 0.2,
+  "balance_strategy": "none_real_distribution",
+  "balance_strategy_label": "Use real distribution without balancing (no sampler/no class weight)",
+  "balance_summary": {
+    "strategy": "none_real_distribution",
+    "before": {
+      "positive_pairs": 26,
+      "negative_pairs": 96,
+      "dataset_rows": 122
+    },
+    "after": {
+      "positive_pairs": 26,
+      "negative_pairs": 96,
+      "dataset_rows": 122
+    },
+    "operation": "kept_original_training_rows"
+  },
+  "seed": 42,
+  "optimizer": "adam",
+  "optimizer_label": "Adaptive gradient optimizer (torch.optim.Adam)",
+  "optimizer_name": "torch.optim.Adam",
+  "configured_loss": "focal_loss",
+  "configured_loss_label": "Focal loss for rare duplicates (custom sigmoid focal loss)",
+  "loss": {
+    "loss_key": "focal_loss",
+    "loss_name": "custom sigmoid focal loss",
+    "loss_label": "Focal loss for rare duplicates (custom sigmoid focal loss)",
+    "formula": "FL(p_t) = -alpha * (1 - p_t)^gamma * log(p_t)",
+    "alpha": 0.25,
+    "gamma": 2.0,
+    "pos_weight": null
+  },
+  "loss_name": "custom sigmoid focal loss",
+  "train_distribution": {
+    "positive_pairs": 26,
+    "negative_pairs": 96,
+    "dataset_rows": 122
+  },
+  "val_distribution": {
+    "positive_pairs": 7,
+    "negative_pairs": 24,
+    "dataset_rows": 31
+  },
+  "history": [
+    {
+      "epoch": 1,
+      "train_loss": 0.103846,
+      "train_accuracy": 0.778689,
+      "val_loss": 0.055856,
+      "val_accuracy": 0.774194,
+      "epoch_seconds": 0.237643
+    },
+    {
+      "epoch": 2,
+      "train_loss": 0.056111,
+      "train_accuracy": 0.786885,
+      "val_loss": 0.060438,
+      "val_accuracy": 0.774194,
+      "epoch_seconds": 0.196436
+    },
+    {
+      "epoch": 3,
+      "train_loss": 0.057629,
+      "train_accuracy": 0.786885,
+      "val_loss": 0.052485,
+      "val_accuracy": 0.774194,
+      "epoch_seconds": 0.196613
+    },
+    {
+      "epoch": 4,
+      "train_loss": 0.052278,
+      "train_accuracy": 0.786885,
+      "val_loss": 0.051992,
+      "val_accuracy": 0.774194,
+      "epoch_seconds": 0.22486
+    },
+    {
+      "epoch": 5,
+      "train_loss": 0.052693,
+      "train_accuracy": 0.786885,
+      "val_loss": 0.053525,
+      "val_accuracy": 0.774194,
+      "epoch_seconds": 0.199682
+    }
+  ],
+  "train_size": 122,
+  "val_size": 31,
+  "status": "completed",
+  "config_id": "focal_loss_lr0p01_h32_d0p1_t0p6",
+  "protocol_stage": "screening",
+  "inference_threshold": 0.6,
+  "wall_seconds": 1.093085,
+  "model_family": "GNN GenAI Spec Protocol Focal Loss"
+}

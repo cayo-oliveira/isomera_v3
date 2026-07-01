@@ -1,0 +1,9 @@
+model_family,artifact_count,scenario_count,coverage,reporting_rule
+GNN TPC-DS v1 cluster,20,20,20/20,detector family with scenario-specific pickle routing
+GNN GenAI SPEC v1 cluster,20,20,20/20,detector family with scenario-specific pickle routing
+GNN GenAI SPEC Protocol rank 1,20,20,20/20,detector family with scenario-specific pickle routing
+GNN GenAI SPEC Protocol rank 2,20,20,20/20,detector family with scenario-specific pickle routing
+GNN GenAI SPEC Protocol rank 3,20,20,20/20,detector family with scenario-specific pickle routing
+GNN GenAI SPEC Protocol rank 4,20,20,20/20,detector family with scenario-specific pickle routing
+GNN GenAI SPEC Protocol rank 5,20,20,20/20,detector family with scenario-specific pickle routing
+GNN Best-of-all cluster selector,20,20,20/20,post-hoc diagnostic selector; cite separately from fixed detector families

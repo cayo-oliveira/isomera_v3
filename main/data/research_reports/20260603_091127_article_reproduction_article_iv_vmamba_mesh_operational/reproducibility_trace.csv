@@ -1,0 +1,5 @@
+step,article_id,title,mode,runs,status,benchmark,scenario,model_family,graph_path,labels_path,model_path,run,elapsed_seconds,predicted_pairs,metric,actual,ET,sf_jaccard
+load_article_spec,article_iv_vmamba_mesh_operational,Article IV - VMamba-Mesh operational study,quick,1.0,match,,,,,,,,,,,,,
+resolve_inputs,,,,,match,tpc_ds_genai_spec_v2,graph_SOR2_D1_seed42,Vanilla VMamba baseline,/Users/cayofel/Documents/GitHub/isomera_v2/main/data/architectures/tpc_ds_genai_spec_v2/gml/graph_SOR2_D1_seed42.gml,/Users/cayofel/Documents/GitHub/isomera_v2/main/data/architectures/tpc_ds_genai_spec_v2/real_pairs/graph_SOR2_D1_seed42.json,/Users/cayofel/Documents/GitHub/isomera_v2/main/data/architectures/tpc_ds_genai_spec_v2/models/vanilla_vmamba/Vanilla_VMamba_graph_image_proxy_graph_SOR2_D1_seed42.pkl,,,,,,,
+predict_pairs,,,,,match,,,,,,,1.0,0.0008548330000017756,1.0,,,,
+compute_metrics,,,,,match,,,,,,,,,,jaccard,1.0,0.0008548330000017756,17547.287013918325

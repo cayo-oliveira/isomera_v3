@@ -1,0 +1,6 @@
+stage,input,output,details
+source,tpc_ds_genai_sor_sot,20 GML scenarios,Operational-layer benchmark with SOR and SOT candidates. This isolates source and transformation structures before final SPEC products.
+normalized graph,GML + node layer metadata,NetworkX directed graph,Edges and nodes are evaluated under the selected candidate scope.
+validation dataset,real_pairs JSON,769 positives inside 22560 candidates,Pairs outside the selected candidate scope are excluded from metric denominators.
+model routing,scenario name + cluster map,pickle path per scenario,Best-of-all is post-hoc diagnostic routing when enabled.
+benchmark execution,detector families,10 family rows,10 runs per detector family per scenario.

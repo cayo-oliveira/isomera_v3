@@ -1,0 +1,73 @@
+{
+  "package_name": "20260603_091148_article_reproduction_article_iv_vmamba_mesh_operational",
+  "generated_at": "2026-06-03T09:11:48.463591+00:00",
+  "mode": "article",
+  "article": {
+    "article_id": "article_iv_vmamba_mesh_operational",
+    "title": "Article IV - VMamba-Mesh operational study",
+    "status": "ready",
+    "summary": "Reproduces the operational VMamba/VMamba-Mesh evidence from the TeXLab journal package using the Isomera benchmark catalogs and stored model pickles.",
+    "benchmarks": [
+      "tpc_ds_genai_spec_v2",
+      "tpc_ds_genai_full_lineage"
+    ],
+    "models": [
+      "Vanilla VMamba baseline",
+      "VMamba-Mesh Isomera adapter"
+    ],
+    "scenarios": [
+      "graph_SOR2_D1_seed42",
+      "graph_SOR16_D1_seed42"
+    ],
+    "runs": 10,
+    "seeds": [
+      42
+    ],
+    "source_files": [
+      "research/vmamba/notebooks/vmamba_local_source_smoke.ipynb",
+      "research/vmamba/notebooks/vmamba_official_source_walkthrough_isomera_case.ipynb",
+      "research/vmamba/notebooks/vmamba_mesh_prototype_isomera_case.ipynb",
+      "research/vmamba/scripts/run_vmamba_mesh_genai_benchmark.py",
+      "research/vmamba/scripts/run_vmamba_mesh_review_analysis.py",
+      "research/vmamba/outputs/vmamba_mesh_genai_benchmark",
+      "research/vmamba/outputs/vmamba_mesh_review_analysis",
+      "papercept_compiler/workspace/creation/final/20260429_182244_vmamba_mesh_operational_journal_draft"
+    ],
+    "expected_metrics": [
+      {
+        "benchmark": "tpc_ds_genai_spec_v2",
+        "algorithm": "Vanilla VMamba baseline",
+        "metric": "jaccard",
+        "value": 0.255548,
+        "tolerance": 0.02
+      },
+      {
+        "benchmark": "tpc_ds_genai_spec_v2",
+        "algorithm": "VMamba-Mesh Isomera adapter",
+        "metric": "jaccard",
+        "value": 0.274798,
+        "tolerance": 0.02
+      },
+      {
+        "benchmark": "tpc_ds_genai_full_lineage",
+        "algorithm": "Vanilla VMamba baseline",
+        "metric": "jaccard",
+        "value": 0.111757,
+        "tolerance": 0.02
+      },
+      {
+        "benchmark": "tpc_ds_genai_full_lineage",
+        "algorithm": "VMamba-Mesh Isomera adapter",
+        "metric": "jaccard",
+        "value": 0.090915,
+        "tolerance": 0.02
+      }
+    ],
+    "notes": [
+      "Execution time is hardware-sensitive and should be interpreted with a tolerance.",
+      "The current VMamba-Mesh artifact is an operational Isomera adapter, not the final CUDA neural model."
+    ]
+  },
+  "metrics_csv": "/Users/cayofel/Documents/GitHub/isomera_v2/main/data/research_reports/20260603_091148_article_reproduction_article_iv_vmamba_mesh_operational/metrics.csv",
+  "trace_csv": "/Users/cayofel/Documents/GitHub/isomera_v2/main/data/research_reports/20260603_091148_article_reproduction_article_iv_vmamba_mesh_operational/reproducibility_trace.csv"
+}

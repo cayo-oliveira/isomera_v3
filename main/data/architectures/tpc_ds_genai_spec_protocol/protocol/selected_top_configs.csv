@@ -1,0 +1,6 @@
+config_id,rank,strategy_label,balance_strategy,loss_name,learning_rate,hidden_channels,dropout,threshold,screening_scenarios,mean_sf_jaccard,mean_jaccard,mean_accuracy,median_ET,tp,fp,fn,tn
+weighted_bce_lr0p005_h16_d0p1_t0p5,1,Weighted BCE,class_weighted_loss,bce_with_logits,0.005,16,0.1,0.5,5,736.518681,0.238693,0.282119,0.063112,267,964,3,24
+weighted_bce_lr0p001_h16_d0p0_t0p4,2,Weighted BCE,class_weighted_loss,bce_with_logits,0.001,16,0.0,0.4,5,702.076753,0.227956,0.236547,0.051064,268,964,2,24
+weighted_bce_lr0p005_h16_d0p1_t0p4,3,Weighted BCE,class_weighted_loss,bce_with_logits,0.005,16,0.1,0.4,5,699.236468,0.226432,0.226432,0.062687,270,988,0,0
+weighted_bce_lr0p001_h16_d0p1_t0p4,4,Weighted BCE,class_weighted_loss,bce_with_logits,0.001,16,0.1,0.4,5,691.740995,0.226729,0.227812,0.062641,270,985,0,3
+weighted_bce_lr0p001_h16_d0p1_t0p5,5,Weighted BCE,class_weighted_loss,bce_with_logits,0.001,16,0.1,0.5,5,691.118933,0.21315,0.41739,0.04939,227,677,43,311

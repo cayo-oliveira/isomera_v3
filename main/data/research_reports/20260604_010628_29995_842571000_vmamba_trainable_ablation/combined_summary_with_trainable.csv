@@ -1,0 +1,15 @@
+algorithm,sf_jaccard,jaccard,ET,accuracy,sf_accuracy,N_pairs,tp,fp,fn,tn,scenarios,runs,aggregation,precision,recall,f1
+VF2,3698.306076,0.074271,0.04272,0.640156,14552.425917,39695,1146,13539,745,24265,20,10,SF is computed per scenario as score * N_pairs / ET and averaged across scenarios.,,,
+Node Match,3737.568836,0.081309,0.040831,0.68462,16070.501852,39695,1108,11736,783,26068,20,10,SF is computed per scenario as score * N_pairs / ET and averaged across scenarios.,,,
+GNN TPC-DS v1 cluster,1252.497459,0.05267,0.04818,0.933846,18480.165737,39695,146,881,1745,36923,20,10,SF is computed per scenario as score * N_pairs / ET and averaged across scenarios.,,,
+GNN GenAI SPEC v1 cluster,3639.462536,0.154016,0.049117,0.874493,17195.285279,39695,907,3998,984,33806,20,10,SF is computed per scenario as score * N_pairs / ET and averaged across scenarios.,,,
+GNN GenAI SPEC Protocol rank 1,2997.622907,0.139641,0.066099,0.899887,17946.247398,39695,645,2728,1246,35076,20,10,SF is computed per scenario as score * N_pairs / ET and averaged across scenarios.,,,
+GNN GenAI SPEC Protocol rank 2,3715.48872,0.154487,0.050674,0.879909,17084.448511,39695,871,3747,1020,34057,20,10,SF is computed per scenario as score * N_pairs / ET and averaged across scenarios.,,,
+GNN GenAI SPEC Protocol rank 3,3780.339115,0.154016,0.05488,0.874493,17228.738211,39695,907,3998,984,33806,20,10,SF is computed per scenario as score * N_pairs / ET and averaged across scenarios.,,,
+GNN GenAI SPEC Protocol rank 4,3556.091302,0.155544,0.056038,0.879506,16761.336942,39695,881,3773,1010,34031,20,10,SF is computed per scenario as score * N_pairs / ET and averaged across scenarios.,,,
+GNN GenAI SPEC Protocol rank 5,3449.910415,0.144503,0.053587,0.917672,18085.330635,39695,552,1929,1339,35875,20,10,SF is computed per scenario as score * N_pairs / ET and averaged across scenarios.,,,
+GNN Best-of-all cluster selector,4380.253193,0.159896,0.049736,0.885905,18582.24754,39695,862,3500,1029,34304,20,10,SF is computed per scenario as score * N_pairs / ET and averaged across scenarios.,,,
+Vanilla VMamba graph-image proxy,5416.744116,0.111757,0.03725,0.638191,15545.191077,39695,1807,14278,84,23526,20,10,,,,
+VMamba-Mesh Isomera adapter,5490.453075,0.090915,0.038131,0.625167,15070.587867,39695,1488,14476,403,23328,20,10,,,,
+VMamba-T,1016.2630744582915,0.28642220019821607,2.942395375000018,0.9310344827586207,,10440,289,700,20,9431,1,1,,0.29221435793731043,0.9352750809061489,0.4453004622496149
+VMamba-Mesh-T,875.5423770729313,0.23462214411247803,2.797643208000011,0.9165708812260537,,10440,267,829,42,9302,1,1,,0.24361313868613138,0.8640776699029126,0.38007117437722415

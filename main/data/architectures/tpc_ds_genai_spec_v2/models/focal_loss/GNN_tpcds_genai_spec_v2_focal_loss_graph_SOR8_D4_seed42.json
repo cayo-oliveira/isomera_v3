@@ -1,0 +1,110 @@
+{
+  "model_path": "/Users/cayofel/Documents/GitHub/isomera_v2/main/data/architectures/tpc_ds_genai_spec_v2/models/focal_loss/GNN_tpcds_genai_spec_v2_focal_loss_graph_SOR8_D4_seed42.pkl",
+  "scenarios": [
+    "graph_SOR8_D4_seed42"
+  ],
+  "dataset_summary": [
+    {
+      "scenario": "graph_SOR8_D4_seed42",
+      "positive_pairs": 62,
+      "negative_pairs": 214,
+      "dataset_rows": 276,
+      "skipped_rows": 0,
+      "dataset_source": "supervised_validation_dataset"
+    }
+  ],
+  "epochs": 5,
+  "learning_rate": 0.005,
+  "hidden_channels": 16,
+  "dropout": 0.1,
+  "negative_ratio": 1,
+  "train_ratio": 0.8,
+  "test_ratio": 0.2,
+  "balance_strategy": "none_real_distribution",
+  "balance_strategy_label": "Use real distribution without balancing (no sampler/no class weight)",
+  "balance_summary": {
+    "strategy": "none_real_distribution",
+    "before": {
+      "positive_pairs": 49,
+      "negative_pairs": 171,
+      "dataset_rows": 220
+    },
+    "after": {
+      "positive_pairs": 49,
+      "negative_pairs": 171,
+      "dataset_rows": 220
+    },
+    "operation": "kept_original_training_rows"
+  },
+  "seed": 42,
+  "optimizer": "adam",
+  "optimizer_label": "Adaptive gradient optimizer (torch.optim.Adam)",
+  "optimizer_name": "torch.optim.Adam",
+  "configured_loss": "focal_loss",
+  "configured_loss_label": "Focal loss for rare duplicates (custom sigmoid focal loss)",
+  "loss": {
+    "loss_key": "focal_loss",
+    "loss_name": "custom sigmoid focal loss",
+    "loss_label": "Focal loss for rare duplicates (custom sigmoid focal loss)",
+    "formula": "FL(p_t) = -alpha * (1 - p_t)^gamma * log(p_t)",
+    "alpha": 0.25,
+    "gamma": 2.0,
+    "pos_weight": null
+  },
+  "loss_name": "custom sigmoid focal loss",
+  "train_distribution": {
+    "positive_pairs": 49,
+    "negative_pairs": 171,
+    "dataset_rows": 220
+  },
+  "val_distribution": {
+    "positive_pairs": 13,
+    "negative_pairs": 43,
+    "dataset_rows": 56
+  },
+  "history": [
+    {
+      "epoch": 1,
+      "train_loss": 0.058559,
+      "train_accuracy": 0.772727,
+      "val_loss": 0.052837,
+      "val_accuracy": 0.767857,
+      "epoch_seconds": 0.131832
+    },
+    {
+      "epoch": 2,
+      "train_loss": 0.068049,
+      "train_accuracy": 0.777273,
+      "val_loss": 0.055211,
+      "val_accuracy": 0.767857,
+      "epoch_seconds": 0.116794
+    },
+    {
+      "epoch": 3,
+      "train_loss": 0.052887,
+      "train_accuracy": 0.777273,
+      "val_loss": 0.054136,
+      "val_accuracy": 0.767857,
+      "epoch_seconds": 0.125802
+    },
+    {
+      "epoch": 4,
+      "train_loss": 0.052994,
+      "train_accuracy": 0.777273,
+      "val_loss": 0.053456,
+      "val_accuracy": 0.767857,
+      "epoch_seconds": 0.121693
+    },
+    {
+      "epoch": 5,
+      "train_loss": 0.052953,
+      "train_accuracy": 0.777273,
+      "val_loss": 0.052528,
+      "val_accuracy": 0.767857,
+      "epoch_seconds": 0.122403
+    }
+  ],
+  "train_size": 220,
+  "val_size": 56,
+  "status": "completed"
+}

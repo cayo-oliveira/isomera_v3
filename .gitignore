@@ -179,3 +179,27 @@ cython_debug/
 #  refer to https://docs.cursor.com/context/ignore-files
 .cursorignore
 .cursorindexingignore
+# Isomera runtime
+main/logs/
+main/ui/logs/
+main/data/training_jobs/
+main/data/.mplconfig/
+main/data/article_capture/*/*.md
+main/data/article_capture/*/*_runtime_*.json
+
+# Private research workspace intentionally excluded from public package
+research/
+papercept_compiler/
+*.ipynb
+*.tex
+*.aux
+*.bbl
+*.blg
+*.fls
+*.fdb_latexmk
+*.synctex.gz
+
+# Large generated archives
+*.zip
+*.tar
+*.tar.gz

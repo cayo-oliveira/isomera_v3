@@ -1,0 +1,2 @@
+filter,setting,effect
+candidate_scope,all,Defines the candidate-pair universe used by metrics.

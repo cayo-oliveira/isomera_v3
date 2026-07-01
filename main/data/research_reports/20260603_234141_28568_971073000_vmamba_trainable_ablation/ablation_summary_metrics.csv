@@ -1,0 +1,3 @@
+family,variant,preset,resolution,patch_size,depths,dims,hidden_dim,embedding_dim,epochs,learning_rate,loss,optimizer,dropout,drop_path_rate,weight_decay,algorithm,jaccard,sf_jaccard,ET,accuracy,precision,recall,f1,N_pairs,tp,fp,fn,tn,scenarios,runs
+VMamba-T,vmamba_t,tiny,16,2,1-1-2-1,32-64-128-256,128,128,1,0.001,weighted_bce,adamw,0.1,0.05,0.05,VMamba-T,1.0,41.816582600003166,0.023913957999999846,1.0,1.0,1.0,1.0,1,1,0,0,0,1,1
+VMamba-Mesh-T,vmamba_mesh_t,tiny,16,2,1-1-2-1,32-64-128-256,128,128,1,0.001,weighted_bce,adamw,0.1,0.05,0.05,VMamba-Mesh-T,1.0,42.23746018380235,0.02367566599999993,1.0,1.0,1.0,1.0,1,1,0,0,0,1,1

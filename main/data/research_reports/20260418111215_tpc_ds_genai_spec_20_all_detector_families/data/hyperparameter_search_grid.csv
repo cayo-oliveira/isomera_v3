@@ -1,0 +1,6 @@
+parameter,values,count,reason
+training strategy,Weighted BCE; Focal Loss; Hard Negatives,3,Compares the main imbalance-handling families used by the GNN pipeline.
+learning rate,0.001; 0.005; 0.010,3,Controls optimizer step size and training stability.
+hidden channels,16; 32,2,Controls embedding capacity while keeping the search lightweight.
+dropout,0.0; 0.1,2,Tests whether regularization improves generalization on scarce positives.
+inference threshold,0.4; 0.5; 0.6,3,Moves the decision boundary between conservative and recall-oriented duplicate detection.

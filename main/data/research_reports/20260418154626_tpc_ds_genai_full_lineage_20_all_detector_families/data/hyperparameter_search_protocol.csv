@@ -1,0 +1,4 @@
+stage,scope,trainings,selection_rule,protocol_output
+screening_5_scenarios,3 benchmarks x 5 representative scenarios x 108 configs,1620,"Rank configurations by SF-Jaccard, then retain top 5 per benchmark.",Documents broad search behavior without paying the cost of a full exhaustive grid.
+full_validation_20_scenarios,3 benchmarks x 20 scenarios x top 5 configs,300,Retrain and evaluate only the top configurations across the complete benchmark suite.,Produces final results with complete scenario coverage and controlled compute cost.
+benchmark_final,"Best GNN configurations vs VF2, Node Match, GNN TPC-DS v1, GNN GenAI v1, and GNN GenAI v2",0,Report detector-family metrics by scenario and aggregate family.,Separates model-selection evidence from final detector-family comparison.

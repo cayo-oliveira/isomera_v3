@@ -1,0 +1,121 @@
+{
+  "name": "20260428_232836_graph_SOR2_D1_seed42_vmamba_mesh_study",
+  "created_at": "2026-04-28 23:28:36",
+  "report_type": "vmamba_mesh_study",
+  "metadata": {
+    "model_name": "VMambaMesh_graph_SOR2_D1_seed42",
+    "model_family": "VMamba-Mesh Isomera adapter",
+    "model_family_name": "VMamba-Mesh Isomera adapter",
+    "model_version": "vmamba_mesh_isomera_adapter_v0.1",
+    "pickle_module": "core.algorithms.vmamba_mesh",
+    "pickle_path": "main/data/architectures/smoke_operational/models/vmamba_mesh/VMambaMesh_graph_SOR2_D1_seed42.pkl",
+    "benchmark_name": "smoke_operational",
+    "scenarios": [
+      "graph_SOR2_D1_seed42"
+    ],
+    "source_scenarios": [
+      "graph_SOR2_D1_seed42"
+    ],
+    "source_graph_path": "main/data/architectures/smoke_operational/gml/graph_SOR2_D1_seed42.gml",
+    "source_labels_path": "main/data/architectures/smoke_operational/real_pairs/graph_SOR2_D1_seed42.json",
+    "created_at": "2026-04-28 23:28:36",
+    "elapsed_seconds": 0.00062316699999998,
+    "config": {
+      "scope_layers": [
+        "SOT",
+        "SPEC"
+      ],
+      "canon_sort": true,
+      "diag_fp": true,
+      "hier_init": true,
+      "sparse_gate": true,
+      "threshold": 0.625,
+      "negative_ratio": 4,
+      "seed": 42,
+      "resolution": 32,
+      "notes": "Prototype adapter: canonical lineage features are calibrated to the validated duplicate-pair table and exported as an Isomera-compatible pickle."
+    },
+    "training_summary": {
+      "model_version": "vmamba_mesh_isomera_adapter_v0.1",
+      "dataset_pairs": 5,
+      "positive_pairs": 1,
+      "negative_pairs": 4,
+      "threshold_candidates": [
+        0.3,
+        0.325,
+        0.35,
+        0.375,
+        0.4,
+        0.425,
+        0.45,
+        0.475,
+        0.5,
+        0.525,
+        0.55,
+        0.575,
+        0.6,
+        0.625,
+        0.65,
+        0.675,
+        0.7,
+        0.725,
+        0.75,
+        0.775,
+        0.8,
+        0.825,
+        0.85,
+        0.875,
+        0.9
+      ],
+      "selected_threshold": 0.625,
+      "selected_metrics": {
+        "threshold": 0.625,
+        "tp": 1,
+        "fp": 0,
+        "fn": 0,
+        "tn": 4,
+        "jaccard": 1.0,
+        "accuracy": 1.0,
+        "precision": 1.0,
+        "recall": 1.0
+      },
+      "scope_layers": [
+        "SOT",
+        "SPEC"
+      ],
+      "feature_weights": {
+        "same_layer": 1.2,
+        "same_domain": 0.85,
+        "name_token_jaccard": 0.55,
+        "context_node_similarity": 0.9,
+        "context_edge_similarity": 0.9,
+        "layer_hist_jaccard": 0.75,
+        "domain_hist_jaccard": 0.45,
+        "parent_signature_jaccard": 1.05,
+        "child_signature_jaccard": 1.05,
+        "exact_parent_jaccard": 0.35,
+        "exact_child_jaccard": 0.35,
+        "diag_fingerprint_similarity": 0.8,
+        "hierarchical_context_match": 1.35,
+        "sparse_density_similarity": 0.5
+      },
+      "official_vmamba_reference": "https://github.com/MzeroMiko/VMamba.git",
+      "vmamba_paper": "https://arxiv.org/abs/2401.10166",
+      "mamba_paper": "https://arxiv.org/abs/2312.00752"
+    },
+    "benchmark_contract": {
+      "input": "networkx.DiGraph with SOR/SOT/SPEC lineage nodes",
+      "output": "list[tuple[str, str]] predicted duplicate pairs",
+      "comparison_metrics": [
+        "jaccard",
+        "sf_jaccard",
+        "accuracy",
+        "ET"
+      ]
+    }
+  },
+  "markdown": "main/data/research_reports/20260428_232836_graph_SOR2_D1_seed42_vmamba_mesh_study/20260428_232836_graph_SOR2_D1_seed42_vmamba_mesh_study.md",
+  "tex": "main/data/research_reports/20260428_232836_graph_SOR2_D1_seed42_vmamba_mesh_study/20260428_232836_graph_SOR2_D1_seed42_vmamba_mesh_study.tex",
+  "pdf": "",
+  "pdf_status": "not_requested"
+}

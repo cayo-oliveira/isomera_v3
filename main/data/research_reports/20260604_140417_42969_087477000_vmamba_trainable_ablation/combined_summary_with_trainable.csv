@@ -1,0 +1,11 @@
+algorithm,sf_jaccard,jaccard,ET,accuracy,sf_accuracy,N_pairs,tp,fp,fn,tn,scenarios,runs,inference_threshold,aggregation,precision,recall,f1
+VF2,546.68133,0.184177,0.021766,0.461795,1014.57474,2395,291,1041,248,815,20,10,0.5,SF is computed per scenario as score * N_pairs / ET and averaged across scenarios.,,,
+Node Match,0.0,0.0,0.015128,0.774948,2392.417281,2395,0,0,539,1856,20,10,0.5,SF is computed per scenario as score * N_pairs / ET and averaged across scenarios.,,,
+GNN TPC-DS v1 cluster,333.638259,0.112849,0.011789,0.668476,3577.80624,2395,101,356,438,1500,20,10,0.5,SF is computed per scenario as score * N_pairs / ET and averaged across scenarios.,,,
+GNN GenAI v2 Weighted BCE,1348.314155,0.218391,0.011076,0.375365,2529.888857,2395,418,1375,121,481,20,10,0.5,SF is computed per scenario as score * N_pairs / ET and averaged across scenarios.,,,
+GNN GenAI v2 Focal Loss,119.832235,0.001855,0.010926,0.775365,4140.570209,2395,1,0,538,1856,20,10,0.5,SF is computed per scenario as score * N_pairs / ET and averaged across scenarios.,,,
+GNN GenAI v2 Hard Negatives,271.83637,0.009225,0.010884,0.775783,4174.801035,2395,5,3,534,1853,20,10,0.5,SF is computed per scenario as score * N_pairs / ET and averaged across scenarios.,,,
+Vanilla VMamba graph-image proxy,5076.803916,0.255548,0.006007,0.537787,6999.149652,2395,380,948,159,908,20,10,,,,,
+VMamba-Mesh Isomera adapter,5464.74402,0.274798,0.005962,0.587891,8017.115973,2395,374,822,165,1034,20,10,,,,,
+VMamba-T (v3-smoke),267.44024649432544,0.2,0.01121745900000004,0.2,,15,3,12,0,0,1,1,,,0.2,1.0,0.33333333333333337
+VMamba-Mesh-T (v3-smoke),274.8966034459866,0.21428571428571427,0.011692707999999996,0.26666666666666666,,15,3,11,0,1,1,1,,,0.21428571428571427,1.0,0.35294117647058826

@@ -1,0 +1,523 @@
+{
+  "model_name": "VMambaMeshT_graph_SOR2_D3_seed42_article_cpu_r16_d2-2-8-2_w16-32-64-128_lossweighted_bce_nr16_hardneg_v3_fpreplay_mps_spec_lr0p0005_seed42",
+  "model_family": "VMamba-Mesh-T",
+  "model_family_name": "VMamba-Mesh-T",
+  "model_version": "vmamba_trainable_tensor_v0.1",
+  "pickle_module": "core.algorithms.vmamba_trainable",
+  "pickle_path": "/Users/cayofel/Documents/GitHub/isomera_v2/main/data/architectures/tpc_ds_genai_spec_v2/models/vmamba_mesh_t/VMambaMeshT_graph_SOR2_D3_seed42_article_cpu_r16_d2-2-8-2_w16-32-64-128_lossweighted_bce_nr16_hardneg_v3_fpreplay_mps_spec_lr0p0005_seed42.pkl",
+  "benchmark_name": "tpc_ds_genai_spec_v2",
+  "scenarios": [
+    "graph_SOR2_D3_seed42"
+  ],
+  "source_scenarios": [
+    "graph_SOR2_D3_seed42"
+  ],
+  "source_graph_path": "/Users/cayofel/Documents/GitHub/isomera_v2/main/data/architectures/tpc_ds_genai_spec_v2/gml/graph_SOR2_D3_seed42.gml",
+  "source_labels_path": "/Users/cayofel/Documents/GitHub/isomera_v2/main/data/architectures/tpc_ds_genai_spec_v2/real_pairs/graph_SOR2_D3_seed42.json",
+  "created_at": "2026-06-04 15:24:00",
+  "elapsed_seconds": 1.4909759999999999,
+  "config": {
+    "variant": "vmamba_mesh_t",
+    "scope_layers": [
+      "SPEC"
+    ],
+    "resolution": 16,
+    "channels": [
+      "C0",
+      "C1",
+      "C2",
+      "C3",
+      "C4",
+      "C5"
+    ],
+    "architecture": "vss_torch",
+    "preset": "article_cpu",
+    "patch_size": 2,
+    "depths": [
+      2,
+      2,
+      8,
+      2
+    ],
+    "dims": [
+      16,
+      32,
+      64,
+      128
+    ],
+    "hidden_dim": 128,
+    "embedding_dim": 128,
+    "mlp_ratio": 4.0,
+    "dropout": 0.1,
+    "drop_path_rate": 0.15,
+    "threshold": 0.1,
+    "negative_ratio": 16,
+    "hard_negative_mining": true,
+    "hard_negative_strategy": "structural_plus_llm_manifest",
+    "hard_negative_agent": "codex_gpt5_llm_hard_negative_reviewer",
+    "hard_negative_manifest_path": "research/vmamba/manifests/llm_hard_negatives_article_iv_20260604.json",
+    "hard_negative_manifest_id": "llm_hard_negatives_article_iv_20260604",
+    "false_positive_replay_rounds": 1,
+    "false_positive_replay_top_k": 0,
+    "false_positive_replay_weight": 3,
+    "false_positive_replay_epochs": 2,
+    "batch_size": 16,
+    "inference_batch_size": 4096,
+    "encoder_batch_size": 64,
+    "auxiliary_features": true,
+    "auxiliary_feature_names": [
+      "same_layer",
+      "same_domain",
+      "name_token_jaccard",
+      "context_node_similarity",
+      "context_edge_similarity",
+      "layer_hist_jaccard",
+      "domain_hist_jaccard",
+      "parent_signature_jaccard",
+      "child_signature_jaccard",
+      "exact_parent_jaccard",
+      "exact_child_jaccard",
+      "canonsort_route_alignment",
+      "diag_fingerprint_similarity",
+      "meshss2d_route_similarity",
+      "hierarchical_context_match",
+      "sparse_density_similarity"
+    ],
+    "seed": 42,
+    "epochs": 10,
+    "learning_rate": 0.0005,
+    "train_ratio": 0.8,
+    "loss_name": "weighted_bce",
+    "threshold_policy": "precision_guard",
+    "threshold_precision_floor": 0.5,
+    "optimizer_name": "adamw",
+    "weight_decay": 0.05,
+    "forward_type": "v05",
+    "device": "mps",
+    "notes": "Trainable VMamba-style tensor pair model for Isomera."
+  },
+  "training_summary": {
+    "model_version": "vmamba_trainable_tensor_v0.1",
+    "variant": "vmamba_mesh_t",
+    "dataset": {
+      "rows": 15,
+      "positive": 6,
+      "negative": 9
+    },
+    "dataset_sampling": {
+      "negative_sampling": "hard_negative_mining",
+      "hard_negative_mining": true,
+      "hard_negative_strategy": "structural_plus_llm_manifest",
+      "hard_negative_agent": "codex_gpt5_llm_hard_negative_reviewer",
+      "hard_negative_manifest_path": "research/vmamba/manifests/llm_hard_negatives_article_iv_20260604.json",
+      "hard_negative_manifest_id": "llm_hard_negatives_article_iv_20260604",
+      "hard_negative_manifest_error": null,
+      "hard_negative_manifest_agent": "Codex",
+      "hard_negative_manifest_model": "GPT-5",
+      "hard_negative_manifest_pairs_available": 9,
+      "positive_pairs": 6,
+      "candidate_negatives": 9,
+      "selected_negatives": 9,
+      "negative_ratio": 16,
+      "selected_negative_preview": [
+        {
+          "node_a": "SPEC_store_sales_summary_D2",
+          "node_b": "SPEC_warehouse_logistics_D2",
+          "hardness_score": 0.627396,
+          "llm_suggested": true,
+          "llm_priority": 0.707167,
+          "llm_reason": "same layer SPEC; same domain D2; similar local degree (1.00); high structural similarity (0.64)"
+        },
+        {
+          "node_a": "SPEC_customer_summary_D3",
+          "node_b": "SPEC_store_sales_summary_D2",
+          "hardness_score": 0.497396,
+          "llm_suggested": true,
+          "llm_priority": 0.586979,
+          "llm_reason": "same layer SPEC; similar name tokens (0.25); similar local degree (1.00); high structural similarity (0.50)"
+        },
+        {
+          "node_a": "SPEC_customer_summary_D3",
+          "node_b": "SPEC_store_sales_summary_D1",
+          "hardness_score": 0.46724,
+          "llm_suggested": true,
+          "llm_priority": 0.50151,
+          "llm_reason": "same layer SPEC; similar name tokens (0.25); similar local degree (0.50); high structural similarity (0.47)"
+        },
+        {
+          "node_a": "SPEC_catalog_performance_D3",
+          "node_b": "SPEC_store_sales_summary_D2",
+          "hardness_score": 0.486875,
+          "llm_suggested": true,
+          "llm_priority": 0.499063,
+          "llm_reason": "same layer SPEC; similar local degree (1.00); high structural similarity (0.50)"
+        },
+        {
+          "node_a": "SPEC_customer_summary_D1",
+          "node_b": "SPEC_store_sales_summary_D2",
+          "hardness_score": 0.369271,
+          "llm_suggested": true,
+          "llm_priority": 0.478542,
+          "llm_reason": "same layer SPEC; similar name tokens (0.25); similar local degree (0.50)"
+        },
+        {
+          "node_a": "SPEC_store_sales_summary_D1",
+          "node_b": "SPEC_warehouse_logistics_D2",
+          "hardness_score": 0.439844,
+          "llm_suggested": true,
+          "llm_priority": 0.407969,
+          "llm_reason": "same layer SPEC; similar local degree (0.50)"
+        },
+        {
+          "node_a": "SPEC_catalog_performance_D3",
+          "node_b": "SPEC_store_sales_summary_D1",
+          "hardness_score": 0.439844,
+          "llm_suggested": true,
+          "llm_priority": 0.407969,
+          "llm_reason": "same layer SPEC; similar local degree (0.50)"
+        },
+        {
+          "node_a": "SPEC_customer_summary_D1",
+          "node_b": "SPEC_warehouse_logistics_D2",
+          "hardness_score": 0.330625,
+          "llm_suggested": true,
+          "llm_priority": 0.387813,
+          "llm_reason": "same layer SPEC; similar local degree (0.50)"
+        },
+        {
+          "node_a": "SPEC_catalog_performance_D3",
+          "node_b": "SPEC_customer_summary_D1",
+          "hardness_score": 0.330625,
+          "llm_suggested": true,
+          "llm_priority": 0.387813,
+          "llm_reason": "same layer SPEC; similar local degree (0.50)"
+        }
+      ]
+    },
+    "train": {
+      "rows": 38,
+      "positive": 4,
+      "negative": 34
+    },
+    "validation": {
+      "rows": 4,
+      "positive": 2,
+      "negative": 2
+    },
+    "selected_threshold": 0.1,
+    "selected_metrics": {
+      "threshold": 0.1,
+      "tp": 2,
+      "fp": 2,
+      "fn": 0,
+      "tn": 0,
+      "jaccard": 0.5,
+      "precision": 0.5,
+      "recall": 1.0,
+      "f1": 0.6666666666666666,
+      "accuracy": 0.5
+    },
+    "threshold_candidates": [
+      0.1,
+      0.125,
+      0.15,
+      0.175,
+      0.2,
+      0.225,
+      0.25,
+      0.275,
+      0.3,
+      0.325,
+      0.35,
+      0.375,
+      0.4,
+      0.425,
+      0.45,
+      0.475,
+      0.5,
+      0.525,
+      0.55,
+      0.575,
+      0.6,
+      0.625,
+      0.65,
+      0.675,
+      0.7,
+      0.725,
+      0.75,
+      0.775,
+      0.8,
+      0.825,
+      0.85,
+      0.875,
+      0.9
+    ],
+    "threshold_selection": {
+      "policy": "precision_guard",
+      "precision_floor": 0.5,
+      "eligible_thresholds": 6,
+      "fallback_to_all_thresholds": false
+    },
+    "history": [
+      {
+        "epoch": 1,
+        "train_loss": 0.880412,
+        "train_accuracy": 0.363636,
+        "val_jaccard_at_0_5": 0.5,
+        "val_accuracy_at_0_5": 0.5
+      },
+      {
+        "epoch": 2,
+        "train_loss": 0.877438,
+        "train_accuracy": 0.545455,
+        "val_jaccard_at_0_5": 0.0,
+        "val_accuracy_at_0_5": 0.5
+      },
+      {
+        "epoch": 3,
+        "train_loss": 0.865842,
+        "train_accuracy": 0.727273,
+        "val_jaccard_at_0_5": 0.0,
+        "val_accuracy_at_0_5": 0.5
+      },
+      {
+        "epoch": 4,
+        "train_loss": 0.875295,
+        "train_accuracy": 0.727273,
+        "val_jaccard_at_0_5": 0.5,
+        "val_accuracy_at_0_5": 0.5
+      },
+      {
+        "epoch": 5,
+        "train_loss": 0.871537,
+        "train_accuracy": 0.545455,
+        "val_jaccard_at_0_5": 0.5,
+        "val_accuracy_at_0_5": 0.5
+      },
+      {
+        "epoch": 6,
+        "train_loss": 0.85462,
+        "train_accuracy": 0.454545,
+        "val_jaccard_at_0_5": 0.5,
+        "val_accuracy_at_0_5": 0.5
+      },
+      {
+        "epoch": 7,
+        "train_loss": 0.889997,
+        "train_accuracy": 0.363636,
+        "val_jaccard_at_0_5": 0.5,
+        "val_accuracy_at_0_5": 0.5
+      },
+      {
+        "epoch": 8,
+        "train_loss": 0.909722,
+        "train_accuracy": 0.363636,
+        "val_jaccard_at_0_5": 0.0,
+        "val_accuracy_at_0_5": 0.5
+      },
+      {
+        "epoch": 9,
+        "train_loss": 0.898933,
+        "train_accuracy": 0.272727,
+        "val_jaccard_at_0_5": 0.666667,
+        "val_accuracy_at_0_5": 0.75
+      },
+      {
+        "epoch": 10,
+        "train_loss": 0.874534,
+        "train_accuracy": 0.636364,
+        "val_jaccard_at_0_5": 0.0,
+        "val_accuracy_at_0_5": 0.5
+      },
+      {
+        "epoch": 11,
+        "replay_round": 1,
+        "train_loss": 0.697498,
+        "train_accuracy": 0.710526,
+        "val_jaccard_at_0_5": 0.0,
+        "val_accuracy_at_0_5": 0.0
+      },
+      {
+        "epoch": 12,
+        "replay_round": 1,
+        "train_loss": 0.559017,
+        "train_accuracy": 0.894737,
+        "val_jaccard_at_0_5": 0.0,
+        "val_accuracy_at_0_5": 0.0
+      }
+    ],
+    "false_positive_replay": {
+      "rounds": 1,
+      "top_k": 0,
+      "weight": 3,
+      "epochs_per_round": 2,
+      "history": [
+        {
+          "round": 1,
+          "selected_pairs": 9,
+          "reinforced_rows": 27,
+          "max_negative_score": 0.493542,
+          "min_selected_score": 0.484885,
+          "preview": [
+            {
+              "node_a": "SPEC_customer_summary_D1",
+              "node_b": "SPEC_store_sales_summary_D2",
+              "score": 0.493542
+            },
+            {
+              "node_a": "SPEC_customer_summary_D3",
+              "node_b": "SPEC_store_sales_summary_D1",
+              "score": 0.491504
+            },
+            {
+              "node_a": "SPEC_catalog_performance_D3",
+              "node_b": "SPEC_customer_summary_D1",
+              "score": 0.491353
+            },
+            {
+              "node_a": "SPEC_customer_summary_D1",
+              "node_b": "SPEC_warehouse_logistics_D2",
+              "score": 0.491353
+            },
+            {
+              "node_a": "SPEC_store_sales_summary_D2",
+              "node_b": "SPEC_warehouse_logistics_D2",
+              "score": 0.49113
+            },
+            {
+              "node_a": "SPEC_catalog_performance_D3",
+              "node_b": "SPEC_store_sales_summary_D1",
+              "score": 0.489783
+            },
+            {
+              "node_a": "SPEC_store_sales_summary_D1",
+              "node_b": "SPEC_warehouse_logistics_D2",
+              "score": 0.489582
+            },
+            {
+              "node_a": "SPEC_customer_summary_D3",
+              "node_b": "SPEC_store_sales_summary_D2",
+              "score": 0.485881
+            },
+            {
+              "node_a": "SPEC_catalog_performance_D3",
+              "node_b": "SPEC_store_sales_summary_D2",
+              "score": 0.484885
+            }
+          ]
+        }
+      ]
+    },
+    "loss": {
+      "loss_name": "torch.nn.BCEWithLogitsLoss(pos_weight)",
+      "pos_weight": 1.75
+    },
+    "device": {
+      "requested_device": "mps",
+      "resolved_device": "mps",
+      "torch_version": "2.8.0",
+      "python_version": "3.9.6",
+      "platform": "macOS-26.2-arm64-arm-64bit",
+      "mps_built": true,
+      "mps_available": true,
+      "mps_device_count": 1,
+      "fallback_reason": null
+    },
+    "architecture": {
+      "architecture": "vss_torch",
+      "preset": "article_cpu",
+      "patch_size": 2,
+      "depths": [
+        2,
+        2,
+        8,
+        2
+      ],
+      "dims": [
+        16,
+        32,
+        64,
+        128
+      ],
+      "mlp_ratio": 4.0,
+      "drop_path_rate": 0.15,
+      "forward_type": "v05",
+      "batch_size": 16,
+      "inference_batch_size": 4096,
+      "encoder_batch_size": 64,
+      "auxiliary_features": true,
+      "auxiliary_feature_names": [
+        "same_layer",
+        "same_domain",
+        "name_token_jaccard",
+        "context_node_similarity",
+        "context_edge_similarity",
+        "layer_hist_jaccard",
+        "domain_hist_jaccard",
+        "parent_signature_jaccard",
+        "child_signature_jaccard",
+        "exact_parent_jaccard",
+        "exact_child_jaccard",
+        "canonsort_route_alignment",
+        "diag_fingerprint_similarity",
+        "meshss2d_route_similarity",
+        "hierarchical_context_match",
+        "sparse_density_similarity"
+      ]
+    },
+    "input_contract": {
+      "pipeline": [
+        "CanonSort context ordering",
+        "six-channel lineage tensorization when VMamba-Mesh-T is selected",
+        "patch embedding",
+        "staged VSS-style blocks",
+        "bidirectional row/column SS2D-style scans",
+        "auditable pair-feature calibration vector",
+        "global pooling",
+        "pair head over left/right/absolute-difference/product features",
+        "sigmoid score",
+        "calibrated threshold"
+      ],
+      "channels": {
+        "C0": {
+          "name": "Forward adjacency",
+          "role": "canonical directed lineage edges"
+        },
+        "C1": {
+          "name": "Reverse adjacency",
+          "role": "reverse lineage edges for bidirectional structural context"
+        },
+        "C2": {
+          "name": "Layer diagonal",
+          "role": "SOR/SOT/SPEC identity injected on the tensor diagonal"
+        },
+        "C3": {
+          "name": "Degree fingerprint",
+          "role": "normalized local in/out degree signature on the diagonal"
+        },
+        "C4": {
+          "name": "Lineage route bias",
+          "role": "route prior for the SOR -> SOT -> SPEC direction"
+        },
+        "C5": {
+          "name": "Sparse mask",
+          "role": "occupied-cell mask so structural zeros are explicitly represented"
+        }
+      }
+    },
+    "elapsed_seconds": 1.41338,
+    "contract": "predict_pairs(graph)",
+    "note": "Trainable VMamba-like VSS/SS2D-style tensor model implemented in native PyTorch; official CUDA/Triton kernels remain the external VMamba reference."
+  },
+  "benchmark_contract": {
+    "input": "networkx.DiGraph",
+    "output": "list[tuple[str, str]] predicted duplicate pairs",
+    "comparison_metrics": [
+      "jaccard",
+      "sf_jaccard",
+      "accuracy",
+      "ET"
+    ],
+    "neural_input": "C x R x R lineage tensor built before the VMamba-style backbone"
+  }
+}

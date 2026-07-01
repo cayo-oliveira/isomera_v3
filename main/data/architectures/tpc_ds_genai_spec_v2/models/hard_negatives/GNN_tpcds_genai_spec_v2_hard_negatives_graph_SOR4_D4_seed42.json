@@ -1,0 +1,108 @@
+{
+  "model_path": "/Users/cayofel/Documents/GitHub/isomera_v2/main/data/architectures/tpc_ds_genai_spec_v2/models/hard_negatives/GNN_tpcds_genai_spec_v2_hard_negatives_graph_SOR4_D4_seed42.pkl",
+  "scenarios": [
+    "graph_SOR4_D4_seed42"
+  ],
+  "dataset_summary": [
+    {
+      "scenario": "graph_SOR4_D4_seed42",
+      "positive_pairs": 30,
+      "negative_pairs": 90,
+      "dataset_rows": 120,
+      "skipped_rows": 0,
+      "dataset_source": "supervised_validation_dataset"
+    }
+  ],
+  "epochs": 5,
+  "learning_rate": 0.005,
+  "hidden_channels": 16,
+  "dropout": 0.1,
+  "negative_ratio": 2,
+  "train_ratio": 0.8,
+  "test_ratio": 0.2,
+  "balance_strategy": "hard_negative_mining",
+  "balance_strategy_label": "Prefer difficult non-duplicates (hard negative mining)",
+  "balance_summary": {
+    "strategy": "hard_negative_mining",
+    "before": {
+      "positive_pairs": 24,
+      "negative_pairs": 72,
+      "dataset_rows": 96
+    },
+    "after": {
+      "positive_pairs": 24,
+      "negative_pairs": 48,
+      "dataset_rows": 72
+    },
+    "operation": "kept_48_structurally_similar_negatives"
+  },
+  "seed": 42,
+  "optimizer": "adam",
+  "optimizer_label": "Adaptive gradient optimizer (torch.optim.Adam)",
+  "optimizer_name": "torch.optim.Adam",
+  "configured_loss": "bce_with_logits",
+  "configured_loss_label": "Binary cross entropy on logits (torch.nn.BCEWithLogitsLoss)",
+  "loss": {
+    "loss_key": "bce_with_logits",
+    "loss_name": "torch.nn.BCEWithLogitsLoss",
+    "loss_label": "Binary cross entropy on logits (torch.nn.BCEWithLogitsLoss)",
+    "formula": "L = -[y log(sigmoid(z)) + (1-y) log(1-sigmoid(z))]",
+    "pos_weight": null
+  },
+  "loss_name": "torch.nn.BCEWithLogitsLoss",
+  "train_distribution": {
+    "positive_pairs": 24,
+    "negative_pairs": 48,
+    "dataset_rows": 72
+  },
+  "val_distribution": {
+    "positive_pairs": 6,
+    "negative_pairs": 18,
+    "dataset_rows": 24
+  },
+  "history": [
+    {
+      "epoch": 1,
+      "train_loss": 0.701594,
+      "train_accuracy": 0.652778,
+      "val_loss": 0.607148,
+      "val_accuracy": 0.75,
+      "epoch_seconds": 0.036885
+    },
+    {
+      "epoch": 2,
+      "train_loss": 0.662612,
+      "train_accuracy": 0.666667,
+      "val_loss": 0.603221,
+      "val_accuracy": 0.75,
+      "epoch_seconds": 0.036462
+    },
+    {
+      "epoch": 3,
+      "train_loss": 0.652409,
+      "train_accuracy": 0.666667,
+      "val_loss": 0.599809,
+      "val_accuracy": 0.75,
+      "epoch_seconds": 0.043218
+    },
+    {
+      "epoch": 4,
+      "train_loss": 0.649773,
+      "train_accuracy": 0.666667,
+      "val_loss": 0.59714,
+      "val_accuracy": 0.75,
+      "epoch_seconds": 0.037801
+    },
+    {
+      "epoch": 5,
+      "train_loss": 0.643508,
+      "train_accuracy": 0.666667,
+      "val_loss": 0.585834,
+      "val_accuracy": 0.75,
+      "epoch_seconds": 0.035694
+    }
+  ],
+  "train_size": 72,
+  "val_size": 24,
+  "status": "completed"
+}

@@ -1,0 +1,113 @@
+{
+  "model_path": "/Users/cayofel/Documents/GitHub/isomera_v2/main/data/architectures/tpc_ds_genai_spec_protocol/models/rank5_weighted_bce_lr0p001_h16_d0p1_t0p5/GNN_tpcds_genai_spec_protocol_rank5_graph_SOR4_D4_seed42.pkl",
+  "scenarios": [
+    "graph_SOR4_D4_seed42"
+  ],
+  "dataset_summary": [
+    {
+      "scenario": "graph_SOR4_D4_seed42",
+      "positive_pairs": 30,
+      "negative_pairs": 90,
+      "dataset_rows": 120,
+      "skipped_rows": 0,
+      "dataset_source": "supervised_validation_dataset"
+    }
+  ],
+  "epochs": 5,
+  "learning_rate": 0.001,
+  "hidden_channels": 16,
+  "dropout": 0.1,
+  "negative_ratio": 1,
+  "train_ratio": 0.8,
+  "test_ratio": 0.2,
+  "balance_strategy": "class_weighted_loss",
+  "balance_strategy_label": "Weight duplicate class in the loss (torch.nn.BCEWithLogitsLoss(pos_weight))",
+  "balance_summary": {
+    "strategy": "class_weighted_loss",
+    "before": {
+      "positive_pairs": 24,
+      "negative_pairs": 72,
+      "dataset_rows": 96
+    },
+    "after": {
+      "positive_pairs": 24,
+      "negative_pairs": 72,
+      "dataset_rows": 96
+    },
+    "operation": "kept_original_training_rows"
+  },
+  "seed": 42,
+  "optimizer": "adam",
+  "optimizer_label": "Adaptive gradient optimizer (torch.optim.Adam)",
+  "optimizer_name": "torch.optim.Adam",
+  "configured_loss": "bce_with_logits",
+  "configured_loss_label": "Binary cross entropy on logits (torch.nn.BCEWithLogitsLoss)",
+  "loss": {
+    "loss_key": "weighted_bce_with_logits",
+    "loss_name": "torch.nn.BCEWithLogitsLoss(pos_weight)",
+    "loss_label": "Weighted binary cross entropy (torch.nn.BCEWithLogitsLoss(pos_weight))",
+    "formula": "L = -[pos_weight * y log(sigmoid(z)) + (1-y) log(1-sigmoid(z))]",
+    "pos_weight": 3.0
+  },
+  "loss_name": "torch.nn.BCEWithLogitsLoss(pos_weight)",
+  "train_distribution": {
+    "positive_pairs": 24,
+    "negative_pairs": 72,
+    "dataset_rows": 96
+  },
+  "val_distribution": {
+    "positive_pairs": 6,
+    "negative_pairs": 18,
+    "dataset_rows": 24
+  },
+  "history": [
+    {
+      "epoch": 1,
+      "train_loss": 1.049185,
+      "train_accuracy": 0.364583,
+      "val_loss": 1.040632,
+      "val_accuracy": 0.75,
+      "epoch_seconds": 0.096512
+    },
+    {
+      "epoch": 2,
+      "train_loss": 1.04997,
+      "train_accuracy": 0.46875,
+      "val_loss": 1.040318,
+      "val_accuracy": 0.708333,
+      "epoch_seconds": 0.095578
+    },
+    {
+      "epoch": 3,
+      "train_loss": 1.044289,
+      "train_accuracy": 0.4375,
+      "val_loss": 1.040932,
+      "val_accuracy": 0.75,
+      "epoch_seconds": 0.129752
+    },
+    {
+      "epoch": 4,
+      "train_loss": 1.042457,
+      "train_accuracy": 0.708333,
+      "val_loss": 1.040815,
+      "val_accuracy": 0.708333,
+      "epoch_seconds": 0.097186
+    },
+    {
+      "epoch": 5,
+      "train_loss": 1.047088,
+      "train_accuracy": 0.34375,
+      "val_loss": 1.040038,
+      "val_accuracy": 0.583333,
+      "epoch_seconds": 0.095987
+    }
+  ],
+  "train_size": 96,
+  "val_size": 24,
+  "status": "completed",
+  "config_id": "weighted_bce_lr0p001_h16_d0p1_t0p5",
+  "protocol_stage": "full_validation",
+  "inference_threshold": 0.5,
+  "wall_seconds": 0.533598,
+  "model_family": "GNN GenAI Spec Protocol Weighted BCE"
+}

@@ -1,0 +1,6 @@
+stage,input,output,details
+source,tpc_ds,20 GML scenarios,Original TPC-DS benchmark using the default curated duplicate pairs.
+normalized graph,GML + node layer metadata,NetworkX directed graph,Edges and nodes are evaluated under the selected candidate scope.
+validation dataset,real_pairs JSON,1794 positives inside 39695 candidates,Pairs outside the selected candidate scope are excluded from metric denominators.
+model routing,scenario name + cluster map,pickle path per scenario,Best-of-all is post-hoc diagnostic routing when enabled.
+benchmark execution,detector families,10 family rows,10 runs per detector family per scenario.

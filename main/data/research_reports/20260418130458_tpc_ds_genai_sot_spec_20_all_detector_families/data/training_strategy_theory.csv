@@ -1,0 +1,4 @@
+strategy,technical_function,formula,interpretation
+Weighted BCE,torch.nn.BCEWithLogitsLoss(pos_weight),L = -[w_p y log(sigmoid(z)) + (1-y) log(1-sigmoid(z))],Keeps all validated pairs and increases the cost of missing rare duplicate pairs. This is the preferred first strategy when positives are scarce.
+Focal Loss,custom sigmoid focal loss,FL(p_t) = -alpha(1-p_t)^gamma log(p_t),Down-weights easy examples and concentrates gradient on hard or misclassified pairs. It is useful when the model otherwise learns only the dominant negative class.
+Hard Negative Mining,structural hard-negative sampler + BCEWithLogitsLoss,score = |nodes_a-nodes_b| + |edges_a-edges_b|,Keeps non-duplicate pairs that look structurally similar to positives. This tests whether the model can separate difficult near-matches instead of only easy negatives.

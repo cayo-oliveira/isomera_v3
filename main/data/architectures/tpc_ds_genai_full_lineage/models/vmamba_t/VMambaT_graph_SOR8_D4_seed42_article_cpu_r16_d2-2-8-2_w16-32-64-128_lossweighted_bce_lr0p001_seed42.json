@@ -1,0 +1,303 @@
+{
+  "model_name": "VMambaT_graph_SOR8_D4_seed42_article_cpu_r16_d2-2-8-2_w16-32-64-128_lossweighted_bce_lr0p001_seed42",
+  "model_family": "VMamba-T",
+  "model_family_name": "VMamba-T",
+  "model_version": "vmamba_trainable_tensor_v0.1",
+  "pickle_module": "core.algorithms.vmamba_trainable",
+  "pickle_path": "/Users/cayofel/Documents/GitHub/isomera_v2/main/data/architectures/tpc_ds_genai_full_lineage/models/vmamba_t/VMambaT_graph_SOR8_D4_seed42_article_cpu_r16_d2-2-8-2_w16-32-64-128_lossweighted_bce_lr0p001_seed42.pkl",
+  "benchmark_name": "tpc_ds_genai_full_lineage",
+  "scenarios": [
+    "graph_SOR8_D4_seed42"
+  ],
+  "source_scenarios": [
+    "graph_SOR8_D4_seed42"
+  ],
+  "source_graph_path": "/Users/cayofel/Documents/GitHub/isomera_v2/main/data/architectures/tpc_ds_genai_full_lineage/gml/graph_SOR8_D4_seed42.gml",
+  "source_labels_path": "/Users/cayofel/Documents/GitHub/isomera_v2/main/data/architectures/tpc_ds_genai_full_lineage/real_pairs/graph_SOR8_D4_seed42.json",
+  "created_at": "2026-06-04 04:53:24",
+  "elapsed_seconds": 793.8806782920001,
+  "config": {
+    "variant": "vmamba_t",
+    "scope_layers": [
+      "SOR",
+      "SOT",
+      "SPEC"
+    ],
+    "resolution": 16,
+    "channels": [
+      "C0",
+      "C1"
+    ],
+    "architecture": "vss_torch",
+    "preset": "article_cpu",
+    "patch_size": 2,
+    "depths": [
+      2,
+      2,
+      8,
+      2
+    ],
+    "dims": [
+      16,
+      32,
+      64,
+      128
+    ],
+    "hidden_dim": 128,
+    "embedding_dim": 128,
+    "mlp_ratio": 4.0,
+    "dropout": 0.1,
+    "drop_path_rate": 0.15,
+    "threshold": 0.9,
+    "negative_ratio": 16,
+    "batch_size": 16,
+    "auxiliary_features": true,
+    "auxiliary_feature_names": [
+      "same_layer",
+      "same_domain",
+      "name_token_jaccard",
+      "context_node_similarity",
+      "context_edge_similarity",
+      "layer_hist_jaccard",
+      "domain_hist_jaccard",
+      "parent_signature_jaccard",
+      "child_signature_jaccard",
+      "exact_parent_jaccard",
+      "exact_child_jaccard",
+      "canonsort_route_alignment",
+      "diag_fingerprint_similarity",
+      "meshss2d_route_similarity",
+      "hierarchical_context_match",
+      "sparse_density_similarity"
+    ],
+    "seed": 42,
+    "epochs": 10,
+    "learning_rate": 0.001,
+    "train_ratio": 0.8,
+    "loss_name": "weighted_bce",
+    "optimizer_name": "adamw",
+    "weight_decay": 0.05,
+    "forward_type": "v05",
+    "notes": "Trainable VMamba-style tensor pair model for Isomera."
+  },
+  "training_summary": {
+    "model_version": "vmamba_trainable_tensor_v0.1",
+    "variant": "vmamba_t",
+    "dataset": {
+      "rows": 3486,
+      "positive": 247,
+      "negative": 3239
+    },
+    "train": {
+      "rows": 2788,
+      "positive": 197,
+      "negative": 2591
+    },
+    "validation": {
+      "rows": 698,
+      "positive": 50,
+      "negative": 648
+    },
+    "selected_threshold": 0.9,
+    "selected_metrics": {
+      "threshold": 0.9,
+      "tp": 46,
+      "fp": 73,
+      "fn": 4,
+      "tn": 575,
+      "jaccard": 0.37398373983739835,
+      "precision": 0.3865546218487395,
+      "recall": 0.92,
+      "accuracy": 0.8896848137535817
+    },
+    "threshold_candidates": [
+      0.1,
+      0.125,
+      0.15,
+      0.175,
+      0.2,
+      0.225,
+      0.25,
+      0.275,
+      0.3,
+      0.325,
+      0.35,
+      0.375,
+      0.4,
+      0.425,
+      0.45,
+      0.475,
+      0.5,
+      0.525,
+      0.55,
+      0.575,
+      0.6,
+      0.625,
+      0.65,
+      0.675,
+      0.7,
+      0.725,
+      0.75,
+      0.775,
+      0.8,
+      0.825,
+      0.85,
+      0.875,
+      0.9
+    ],
+    "history": [
+      {
+        "epoch": 1,
+        "train_loss": 1.21847,
+        "train_accuracy": 0.587877,
+        "val_jaccard_at_0_5": 0.273684,
+        "val_accuracy_at_0_5": 0.901146
+      },
+      {
+        "epoch": 2,
+        "train_loss": 0.871424,
+        "train_accuracy": 0.785868,
+        "val_jaccard_at_0_5": 0.265957,
+        "val_accuracy_at_0_5": 0.802292
+      },
+      {
+        "epoch": 3,
+        "train_loss": 0.589474,
+        "train_accuracy": 0.8533,
+        "val_jaccard_at_0_5": 0.358779,
+        "val_accuracy_at_0_5": 0.879656
+      },
+      {
+        "epoch": 4,
+        "train_loss": 0.514551,
+        "train_accuracy": 0.871593,
+        "val_jaccard_at_0_5": 0.352518,
+        "val_accuracy_at_0_5": 0.87106
+      },
+      {
+        "epoch": 5,
+        "train_loss": 0.483453,
+        "train_accuracy": 0.875538,
+        "val_jaccard_at_0_5": 0.314465,
+        "val_accuracy_at_0_5": 0.84384
+      },
+      {
+        "epoch": 6,
+        "train_loss": 0.469884,
+        "train_accuracy": 0.874462,
+        "val_jaccard_at_0_5": 0.371212,
+        "val_accuracy_at_0_5": 0.881089
+      },
+      {
+        "epoch": 7,
+        "train_loss": 0.443174,
+        "train_accuracy": 0.88056,
+        "val_jaccard_at_0_5": 0.368421,
+        "val_accuracy_at_0_5": 0.879656
+      },
+      {
+        "epoch": 8,
+        "train_loss": 0.447152,
+        "train_accuracy": 0.87769,
+        "val_jaccard_at_0_5": 0.318471,
+        "val_accuracy_at_0_5": 0.846705
+      },
+      {
+        "epoch": 9,
+        "train_loss": 0.436204,
+        "train_accuracy": 0.879125,
+        "val_jaccard_at_0_5": 0.337838,
+        "val_accuracy_at_0_5": 0.859599
+      },
+      {
+        "epoch": 10,
+        "train_loss": 0.434563,
+        "train_accuracy": 0.882353,
+        "val_jaccard_at_0_5": 0.310559,
+        "val_accuracy_at_0_5": 0.840974
+      }
+    ],
+    "loss": {
+      "loss_name": "torch.nn.BCEWithLogitsLoss(pos_weight)",
+      "pos_weight": 13.152284263959391
+    },
+    "architecture": {
+      "architecture": "vss_torch",
+      "preset": "article_cpu",
+      "patch_size": 2,
+      "depths": [
+        2,
+        2,
+        8,
+        2
+      ],
+      "dims": [
+        16,
+        32,
+        64,
+        128
+      ],
+      "mlp_ratio": 4.0,
+      "drop_path_rate": 0.15,
+      "forward_type": "v05",
+      "batch_size": 16,
+      "auxiliary_features": true,
+      "auxiliary_feature_names": [
+        "same_layer",
+        "same_domain",
+        "name_token_jaccard",
+        "context_node_similarity",
+        "context_edge_similarity",
+        "layer_hist_jaccard",
+        "domain_hist_jaccard",
+        "parent_signature_jaccard",
+        "child_signature_jaccard",
+        "exact_parent_jaccard",
+        "exact_child_jaccard",
+        "canonsort_route_alignment",
+        "diag_fingerprint_similarity",
+        "meshss2d_route_similarity",
+        "hierarchical_context_match",
+        "sparse_density_similarity"
+      ]
+    },
+    "input_contract": {
+      "pipeline": [
+        "CanonSort context ordering",
+        "six-channel lineage tensorization when VMamba-Mesh-T is selected",
+        "patch embedding",
+        "staged VSS-style blocks",
+        "bidirectional row/column SS2D-style scans",
+        "auditable pair-feature calibration vector",
+        "global pooling",
+        "pair head over left/right/absolute-difference/product features",
+        "sigmoid score",
+        "calibrated threshold"
+      ],
+      "channels": {
+        "C0": {
+          "name": "Forward adjacency",
+          "role": "canonical directed lineage edges"
+        },
+        "C1": {
+          "name": "Reverse adjacency",
+          "role": "reverse lineage edges for bidirectional structural context"
+        }
+      }
+    },
+    "elapsed_seconds": 793.26447,
+    "contract": "predict_pairs(graph)",
+    "note": "Trainable VMamba-like VSS/SS2D-style tensor model implemented in native PyTorch; official CUDA/Triton kernels remain the external VMamba reference."
+  },
+  "benchmark_contract": {
+    "input": "networkx.DiGraph",
+    "output": "list[tuple[str, str]] predicted duplicate pairs",
+    "comparison_metrics": [
+      "jaccard",
+      "sf_jaccard",
+      "accuracy",
+      "ET"
+    ],
+    "neural_input": "C x R x R lineage tensor built before the VMamba-style backbone"
+  }
+}

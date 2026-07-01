@@ -1,0 +1,154 @@
+{
+  "scenario": "graph_SOR2_D2_seed42",
+  "schema": "scenario_sor2_d2_seed42",
+  "domains": {
+    "1": {
+      "name": "customer",
+      "tables": [
+        {
+          "node": "SOR_customer_D1",
+          "type": "SOR",
+          "raw_name": "customer",
+          "semantic_name": "customer",
+          "table_name": "d1_sor_customer"
+        },
+        {
+          "node": "SOR_customer_demographics_D1",
+          "type": "SOR",
+          "raw_name": "customer_demographics",
+          "semantic_name": "customer_demographics",
+          "table_name": "d1_sor_customer_demographics"
+        },
+        {
+          "node": "SOT_customer_orders_D1",
+          "type": "SOT",
+          "raw_name": "customer_orders",
+          "semantic_name": "customer_orders",
+          "table_name": "d1_sot_customer_orders"
+        },
+        {
+          "node": "SOT_store_sales_D1",
+          "type": "SOT",
+          "raw_name": "store_sales",
+          "semantic_name": "store_sales",
+          "table_name": "d1_sot_store_sales"
+        },
+        {
+          "node": "SPEC_store_sales_summary_D1",
+          "type": "SPEC",
+          "raw_name": "store_sales_summary",
+          "semantic_name": "store_sales_summary",
+          "table_name": "d1_spec_store_sales_summary"
+        },
+        {
+          "node": "SPEC_time_analysis_D1",
+          "type": "SPEC",
+          "raw_name": "time_analysis",
+          "semantic_name": "time_analysis",
+          "table_name": "d1_spec_time_analysis"
+        }
+      ]
+    },
+    "2": {
+      "name": "location_store",
+      "tables": [
+        {
+          "node": "SOR_nation_D2",
+          "type": "SOR",
+          "raw_name": "nation",
+          "semantic_name": "nation",
+          "table_name": "d2_sor_nation"
+        },
+        {
+          "node": "SOR_store_D2",
+          "type": "SOR",
+          "raw_name": "store",
+          "semantic_name": "store",
+          "table_name": "d2_sor_store"
+        },
+        {
+          "node": "SOT_catalog_sales_D2",
+          "type": "SOT",
+          "raw_name": "catalog_sales",
+          "semantic_name": "catalog_sales",
+          "table_name": "d2_sot_catalog_sales"
+        },
+        {
+          "node": "SOT_web_sales_D2",
+          "type": "SOT",
+          "raw_name": "web_sales",
+          "semantic_name": "web_sales",
+          "table_name": "d2_sot_web_sales"
+        },
+        {
+          "node": "SPEC_store_sales_summary_D2",
+          "type": "SPEC",
+          "raw_name": "store_sales_summary",
+          "semantic_name": "store_sales_summary",
+          "table_name": "d2_spec_store_sales_summary"
+        },
+        {
+          "node": "SPEC_web_sales_summary_D2",
+          "type": "SPEC",
+          "raw_name": "web_sales_summary",
+          "semantic_name": "web_sales_summary",
+          "table_name": "d2_spec_web_sales_summary"
+        }
+      ]
+    }
+  },
+  "edges": [
+    {
+      "from": "SOT_store_sales_D1",
+      "to": "SOR_customer_demographics_D1"
+    },
+    {
+      "from": "SOT_store_sales_D1",
+      "to": "SOR_customer_D1"
+    },
+    {
+      "from": "SOT_customer_orders_D1",
+      "to": "SOR_customer_demographics_D1"
+    },
+    {
+      "from": "SOT_customer_orders_D1",
+      "to": "SOR_customer_D1"
+    },
+    {
+      "from": "SOT_web_sales_D2",
+      "to": "SOR_store_D2"
+    },
+    {
+      "from": "SOT_web_sales_D2",
+      "to": "SOR_nation_D2"
+    },
+    {
+      "from": "SOT_catalog_sales_D2",
+      "to": "SOR_store_D2"
+    },
+    {
+      "from": "SOT_catalog_sales_D2",
+      "to": "SOR_nation_D2"
+    },
+    {
+      "from": "SPEC_store_sales_summary_D1",
+      "to": "SOT_store_sales_D1"
+    },
+    {
+      "from": "SPEC_store_sales_summary_D1",
+      "to": "SOT_customer_orders_D1"
+    },
+    {
+      "from": "SPEC_time_analysis_D1",
+      "to": "SOT_catalog_sales_D2"
+    },
+    {
+      "from": "SPEC_store_sales_summary_D2",
+      "to": "SOT_store_sales_D1"
+    },
+    {
+      "from": "SPEC_web_sales_summary_D2",
+      "to": "SOT_web_sales_D2"
+    }
+  ]
+}

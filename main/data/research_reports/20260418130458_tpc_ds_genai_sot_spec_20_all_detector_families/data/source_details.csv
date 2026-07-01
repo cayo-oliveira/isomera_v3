@@ -1,0 +1,7 @@
+field,value
+benchmark,tpc_ds_genai_sot_spec
+display_name,TPC-DS GenAI SOT + SPEC
+architecture_root,/Users/cayofel/Documents/GitHub/isomera_v2/main/data/architectures/tpc_ds_genai_sot_spec
+candidate_scope,sot_spec
+runs,10
+best_of_all,True

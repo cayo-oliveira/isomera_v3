@@ -1,0 +1,7 @@
+field,value
+benchmark,tpc_ds_default
+display_name,TPC-DS (Default)
+architecture_root,/Users/cayofel/Documents/GitHub/isomera_v2/main/data/architectures/tpc_ds
+candidate_scope,all
+runs,10
+best_of_all,True

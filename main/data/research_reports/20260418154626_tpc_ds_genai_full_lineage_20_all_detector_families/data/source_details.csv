@@ -1,0 +1,7 @@
+field,value
+benchmark,tpc_ds_genai_full_lineage
+display_name,TPC-DS GenAI Full Lineage
+architecture_root,/Users/cayofel/Documents/GitHub/isomera_v2/main/data/architectures/tpc_ds_genai_full_lineage
+candidate_scope,all
+runs,10
+best_of_all,True

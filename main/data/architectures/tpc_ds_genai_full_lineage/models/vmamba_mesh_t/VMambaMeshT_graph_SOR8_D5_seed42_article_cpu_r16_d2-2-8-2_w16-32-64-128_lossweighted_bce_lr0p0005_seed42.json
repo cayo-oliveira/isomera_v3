@@ -1,0 +1,323 @@
+{
+  "model_name": "VMambaMeshT_graph_SOR8_D5_seed42_article_cpu_r16_d2-2-8-2_w16-32-64-128_lossweighted_bce_lr0p0005_seed42",
+  "model_family": "VMamba-Mesh-T",
+  "model_family_name": "VMamba-Mesh-T",
+  "model_version": "vmamba_trainable_tensor_v0.1",
+  "pickle_module": "core.algorithms.vmamba_trainable",
+  "pickle_path": "/Users/cayofel/Documents/GitHub/isomera_v2/main/data/architectures/tpc_ds_genai_full_lineage/models/vmamba_mesh_t/VMambaMeshT_graph_SOR8_D5_seed42_article_cpu_r16_d2-2-8-2_w16-32-64-128_lossweighted_bce_lr0p0005_seed42.pkl",
+  "benchmark_name": "tpc_ds_genai_full_lineage",
+  "scenarios": [
+    "graph_SOR8_D5_seed42"
+  ],
+  "source_scenarios": [
+    "graph_SOR8_D5_seed42"
+  ],
+  "source_graph_path": "/Users/cayofel/Documents/GitHub/isomera_v2/main/data/architectures/tpc_ds_genai_full_lineage/gml/graph_SOR8_D5_seed42.gml",
+  "source_labels_path": "/Users/cayofel/Documents/GitHub/isomera_v2/main/data/architectures/tpc_ds_genai_full_lineage/real_pairs/graph_SOR8_D5_seed42.json",
+  "created_at": "2026-06-04 06:56:04",
+  "elapsed_seconds": 1244.761184375,
+  "config": {
+    "variant": "vmamba_mesh_t",
+    "scope_layers": [
+      "SOR",
+      "SOT",
+      "SPEC"
+    ],
+    "resolution": 16,
+    "channels": [
+      "C0",
+      "C1",
+      "C2",
+      "C3",
+      "C4",
+      "C5"
+    ],
+    "architecture": "vss_torch",
+    "preset": "article_cpu",
+    "patch_size": 2,
+    "depths": [
+      2,
+      2,
+      8,
+      2
+    ],
+    "dims": [
+      16,
+      32,
+      64,
+      128
+    ],
+    "hidden_dim": 128,
+    "embedding_dim": 128,
+    "mlp_ratio": 4.0,
+    "dropout": 0.1,
+    "drop_path_rate": 0.15,
+    "threshold": 0.6,
+    "negative_ratio": 16,
+    "batch_size": 16,
+    "auxiliary_features": true,
+    "auxiliary_feature_names": [
+      "same_layer",
+      "same_domain",
+      "name_token_jaccard",
+      "context_node_similarity",
+      "context_edge_similarity",
+      "layer_hist_jaccard",
+      "domain_hist_jaccard",
+      "parent_signature_jaccard",
+      "child_signature_jaccard",
+      "exact_parent_jaccard",
+      "exact_child_jaccard",
+      "canonsort_route_alignment",
+      "diag_fingerprint_similarity",
+      "meshss2d_route_similarity",
+      "hierarchical_context_match",
+      "sparse_density_similarity"
+    ],
+    "seed": 42,
+    "epochs": 10,
+    "learning_rate": 0.0005,
+    "train_ratio": 0.8,
+    "loss_name": "weighted_bce",
+    "optimizer_name": "adamw",
+    "weight_decay": 0.05,
+    "forward_type": "v05",
+    "notes": "Trainable VMamba-style tensor pair model for Isomera."
+  },
+  "training_summary": {
+    "model_version": "vmamba_trainable_tensor_v0.1",
+    "variant": "vmamba_mesh_t",
+    "dataset": {
+      "rows": 5460,
+      "positive": 395,
+      "negative": 5065
+    },
+    "train": {
+      "rows": 4368,
+      "positive": 316,
+      "negative": 4052
+    },
+    "validation": {
+      "rows": 1092,
+      "positive": 79,
+      "negative": 1013
+    },
+    "selected_threshold": 0.6,
+    "selected_metrics": {
+      "threshold": 0.6,
+      "tp": 79,
+      "fp": 142,
+      "fn": 0,
+      "tn": 871,
+      "jaccard": 0.3574660633484163,
+      "precision": 0.3574660633484163,
+      "recall": 1.0,
+      "accuracy": 0.86996336996337
+    },
+    "threshold_candidates": [
+      0.1,
+      0.125,
+      0.15,
+      0.175,
+      0.2,
+      0.225,
+      0.25,
+      0.275,
+      0.3,
+      0.325,
+      0.35,
+      0.375,
+      0.4,
+      0.425,
+      0.45,
+      0.475,
+      0.5,
+      0.525,
+      0.55,
+      0.575,
+      0.6,
+      0.625,
+      0.65,
+      0.675,
+      0.7,
+      0.725,
+      0.75,
+      0.775,
+      0.8,
+      0.825,
+      0.85,
+      0.875,
+      0.9
+    ],
+    "history": [
+      {
+        "epoch": 1,
+        "train_loss": 1.179271,
+        "train_accuracy": 0.588141,
+        "val_jaccard_at_0_5": 0.125683,
+        "val_accuracy_at_0_5": 0.85348
+      },
+      {
+        "epoch": 2,
+        "train_loss": 0.879047,
+        "train_accuracy": 0.798764,
+        "val_jaccard_at_0_5": 0.291513,
+        "val_accuracy_at_0_5": 0.824176
+      },
+      {
+        "epoch": 3,
+        "train_loss": 0.616679,
+        "train_accuracy": 0.861722,
+        "val_jaccard_at_0_5": 0.32377,
+        "val_accuracy_at_0_5": 0.848901
+      },
+      {
+        "epoch": 4,
+        "train_loss": 0.501261,
+        "train_accuracy": 0.876374,
+        "val_jaccard_at_0_5": 0.294776,
+        "val_accuracy_at_0_5": 0.826923
+      },
+      {
+        "epoch": 5,
+        "train_loss": 0.459889,
+        "train_accuracy": 0.879579,
+        "val_jaccard_at_0_5": 0.334746,
+        "val_accuracy_at_0_5": 0.856227
+      },
+      {
+        "epoch": 6,
+        "train_loss": 0.446439,
+        "train_accuracy": 0.880952,
+        "val_jaccard_at_0_5": 0.334746,
+        "val_accuracy_at_0_5": 0.856227
+      },
+      {
+        "epoch": 7,
+        "train_loss": 0.437239,
+        "train_accuracy": 0.882555,
+        "val_jaccard_at_0_5": 0.334746,
+        "val_accuracy_at_0_5": 0.856227
+      },
+      {
+        "epoch": 8,
+        "train_loss": 0.426818,
+        "train_accuracy": 0.883929,
+        "val_jaccard_at_0_5": 0.334746,
+        "val_accuracy_at_0_5": 0.856227
+      },
+      {
+        "epoch": 9,
+        "train_loss": 0.417286,
+        "train_accuracy": 0.882555,
+        "val_jaccard_at_0_5": 0.334746,
+        "val_accuracy_at_0_5": 0.856227
+      },
+      {
+        "epoch": 10,
+        "train_loss": 0.424882,
+        "train_accuracy": 0.883471,
+        "val_jaccard_at_0_5": 0.351111,
+        "val_accuracy_at_0_5": 0.8663
+      }
+    ],
+    "loss": {
+      "loss_name": "torch.nn.BCEWithLogitsLoss(pos_weight)",
+      "pos_weight": 12.822784810126583
+    },
+    "architecture": {
+      "architecture": "vss_torch",
+      "preset": "article_cpu",
+      "patch_size": 2,
+      "depths": [
+        2,
+        2,
+        8,
+        2
+      ],
+      "dims": [
+        16,
+        32,
+        64,
+        128
+      ],
+      "mlp_ratio": 4.0,
+      "drop_path_rate": 0.15,
+      "forward_type": "v05",
+      "batch_size": 16,
+      "auxiliary_features": true,
+      "auxiliary_feature_names": [
+        "same_layer",
+        "same_domain",
+        "name_token_jaccard",
+        "context_node_similarity",
+        "context_edge_similarity",
+        "layer_hist_jaccard",
+        "domain_hist_jaccard",
+        "parent_signature_jaccard",
+        "child_signature_jaccard",
+        "exact_parent_jaccard",
+        "exact_child_jaccard",
+        "canonsort_route_alignment",
+        "diag_fingerprint_similarity",
+        "meshss2d_route_similarity",
+        "hierarchical_context_match",
+        "sparse_density_similarity"
+      ]
+    },
+    "input_contract": {
+      "pipeline": [
+        "CanonSort context ordering",
+        "six-channel lineage tensorization when VMamba-Mesh-T is selected",
+        "patch embedding",
+        "staged VSS-style blocks",
+        "bidirectional row/column SS2D-style scans",
+        "auditable pair-feature calibration vector",
+        "global pooling",
+        "pair head over left/right/absolute-difference/product features",
+        "sigmoid score",
+        "calibrated threshold"
+      ],
+      "channels": {
+        "C0": {
+          "name": "Forward adjacency",
+          "role": "canonical directed lineage edges"
+        },
+        "C1": {
+          "name": "Reverse adjacency",
+          "role": "reverse lineage edges for bidirectional structural context"
+        },
+        "C2": {
+          "name": "Layer diagonal",
+          "role": "SOR/SOT/SPEC identity injected on the tensor diagonal"
+        },
+        "C3": {
+          "name": "Degree fingerprint",
+          "role": "normalized local in/out degree signature on the diagonal"
+        },
+        "C4": {
+          "name": "Lineage route bias",
+          "role": "route prior for the SOR -> SOT -> SPEC direction"
+        },
+        "C5": {
+          "name": "Sparse mask",
+          "role": "occupied-cell mask so structural zeros are explicitly represented"
+        }
+      }
+    },
+    "elapsed_seconds": 1243.445253,
+    "contract": "predict_pairs(graph)",
+    "note": "Trainable VMamba-like VSS/SS2D-style tensor model implemented in native PyTorch; official CUDA/Triton kernels remain the external VMamba reference."
+  },
+  "benchmark_contract": {
+    "input": "networkx.DiGraph",
+    "output": "list[tuple[str, str]] predicted duplicate pairs",
+    "comparison_metrics": [
+      "jaccard",
+      "sf_jaccard",
+      "accuracy",
+      "ET"
+    ],
+    "neural_input": "C x R x R lineage tensor built before the VMamba-style backbone"
+  }
+}

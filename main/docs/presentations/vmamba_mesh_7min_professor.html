@@ -1,0 +1,187 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Isomera e VMamba-Mesh - versão técnica</title>
+  <style>
+    :root {
+      --bg: #f6f7f8;
+      --ink: #17212b;
+      --muted: #66717d;
+      --panel: #ffffff;
+      --line: #d9dee4;
+      --accent: #0f6b6e;
+      --accent2: #8a5a00;
+      --soft: #e9f3f3;
+      --warn: #fff7e6;
+    }
+    * { box-sizing: border-box; }
+    body { margin: 0; font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; background: var(--bg); color: var(--ink); }
+    main { min-height: 100vh; display: grid; grid-template-rows: 1fr auto; }
+    .slide { display: none; min-height: calc(100vh - 72px); padding: 42px 58px 28px; }
+    .slide.active { display: block; }
+    .eyebrow { color: var(--accent); font-size: 14px; font-weight: 800; text-transform: uppercase; margin-bottom: 10px; letter-spacing: .06em; }
+    h1, h2 { margin: 0 0 18px; line-height: 1.05; letter-spacing: 0; }
+    h1 { font-size: 50px; max-width: 1120px; }
+    h2 { font-size: 38px; }
+    h3 { margin: 0 0 8px; font-size: 22px; }
+    p, li { font-size: 20px; line-height: 1.38; }
+    ul { padding-left: 22px; }
+    .grid { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 24px; align-items: start; }
+    .grid-3 { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; }
+    .panel { background: var(--panel); border: 1px solid var(--line); border-radius: 8px; padding: 18px; }
+    .panel p, .panel li { font-size: 17px; }
+    .figure { background: #fff; border: 1px solid var(--line); border-radius: 8px; padding: 10px; }
+    .figure img { width: 100%; max-height: 500px; object-fit: contain; display: block; }
+    .caption { color: var(--muted); font-size: 13px; margin-top: 8px; }
+    .callout { background: var(--warn); border: 1px solid #e6c47c; border-radius: 8px; padding: 16px; color: #4e3600; font-size: 18px; }
+    .demo { background: var(--soft); border: 1px solid #b8d4d4; border-radius: 8px; padding: 16px; font-weight: 800; color: #174b4d; font-size: 20px; }
+    table { width: 100%; border-collapse: collapse; background: #fff; border: 1px solid var(--line); border-radius: 8px; overflow: hidden; font-size: 16px; }
+    .dense { font-size: 13px; }
+    th, td { text-align: left; border-bottom: 1px solid var(--line); padding: 9px 10px; vertical-align: top; }
+    th { background: var(--soft); }
+    tr:last-child td { border-bottom: 0; }
+    strong { color: #0b5f44; }
+    code { background: #eef1f4; border: 1px solid #dce1e6; padding: 2px 6px; border-radius: 5px; }
+    footer { min-height: 72px; display: flex; align-items: center; justify-content: space-between; gap: 18px; padding: 12px 28px; background: #fff; border-top: 1px solid var(--line); color: var(--muted); }
+    button { border: 1px solid var(--line); background: #fff; color: var(--ink); border-radius: 8px; padding: 10px 14px; cursor: pointer; font-size: 16px; }
+    button:hover { border-color: var(--accent); color: var(--accent); }
+    .progress { height: 8px; background: #dfe5e7; border-radius: 999px; width: 220px; overflow: hidden; }
+    .bar { height: 100%; width: 0; background: var(--accent); }
+    @media (max-width: 900px) { .slide { padding: 28px 20px; } h1 { font-size: 34px; } h2 { font-size: 28px; } p, li { font-size: 17px; } .grid, .grid-3 { grid-template-columns: 1fr; } footer { height: auto; flex-wrap: wrap; } }
+</style>
+</head>
+<body>
+<main>
+
+  <section class="slide active">
+    <div class="eyebrow">0:00 - 0:35 | problema</div>
+    <h1>Isomera e VMamba-Mesh: detecção reprodutível de tabelas duplicadas</h1>
+    <div class="grid">
+      <div>
+        <p>O problema é identificar duplicidade estrutural em Data Mesh: tabelas diferentes podem ter nomes distintos, mas repetir a mesma função de linhagem.</p>
+        <p>O Isomera conecta ao banco, materializa grafos, gera matrizes/tensores e executa benchmarks com rastreabilidade.</p>
+      </div>
+      <div class="figure"><img src="vmamba_mesh_assets/isomera_duplicate_pair_subgraphs.png" alt="Subgrafos candidatos"><div class="caption">Dois subgrafos candidatos a duplicidade, gerados pelo fluxo do Isomera.</div></div>
+    </div>
+  </section>
+  <section class="slide">
+    <div class="eyebrow">0:35 - 1:10 | história do projeto</div>
+    <h2>Da formalização ao Article IV</h2>
+    <div class="grid-3">
+      <div class="panel"><h3>Versão 1</h3><p>Formalização de redundância estrutural como problema de grafos e isomorfismo.</p></div>
+      <div class="panel"><h3>Versão 2</h3><p>GNN/GIN para classificar pares, com treinamento supervisionado e benchmarks iniciais.</p></div>
+      <div class="panel"><h3>Versão 3</h3><p>Isomera v2: conexão com banco, geração de benchs, validação com LLM, relatórios e reprodutibilidade.</p></div>
+    </div>
+    <div class="figure" style="margin-top:18px;"><img src="vmamba_mesh_assets/isomera_v2_usage_sequence.png" alt="Fluxo Isomera"><div class="caption">Sequência operacional que será mostrada também na ferramenta.</div></div>
+  </section>
+  <section class="slide">
+    <div class="eyebrow">1:10 - 1:55 | benchmarks</div>
+    <h2>Benchmarks e ground truth</h2>
+    <div class="grid">
+      <div class="panel"><h3>SPEC v2</h3><p>Foco em produtos semânticos finais. É mais limpo para avaliar duplicidade em tabelas finais e foi onde o VMamba-Mesh teve ganho mais estável.</p></div>
+      <div class="panel"><h3>Full Lineage</h3><p>Mistura SOR, SOT e SPEC. É mais amplo e gera mais negativos plausíveis, por isso o IC de qualidade é mais difícil de estabilizar.</p></div>
+    </div>
+    <div class="callout" style="margin-top:18px;">LLM foi usado para apoiar a curadoria auditável de pares difíceis, não como chamada oculta durante o treino.</div>
+  </section>
+  <section class="slide">
+    <div class="eyebrow">1:55 - 2:45 | entrada do modelo</div>
+    <h2>Do grafo ao tensor C0-C5</h2>
+    <div class="grid">
+      <div>
+        <p>O VMamba original trabalha com imagens. O VMamba-Mesh transforma subgrafos de linhagem em tensores canônicos.</p>
+        <ul>
+          <li><strong>CanonSort:</strong> fixa ordem dos nós.</li>
+          <li><strong>DiagFP:</strong> usa a diagonal para camada e grau.</li>
+          <li><strong>MeshSS2D:</strong> adapta cross-scan para rotas SOR-SOT-SPEC.</li>
+          <li><strong>SparseGate:</strong> reduz peso de células vazias.</li>
+        </ul>
+      </div>
+      <div class="figure"><img src="vmamba_mesh_assets/tensor_channels_zoom.png" alt="Canais C0-C5"><div class="caption">C0 forward, C1 reverse, C2 layer, C3 degree, C4 route bias, C5 sparse mask.</div></div>
+    </div>
+  </section>
+  <section class="slide">
+    <div class="eyebrow">2:45 - 3:30 | modelos</div>
+    <h2>V1, V2 e V3</h2>
+    <div class="figure"><img src="vmamba_mesh_assets/vmamba_mesh_model_evolution_v1_v3.png" alt="Evolução V1 V2 V3"><div class="caption">V1 é mais eficiente; V2 é melhor qualidade; V3 é calibração MPS com menos falsos positivos.</div></div>
+  </section>
+  <section class="slide">
+    <div class="eyebrow">3:30 - 4:40 | tabela decisiva</div>
+    <h2>Todos os modelos testados no SPEC v2</h2>
+    
+      <table class="dense">
+        <thead>
+          <tr><th>Modelo</th><th>Protocolo</th><th>Jaccard</th><th>ET</th><th>SF-Jaccard</th><th>Acc.</th><th>Prec.</th><th>Recall</th><th>TP/FP/FN</th></tr>
+        </thead>
+        <tbody><tr><td>VF2</td><td>deterministic graph matcher</td><td>0.1842</td><td>0.0218</td><td>546.68</td><td>0.4618</td><td>0.2185</td><td>0.5399</td><td>291/1041/248</td></tr>
+<tr><td>Node Match</td><td>node-label matcher</td><td>0.0000</td><td>0.0151</td><td>0.00</td><td>0.7749</td><td>0.0000</td><td>0.0000</td><td>0/0/539</td></tr>
+<tr><td>GNN TPC-DS v1</td><td>historical GNN</td><td>0.1128</td><td>0.0118</td><td>333.64</td><td>0.6685</td><td>0.2210</td><td>0.1874</td><td>101/356/438</td></tr>
+<tr><td>GNN GenAI v2 WBCE</td><td>GNN loss reweighting</td><td>0.2184</td><td>0.0111</td><td>1348.31</td><td>0.3754</td><td>0.2331</td><td>0.7755</td><td>418/1375/121</td></tr>
+<tr><td>GNN GenAI v2 hardneg</td><td>GNN hard negatives</td><td>0.0092</td><td>0.0109</td><td>271.84</td><td>0.7758</td><td><strong>0.6250</strong></td><td>0.0093</td><td>5/3/534</td></tr>
+<tr><td>V1 VMamba</td><td>C0-C1 adapter</td><td>0.2555</td><td>0.0060</td><td>5076.80</td><td>0.5378</td><td>0.2861</td><td>0.7050</td><td>380/948/159</td></tr>
+<tr><td>V1 VMamba-Mesh</td><td>C0-C5 adapter</td><td>0.2748</td><td><strong>0.0060</strong></td><td><strong>5464.74</strong></td><td>0.5879</td><td>0.3127</td><td>0.6939</td><td>374/822/165</td></tr>
+<tr><td>V2 VMamba-T CPU</td><td>trainable C0-C1</td><td>0.4815</td><td>0.1583</td><td>200.58</td><td>0.8188</td><td>0.5749</td><td>0.7477</td><td>403/298/136</td></tr>
+<tr><td>V2 VMamba-Mesh-T CPU</td><td>trainable C0-C5</td><td><strong>0.4883</strong></td><td>0.1679</td><td>202.39</td><td>0.8088</td><td>0.5511</td><td><strong>0.8108</strong></td><td>437/356/102</td></tr>
+<tr><td>V3 VMamba-T MPS</td><td>LLM manifest + calibration</td><td>0.3926</td><td>0.0968</td><td>345.75</td><td>0.7603</td><td>0.4775</td><td>0.6883</td><td>371/406/168</td></tr>
+<tr><td>V3 VMamba-Mesh-T MPS</td><td>LLM manifest + calibration</td><td>0.4757</td><td>0.0871</td><td>419.32</td><td><strong>0.8288</strong></td><td>0.6049</td><td>0.6902</td><td>372/243/167</td></tr></tbody>
+      </table>
+    
+    <p class="caption">Colunas em negrito mostram o melhor por indicador. ET menor é melhor; demais métricas maiores são melhores.</p>
+  </section>
+  <section class="slide">
+    <div class="eyebrow">4:40 - 5:20 | interpretação dos resultados</div>
+    <h2>Jaccard e SF-Jaccard contam histórias diferentes</h2>
+    <div class="grid">
+      <div class="figure"><img src="vmamba_mesh_assets/vmamba_family_spec_v2_jaccard_comparison.png" alt="Jaccard"><div class="caption">Melhor qualidade pooled: V2 VMamba-Mesh-T CPU, Jaccard 0.4883.</div></div>
+      <div class="figure"><img src="vmamba_mesh_assets/vmamba_family_spec_v2_sf_jaccard_comparison.png" alt="SF-Jaccard"><div class="caption">Melhor eficiência: V1 VMamba-Mesh adapter, SF-Jaccard 5464.74.</div></div>
+    </div>
+  </section>
+  <section class="slide">
+    <div class="eyebrow">5:20 - 6:25 | demo Isomera</div>
+    <h2>O que mostrar na ferramenta</h2>
+    <div class="demo">Abrir Isomera -> Study Lab -> Deep Learning Workbench -> selecionar SPEC v2, SOR16, VMamba-Mesh e VMamba-Mesh-T.</div>
+    <ul>
+      <li>Mostrar grafo, matriz de adjacência e canais.</li>
+      <li>Mostrar seletor de modelo e hiperparâmetros.</li>
+      <li>Mostrar Benchmark & Examples -> Article Reproducibility.</li>
+      <li>Mostrar Research Reports com CSV, figuras, manifest e trace.</li>
+    </ul>
+  </section>
+  <section class="slide">
+    <div class="eyebrow">6:25 - 7:00 | conclusão e Article V</div>
+    <h2>Conclusão rigorosa</h2>
+    <p>Article IV fecha a história com três papéis: V1 para eficiência, V2 para qualidade neural e V3 para calibração MPS.</p>
+    <p>Próximo passo natural para o Article V: híbrido VMamba-Mesh + GNN, com gate rápido de alta revocação e VMamba-Mesh-T como reranker dos pares plausíveis.</p>
+  </section>
+
+
+  <footer>
+    <div>
+      <button id="prev">Anterior</button>
+      <button id="next">Próximo</button>
+    </div>
+    <div><span id="count"></span></div>
+    <div class="progress"><div class="bar" id="bar"></div></div>
+  </footer>
+  <script>
+    const slides = [...document.querySelectorAll('.slide')];
+    let i = 0;
+    function show(n) {
+      i = Math.max(0, Math.min(slides.length - 1, n));
+      slides.forEach((s, idx) => s.classList.toggle('active', idx === i));
+      document.getElementById('count').textContent = `${i + 1} / ${slides.length}`;
+      document.getElementById('bar').style.width = `${((i + 1) / slides.length) * 100}%`;
+    }
+    document.getElementById('prev').onclick = () => show(i - 1);
+    document.getElementById('next').onclick = () => show(i + 1);
+    document.addEventListener('keydown', (e) => {
+      if (['ArrowRight', 'PageDown', ' '].includes(e.key)) show(i + 1);
+      if (['ArrowLeft', 'PageUp'].includes(e.key)) show(i - 1);
+    });
+    show(0);
+  </script>
+
+</main>
+</body>
+</html>

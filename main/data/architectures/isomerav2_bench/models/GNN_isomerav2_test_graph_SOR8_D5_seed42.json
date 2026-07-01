@@ -1,0 +1,45 @@
+{
+  "model_path": "/Users/cayofel/Documents/GitHub/isomera_v2/main/data/architectures/isomerav2_bench/models/GNN_isomerav2_test_graph_SOR8_D5_seed42.pkl",
+  "scenarios": [
+    "graph_SOR8_D5_seed42"
+  ],
+  "dataset_summary": [
+    {
+      "scenario": "graph_SOR8_D5_seed42",
+      "positive_pairs": 376,
+      "negative_pairs": 376,
+      "dataset_rows": 752
+    }
+  ],
+  "epochs": 2,
+  "learning_rate": 0.005,
+  "hidden_channels": 16,
+  "dropout": 0.2,
+  "negative_ratio": 1,
+  "train_ratio": 0.8,
+  "test_ratio": 0.2,
+  "balance_strategy": "negative_sampling",
+  "seed": 42,
+  "optimizer": "adam",
+  "history": [
+    {
+      "epoch": 1,
+      "train_loss": 0.696498,
+      "train_accuracy": 0.499168,
+      "val_loss": 0.688126,
+      "val_accuracy": 0.503311,
+      "epoch_seconds": 0.764884
+    },
+    {
+      "epoch": 2,
+      "train_loss": 0.631166,
+      "train_accuracy": 0.655574,
+      "val_loss": 0.515034,
+      "val_accuracy": 0.708609,
+      "epoch_seconds": 0.806046
+    }
+  ],
+  "train_size": 601,
+  "val_size": 151,
+  "status": "completed"
+}

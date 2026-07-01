@@ -1,0 +1,27 @@
+{
+  "created_at": "2026-06-10 21:26:21",
+  "benchmark": "tpc_ds_genai_spec_v2",
+  "scenario": "graph_SOR16_D1_seed42",
+  "pair": [
+    "SPEC_customer_summary_D1",
+    "SPEC_store_sales_summary_D1"
+  ],
+  "model_label": "smoke",
+  "interpretability_contract": [
+    "selected report/manifest",
+    "benchmark scenario graph",
+    "candidate pair",
+    "C0-C5 or C0-C1 tensorization",
+    "structural channel maps",
+    "neural input-gradient saliency when trainable pickle is available",
+    "score/threshold/decision trace"
+  ],
+  "figures": {
+    "smoke_saliency": "/Users/cayofel/Documents/GitHub/isomera_v2/main/data/research_reports/20260610_212621_vmamba_interpretability_graph_SOR16_D1_seed42/figures/smoke_saliency.png"
+  },
+  "result": {
+    "score": 0.2231864631175995,
+    "threshold": 0.2,
+    "decision": "duplicate"
+  }
+}

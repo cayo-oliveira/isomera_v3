@@ -1,0 +1,14 @@
+[
+  [
+    "SOT_catalog_sales_D2",
+    "SOT_web_sales_D2"
+  ],
+  [
+    "SOT_customer_orders_D1",
+    "SOT_store_sales_D1"
+  ],
+  [
+    "SPEC_store_sales_summary_D1",
+    "SPEC_store_sales_summary_D2"
+  ]
+]
