@@ -1,8 +1,16 @@
 # Isomera v3
 
-Isomera v3 is an executable research workbench for detecting duplicate or redundant tables in data architectures represented as lineage graphs. It was developed in the context of research at Centro de Informática da Universidade Federal de Pernambuco (CIn/UFPE).
+Isomera v3 is an executable research workbench for detecting duplicate or redundant tables in data architectures represented as lineage graphs. It was developed in the context of graduate research at Centro de Informática da Universidade Federal de Pernambuco (CIn/UFPE), in connection with the [MoDCS Research Group](https://www.modcs.org/).
 
 The repository contains the application code, benchmark scenarios, trained model artifacts and reproducibility evidence needed to run the public Isomera demo locally. Research notebooks, TeXLab workspaces, manuscript drafts and exploratory study files are intentionally not included.
+
+
+## Authors And Research Context
+
+- **Cayo Oliveira** — developer and graduate researcher, CIn/UFPE. Contact: [cflo@cin.ufpe.br](mailto:cflo@cin.ufpe.br), [cayo07@gmail.com](mailto:cayo07@gmail.com), [LinkedIn: cayo-oliveira](https://www.linkedin.com/in/cayo-oliveira/).
+- **Prof. Jamilson Dantas** — advisor, CIn/UFPE.
+- **MoDCS Research Group** — research group associated with CIn/UFPE. Its public website identifies the group as **MoDCS Research Group** and organizes material around research projects, publications, theses/dissertations, courses and WMoDCS activities. See: <https://www.modcs.org/>.
+
 
 ## What Is Included
 
@@ -138,7 +146,7 @@ This repository is intended as a clean executable release of Isomera. It is not 
 
 ## Citation
 
-If you use this software in academic work, cite the Isomera project and the related CIn/UFPE research artifacts associated with data lineage, duplicate table detection and VMamba-Mesh reproducibility.
+If you use this software in academic work, cite the Isomera project, Cayo Oliveira, Prof. Jamilson Dantas, CIn/UFPE and the related MoDCS/CIn-UFPE research artifacts associated with data lineage, duplicate table detection and VMamba-Mesh reproducibility.
 
 A formal citation file may be added after the final publication metadata is available.
 

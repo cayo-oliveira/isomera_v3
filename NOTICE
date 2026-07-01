@@ -1,7 +1,9 @@
 Isomera v3
 
-Developed by Cayo Oliveira in the context of graduate research at Centro de Informática da Universidade Federal de Pernambuco (CIn/UFPE), with academic supervision and collaboration from the research group.
+Developed by Cayo Oliveira in the context of graduate research at Centro de Informática da Universidade Federal de Pernambuco (CIn/UFPE), under the supervision of Prof. Jamilson Dantas and in connection with the MoDCS Research Group (https://www.modcs.org/), a research group associated with CIn/UFPE.
 
 This public repository contains the executable Isomera application, selected benchmark data, trained model artifacts and reproducibility evidence required to run the public demo. It intentionally excludes private notebooks, manuscript drafts, TeXLab workspaces and exploratory research material.
 
 Institutional names are used for academic attribution. The software is provided under the MIT License without warranty.
+
+Contacts: cflo@cin.ufpe.br, cayo07@gmail.com, LinkedIn cayo-oliveira.
