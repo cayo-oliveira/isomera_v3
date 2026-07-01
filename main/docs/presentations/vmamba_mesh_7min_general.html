@@ -59,21 +59,21 @@
     <div class="eyebrow">0:00 - 0:45 | ideia central</div>
     <h1>Isomera: encontrando tabelas duplicadas em arquiteturas de dados</h1>
     <p>Quando várias equipes criam dados ao mesmo tempo, duas tabelas podem fazer quase a mesma coisa sem terem o mesmo nome. O Isomera ajuda a encontrar esses casos olhando a estrutura de dependências.</p>
-    <div class="figure"><img src="vmamba_mesh_assets/isomera_duplicate_pair_subgraphs.png" alt="Duplicidade em tabelas"><div class="caption">Duas tabelas vistas como dois pequenos grafos.</div></div>
+    <div class="figure"><img src="vmamba_mesh_assets/final_paper_figures/sor16_lineage_graph.png" alt="Duplicidade em tabelas"><div class="caption">Duas tabelas vistas como dois pequenos grafos.</div></div>
   </section>
   <section class="slide">
     <div class="eyebrow">0:45 - 1:30 | método</div>
     <h2>Como o Isomera enxerga uma tabela</h2>
     <div class="grid">
       <div><p>Em vez de comparar só nomes, o Isomera compara a linhagem: de onde a tabela vem, para onde ela vai e qual papel ela exerce.</p></div>
-      <div class="figure"><img src="vmamba_mesh_assets/isomera_v2_usage_sequence.png" alt="Fluxo Isomera"><div class="caption">Banco -> grafo -> matriz -> modelo -> relatório.</div></div>
+      <div class="figure"><img src="vmamba_mesh_assets/final_paper_figures/trainable_decision_pipeline.png" alt="Fluxo Isomera"><div class="caption">Banco -> grafo -> matriz -> modelo -> relatório.</div></div>
     </div>
   </section>
   <section class="slide">
     <div class="eyebrow">1:30 - 2:30 | VMamba-Mesh</div>
     <h2>Por que usar VMamba-Mesh?</h2>
     <p>O VMamba trabalha bem com grades 2D. O VMamba-Mesh transforma grafos de tabelas em uma grade com seis canais, cada um guardando uma parte da estrutura.</p>
-    <div class="figure"><img src="vmamba_mesh_assets/tensor_channels_zoom.png" alt="Canais"><div class="caption">Os canais ajudam o modelo a não olhar só zeros na matriz.</div></div>
+    <div class="figure"><img src="vmamba_mesh_assets/final_paper_figures/sor16_tensor_channels_6ch.png" alt="Canais"><div class="caption">Os canais ajudam o modelo a não olhar só zeros na matriz.</div></div>
   </section>
   <section class="slide">
     <div class="eyebrow">2:30 - 4:00 | resultados</div>
@@ -82,13 +82,13 @@
       <div class="panel"><h3>Melhor qualidade</h3><p>V2 VMamba-Mesh-T CPU: Jaccard 0.4883.</p></div>
       <div class="panel"><h3>Melhor velocidade</h3><p>V1 VMamba-Mesh adapter: SF-Jaccard 5464.74.</p></div>
     </div>
-    <div class="figure" style="margin-top:16px;"><img src="vmamba_mesh_assets/vmamba_family_spec_v2_jaccard_comparison.png" alt="Jaccard"><div class="caption">Quando a métrica é qualidade, a versão neural V2 vence.</div></div>
+    <div class="figure" style="margin-top:16px;"><img src="vmamba_mesh_assets/final_paper_figures/spec_v2_jaccard_comparison.png" alt="Jaccard"><div class="caption">Quando a métrica é qualidade, a versão neural V2 vence.</div></div>
   </section>
   <section class="slide">
     <div class="eyebrow">4:00 - 5:10 | eficiência</div>
     <h2>Por que a versão rápida ainda importa?</h2>
     <p>Em produção, não basta acertar. O modelo precisa rodar rápido em muitos pares. Por isso usamos SF-Jaccard: qualidade multiplicada por volume e dividida pelo tempo.</p>
-    <div class="figure"><img src="vmamba_mesh_assets/vmamba_family_spec_v2_sf_jaccard_comparison.png" alt="SF-Jaccard"><div class="caption">Quando o tempo entra na conta, o adapter determinístico é o candidato operacional.</div></div>
+    <div class="figure"><img src="vmamba_mesh_assets/final_paper_figures/spec_v2_sf_jaccard_comparison.png" alt="SF-Jaccard"><div class="caption">Quando o tempo entra na conta, o adapter determinístico é o candidato operacional.</div></div>
   </section>
   <section class="slide">
     <div class="eyebrow">5:10 - 6:20 | demonstração</div>

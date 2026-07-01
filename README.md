@@ -1,164 +1,58 @@
 # Isomera v3
 
-**A reproducible workbench for finding duplicate tables in data architectures using lineage graphs, graph matching and trainable neural models.**
-
-Isomera v3 turns a data architecture into something that can be inspected, tested and reproduced. Instead of asking only whether two table names look similar, Isomera looks at lineage: where a table comes from, which transformations created it, which semantic layer it belongs to and how similar its neighborhood is to another table.
-
 <p align="center">
-  <img src="main/docs/presentations/vmamba_mesh_assets/vmamba_mesh_problem_input_output.png" alt="Isomera duplicate table detection problem" width="82%">
+  <strong>Find duplicate tables in data architectures by turning lineage into reproducible graph, tensor and neural evidence.</strong>
 </p>
 
-## Why This Exists
-
-Data Mesh decentralizes ownership. That is useful, but it also makes it easier for different domains to recreate equivalent tables with different names, slightly different transformations or different local conventions. The result is duplicated maintenance, repeated storage, inconsistent metrics and harder governance.
-
-Isomera was created to make this problem operational. It represents SOR, SOT and SPEC assets as lineage graphs, compares candidate table pairs with deterministic and neural models, and records the evidence needed to reproduce each result.
-
 <p align="center">
-  <img src="main/docs/presentations/vmamba_mesh_assets/isomera_vmamba_pipeline.png" alt="Isomera pipeline" width="88%">
+  <a href="https://www.python.org/"><img alt="Python" src="https://img.shields.io/badge/Python-3.11+-3776AB?logo=python&logoColor=white"></a>
+  <a href="https://streamlit.io/"><img alt="Streamlit" src="https://img.shields.io/badge/UI-Streamlit-FF4B4B?logo=streamlit&logoColor=white"></a>
+  <a href="LICENSE"><img alt="License" src="https://img.shields.io/badge/License-MIT-green"></a>
+  <a href="https://www.modcs.org/"><img alt="MoDCS" src="https://img.shields.io/badge/MoDCS-CIn%2FUFPE-blue"></a>
 </p>
 
-## What Is Isomera?
-
-Isomera is a local Streamlit application and research workbench. It lets a user:
-
-- inspect benchmark lineage graphs;
-- compare duplicate-table detectors side by side;
-- run VF2, Node Match, GNN/GIN, Vanilla VMamba, VMamba-Mesh, VMamba-T and VMamba-Mesh-T;
-- open stored reports and model artifacts;
-- inspect neural/structural interpretability images;
-- reproduce Article IV evidence from packaged benchmarks, metrics and manifests.
-
-The core idea is simple: a data lineage graph can be converted into a canonical tensor. That tensor can be read by graph algorithms, deterministic VMamba-Mesh adapters or trainable PyTorch models inspired by visual state-space models.
-
 <p align="center">
-  <img src="main/docs/presentations/vmamba_mesh_assets/vmamba_mesh_architecture_surgery_ieee_style.png" alt="VMamba-Mesh and VMamba-Mesh-T architecture" width="92%">
+  <img src="main/docs/presentations/vmamba_mesh_assets/final_paper_figures/vmamba_mesh_dual_architecture.png" alt="Isomera VMamba-Mesh architecture" width="92%">
 </p>
 
-## Research Context
+## The short version
 
-This public repository is the executable release of Isomera v3. It was developed in the context of graduate research at **Centro de Informática da Universidade Federal de Pernambuco (CIn/UFPE)**, in connection with the **[MoDCS Research Group](https://www.modcs.org/)**.
+Modern data platforms often contain the same analytical idea more than once: two domains recreate a customer summary, a sales aggregate, a reporting table or a semantic product with different names and slightly different lineage. Exact graph isomorphism catches only part of this. A useful governance tool needs to inspect lineage, compare candidate pairs, explain the decision and reproduce the result later.
 
-The MoDCS public website identifies the group as **MoDCS Research Group** and organizes its academic material around research projects, publications, theses/dissertations, courses and WMoDCS activities. In this repository, MoDCS is referenced as the CIn/UFPE research group context in which this line of work is being developed.
+**Isomera v3** is the executable version of that workflow. It packages benchmark lineage graphs, deterministic graph baselines, trainable deep-learning models, model reports, interpretability artifacts and a Streamlit interface that lets a reviewer move from a table-pair suspicion to auditable evidence.
 
-**Authors and contacts**
+## What Isomera does
 
-- **Cayo Oliveira** — developer and graduate researcher, CIn/UFPE.  
-  Email: [cflo@cin.ufpe.br](mailto:cflo@cin.ufpe.br), [cayo07@gmail.com](mailto:cayo07@gmail.com).  
-  LinkedIn: [cayo-oliveira](https://www.linkedin.com/in/cayo-oliveira/).
-- **Prof. Jamilson Dantas** — advisor, CIn/UFPE.
-- **MoDCS Research Group** — CIn/UFPE research group context: <https://www.modcs.org/>.
+Isomera reads data-architecture scenarios as directed lineage graphs. Nodes represent operational sources, transformations and semantic products. Candidate duplicate tables are evaluated through several model families under the same app contract: each model receives graph evidence and returns duplicate-pair decisions, scores, metrics and reproducibility traces.
 
-## What Is Included
-
-```text
-main/ui/app.py                         Streamlit application entry point
-main/core/                             Core graph, benchmark, model and persistence logic
-main/core/algorithms/                  VF2, Node Match, GNN, VMamba, VMamba-Mesh and trainable VMamba models
-main/scripts/                          Local launcher and reproducibility helpers
-main/data/architectures/               Benchmark graphs, labels and stored model artifacts
-main/data/tpcds_postgres/              PostgreSQL scenario manifests and schema files
-main/data/article_evidence/            Packaged Article IV evidence used by the app
-main/data/research_reports/            Reproducibility reports and result packages used by the UI
-main/docs/presentations/               Runtime images and presentation assets shown inside the app
-.github/knowledge_bases/               Knowledge base files shown in the Study Lab help
-```
-
-This repository intentionally excludes the private research workspace:
-
-```text
-research/
-papercept_compiler/
-Jupyter notebooks
-LaTeX manuscript workspaces
-local virtual environments
-runtime logs and caches
-```
-
-## Quick Start
-
-Recommended manual startup:
-
-```bash
-git clone https://github.com/cayo-oliveira/isomera_v3.git
-cd isomera_v3
-python3.11 -m venv .venv
-.venv/bin/python -m pip install --upgrade pip
-.venv/bin/python -m pip install -r main/requirements.txt
-.venv/bin/python -m streamlit run main/ui/app.py --server.port 8501 --server.address localhost
-```
-
-Then open:
-
-```text
-http://localhost:8501
-```
-
-On macOS, the launcher can also be used:
-
-```bash
-./launch_isomera.command
-```
-
-The launcher checks the local virtual environment, dependencies, Streamlit process state and local database services before opening the app.
-
-## Requirements
-
-Recommended environment:
-
-- macOS or Linux;
-- Python 3.11+;
-- Git;
-- internet access for the first dependency installation.
-
-Optional but useful:
-
-- PostgreSQL 16, for materialized TPC-DS scenario inspection;
-- MySQL, for publication/backend demonstrations;
-- Apple Silicon MPS or another PyTorch-supported device for neural experiments.
-
-The app can open and inspect packaged benchmarks without manually creating the databases first. Database-backed flows require local database services.
-
-## First Walkthrough
-
-After opening the app, these are the most useful paths:
-
-```text
-Help -> VMamba-Mesh Presentation
-Study Lab -> Deep Learning Workbench
-Study Lab -> Model Reports
-Study Lab -> Model Interpretability
-Benchmark & Examples -> Article Reproducibility
-Research Reports
-```
-
-A good first run is:
-
-1. Open `Help -> VMamba-Mesh Presentation` to understand the problem and architecture.
-2. Open `Study Lab -> Deep Learning Workbench` and select `tpc_ds_genai_spec_v2`.
-3. Compare `Vanilla VMamba baseline` and `VMamba-Mesh Isomera adapter`.
-4. Open `Study Lab -> Model Reports` to inspect trainable VMamba-T and VMamba-Mesh-T evidence.
-5. Open `Study Lab -> Model Interpretability` and inspect saliency/structural influence for SOR16-D1.
-6. Open `Benchmark & Examples -> Article Reproducibility` and run the Article IV reproduction flow.
+The VMamba-Mesh path converts a local graph context into a six-channel tensor:
 
 <p align="center">
-  <img src="main/docs/presentations/vmamba_mesh_assets/sor16_lineage_graph.png" alt="SOR16 lineage graph" width="45%">
-  <img src="main/docs/presentations/vmamba_mesh_assets/sor16_adjacency_matrix.png" alt="SOR16 adjacency matrix" width="45%">
+  <img src="main/docs/presentations/vmamba_mesh_assets/final_paper_figures/sor16_lineage_graph.png" alt="SOR16 lineage graph" width="47%">
+  <img src="main/docs/presentations/vmamba_mesh_assets/final_paper_figures/sor16_adjacency_matrix.png" alt="SOR16 adjacency matrix" width="47%">
 </p>
 
-## Model Families
+<p align="center">
+  <img src="main/docs/presentations/vmamba_mesh_assets/final_paper_figures/sor16_tensor_channels_6ch.png" alt="Six tensor channels" width="92%">
+</p>
 
-The public package includes executable model families used by the app:
+The channels are: forward adjacency, reverse adjacency, layer diagonal, degree fingerprint, lineage-route bias and sparse mask. This makes the tensor more than an image of a graph: it preserves direction, layer, sparsity and governance structure before scoring or neural inference.
 
-- **VF2**: deterministic graph-isomorphism baseline.
-- **Node Match**: deterministic baseline using graph/node matching rules.
-- **GNN/GIN**: graph neural pair-classifier artifacts.
-- **Vanilla VMamba baseline**: tensor-based baseline using graph-derived channels.
-- **VMamba-Mesh adapter**: deterministic lineage-aware VMamba-Mesh scoring path.
-- **VMamba-T**: trainable PyTorch model using C0/C1 channels.
-- **VMamba-Mesh-T**: trainable PyTorch model using the full C0-C5 tensor contract.
+## Model families included
 
-The trainable path follows this contract:
+Isomera v3 includes executable routes for:
+
+| Family | Role in the app |
+| --- | --- |
+| VF2 | deterministic exact/near-exact graph matching baseline |
+| Node Match | deterministic node/edge matching baseline |
+| GNN/GIN | graph neural pair-classifier artifacts |
+| Vanilla VMamba | trainable tensor route using adjacency channels C0/C1 |
+| VMamba-Mesh adapter | deterministic six-channel structural score |
+| VMamba-T | PyTorch trainable model over C0/C1 |
+| VMamba-Mesh-T | PyTorch trainable model over the full C0-C5 tensor |
+
+For the trainable route, the decision path is:
 
 ```text
 graph pair
@@ -175,55 +69,131 @@ graph pair
 ```
 
 <p align="center">
-  <img src="main/docs/presentations/vmamba_mesh_assets/isomera_real_graph_tensor_channels.png" alt="Six VMamba-Mesh tensor channels" width="88%">
+  <img src="main/docs/presentations/vmamba_mesh_assets/final_paper_figures/trainable_decision_pipeline.png" alt="Trainable duplicate decision pipeline" width="92%">
 </p>
 
-## Reproducing The Article IV Evidence
+## What you can reproduce
 
-The packaged Article IV evidence is available under:
+The public repository is designed so a professor, reviewer or researcher can run the app and inspect the same kind of evidence used in the final report:
 
-```text
-main/data/article_evidence/vmamba_mesh_genai_benchmark/
-```
-
-The benchmark/model artifacts are available under:
-
-```text
-main/data/architectures/tpc_ds_genai_spec_v2/
-main/data/architectures/tpc_ds_genai_full_lineage/
-```
-
-Inside the app:
-
-```text
-Benchmark & Examples -> Article Reproducibility
-```
-
-Select:
-
-```text
-Article IV - VMamba-Mesh operational study
-```
-
-Use quick mode for a single scenario or article evidence mode to compare stored metrics against expected article values.
+- benchmark scenarios for SPEC v2 and Full Lineage;
+- stored model artifacts and manifests;
+- deterministic and trainable model reports;
+- score, threshold and decision traces;
+- tensor-channel visualizations;
+- input-gradient saliency for a selected SOR16-D1 pair;
+- CSV, JSON and Markdown reports generated by the reproducibility workflow.
 
 <p align="center">
-  <img src="main/docs/presentations/vmamba_mesh_assets/trainable_results/spec_v2_combined_sf_jaccard_with_trainable.png" alt="SPEC v2 trainable comparison" width="47%">
-  <img src="main/docs/presentations/vmamba_mesh_assets/trainable_results/full_lineage_combined_sf_jaccard_with_trainable.png" alt="Full Lineage trainable comparison" width="47%">
+  <img src="main/docs/presentations/vmamba_mesh_assets/final_paper_figures/spec_v2_jaccard_comparison.png" alt="SPEC v2 Jaccard comparison" width="47%">
+  <img src="main/docs/presentations/vmamba_mesh_assets/final_paper_figures/spec_v2_sf_jaccard_comparison.png" alt="SPEC v2 SF-Jaccard comparison" width="47%">
 </p>
 
-## Repository Scope
+## Quick start
 
-This repository is meant to be runnable and public. It is not the complete private research workspace. Generated manuscripts, notebooks and TeXLab materials should remain outside this repository unless explicitly prepared for publication.
+```bash
+git clone https://github.com/cayo-oliveira/isomera_v3.git
+cd isomera_v3
+python3.11 -m venv .venv
+.venv/bin/python -m pip install --upgrade pip
+.venv/bin/python -m pip install -r main/requirements.txt
+.venv/bin/python -m streamlit run main/ui/app.py --server.port 8501 --server.address localhost
+```
 
-The first public goal is reproducibility: a professor, reviewer or researcher should be able to clone the repository, install dependencies, open the app and inspect the same benchmark/model evidence used in the demo.
+Open:
+
+```text
+http://localhost:8501
+```
+
+On macOS, you can also use:
+
+```bash
+./launch_isomera.command
+```
+
+The launcher checks the virtual environment, dependencies, Streamlit process state and local database services before opening the app.
+
+## Recommended demo path
+
+Inside the app, follow this path for a compact review:
+
+```text
+Help -> VMamba-Mesh Presentation
+Study Lab -> Deep Learning Workbench
+Study Lab -> Model Reports
+Study Lab -> Model Interpretability
+Benchmark & Examples -> Article Reproducibility
+Research Reports
+```
+
+A practical first walkthrough:
+
+1. Open `Help -> VMamba-Mesh Presentation` to see the problem, architecture and result story.
+2. Open `Study Lab -> Deep Learning Workbench`, select `tpc_ds_genai_spec_v2` and inspect `graph_SOR16_D1_seed42`.
+3. Compare `Vanilla VMamba baseline` with `VMamba-Mesh Isomera adapter`.
+4. Open `Study Lab -> Model Reports` to inspect stored VMamba-T and VMamba-Mesh-T campaigns.
+5. Open `Study Lab -> Model Interpretability` to load SOR16-D1, inspect graph, matrix, channels, score, threshold and saliency.
+6. Open `Benchmark & Examples -> Article Reproducibility` to run the packaged reproducibility workflow.
+
+<p align="center">
+  <img src="main/docs/presentations/vmamba_mesh_assets/final_paper_figures/sor16_neural_saliency.png" alt="SOR16 neural saliency" width="78%">
+</p>
+
+## Repository map
+
+```text
+main/ui/app.py                         Streamlit app entry point
+main/core/                             Graph, benchmark, model and persistence logic
+main/core/algorithms/                  VF2, Node Match, GNN, VMamba and VMamba-Mesh routes
+main/scripts/                          Launch and reproducibility helpers
+main/data/architectures/               Packaged benchmarks, labels and model artifacts
+main/data/tpcds_postgres/              PostgreSQL scenario manifests and schema files
+main/data/article_evidence/            Packaged reproducibility evidence used by the app
+main/data/research_reports/            Stored reports surfaced in the UI
+main/docs/                             Public technical documentation and presentation assets
+.github/knowledge_bases/               Knowledge base files shown in Study Lab help
+```
+
+This repository intentionally excludes the private research workspace, notebooks, manuscript work directories, local virtual environments, runtime logs and caches. The goal is to keep the public package runnable and reviewable.
+
+## Requirements
+
+Recommended:
+
+- macOS or Linux;
+- Python 3.11+;
+- Git;
+- internet access for the first dependency installation.
+
+Optional:
+
+- PostgreSQL 16 for materialized TPC-DS inspection;
+- MySQL for backend demonstrations;
+- Apple Silicon MPS or another PyTorch-supported device for neural experiments.
+
+Packaged benchmarks can be inspected without manually creating databases first. Database-backed flows require local database services.
+
+## Research context
+
+Isomera v3 was developed in the context of graduate research at the **Centro de Informatica da Universidade Federal de Pernambuco (CIn/UFPE)** and the **[MoDCS Research Group](https://www.modcs.org/)**.
+
+The MoDCS public site presents the group as a CIn/UFPE research group with projects, publications, theses, dissertations, courses and WMoDCS activities. In this repository, MoDCS is the research context for the data-lineage, governance and reproducible-modeling work packaged in Isomera.
+
+**Authors and contacts**
+
+- **Cayo Oliveira**, developer and graduate researcher, CIn/UFPE.  
+  Email: [cflo@cin.ufpe.br](mailto:cflo@cin.ufpe.br), [cayo07@gmail.com](mailto:cayo07@gmail.com).  
+  LinkedIn: [cayo-oliveira](https://www.linkedin.com/in/cayo-oliveira/).
+- **Prof. Jamilson Dantas**, advisor, CIn/UFPE.
+- **MoDCS Research Group**, CIn/UFPE: <https://www.modcs.org/>.
 
 ## Citation
 
-If you use this software in academic work, cite the Isomera project, Cayo Oliveira, Prof. Jamilson Dantas, CIn/UFPE and the related MoDCS/CIn-UFPE research artifacts associated with data lineage, duplicate table detection and VMamba-Mesh reproducibility.
+If you use this software in academic work, cite Isomera, Cayo Oliveira, Prof. Jamilson Dantas, CIn/UFPE and the associated MoDCS/CIn-UFPE research artifacts on data lineage, duplicate-table detection and VMamba-Mesh reproducibility.
 
-A formal citation file may be added after the final publication metadata is available.
+A formal citation file can be added after final publication metadata is available.
 
 ## License
 
-This repository is released under the MIT License. See [LICENSE](LICENSE) and [NOTICE](NOTICE).
+Released under the MIT License. See [LICENSE](LICENSE) and [NOTICE](NOTICE).

@@ -126,7 +126,7 @@ predict_pairs(G)
 
 The article-ready version of this map is generated as a high-resolution image:
 
-![Isomera GIN pair classifier](../../../research/img/isomera_v2_gnn_pair_classifier.png)
+![VMamba-Mesh trainable decision pipeline](../presentations/vmamba_mesh_assets/final_paper_figures/trainable_decision_pipeline.png)
 
 Use this image when explaining how the graph seen in Scenario Studio becomes model input:
 

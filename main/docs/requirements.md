@@ -260,10 +260,10 @@ Este layout garante que o usuário possa configurar rapidamente os parâmetros e
 
 #### Exemplos do Dall-E
 
-![imagem](img/DALL·E%202024-11-22%2002.41.16%20-%20A%20clean,%20structured%20interface%20mockup%20for%20a%20data%20lineage%20application.%20On%20the%20left,%20a%20vertical%20panel%20titled%20'Configuration%20Parameters'%20with%20clearly%20spac.webp)
+![Arquitetura VMamba-Mesh](presentations/vmamba_mesh_assets/final_paper_figures/vmamba_mesh_dual_architecture.png)
 
-![imagem](img/bdad81d8-4bbd-4090-80af-024dc59400b3.webp)
+![Grafo SOR16-D1](presentations/vmamba_mesh_assets/final_paper_figures/sor16_lineage_graph.png)
 
-![imagem](img/cad5c5b6-acd2-4949-9ec5-43a3681d4816.webp)
+![Canais C0-C5](presentations/vmamba_mesh_assets/final_paper_figures/sor16_tensor_channels_6ch.png)
 
-![imagem](img/61de8e47-4745-4cb2-86e4-d24b0f7a2382.webp)
+![Saliency neural SOR16-D1](presentations/vmamba_mesh_assets/final_paper_figures/sor16_neural_saliency.png)

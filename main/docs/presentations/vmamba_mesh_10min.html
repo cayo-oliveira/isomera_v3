@@ -63,7 +63,7 @@
         <p>O problema é identificar duplicidade estrutural em Data Mesh: tabelas diferentes podem ter nomes distintos, mas repetir a mesma função de linhagem.</p>
         <p>O Isomera conecta ao banco, materializa grafos, gera matrizes/tensores e executa benchmarks com rastreabilidade.</p>
       </div>
-      <div class="figure"><img src="vmamba_mesh_assets/isomera_duplicate_pair_subgraphs.png" alt="Subgrafos candidatos"><div class="caption">Dois subgrafos candidatos a duplicidade, gerados pelo fluxo do Isomera.</div></div>
+      <div class="figure"><img src="vmamba_mesh_assets/final_paper_figures/sor16_lineage_graph.png" alt="Subgrafos candidatos"><div class="caption">Dois subgrafos candidatos a duplicidade, gerados pelo fluxo do Isomera.</div></div>
     </div>
   </section>
   <section class="slide">
@@ -74,7 +74,7 @@
       <div class="panel"><h3>Versão 2</h3><p>GNN/GIN para classificar pares, com treinamento supervisionado e benchmarks iniciais.</p></div>
       <div class="panel"><h3>Versão 3</h3><p>Isomera v2: conexão com banco, geração de benchs, validação com LLM, relatórios e reprodutibilidade.</p></div>
     </div>
-    <div class="figure" style="margin-top:18px;"><img src="vmamba_mesh_assets/isomera_v2_usage_sequence.png" alt="Fluxo Isomera"><div class="caption">Sequência operacional que será mostrada também na ferramenta.</div></div>
+    <div class="figure" style="margin-top:18px;"><img src="vmamba_mesh_assets/final_paper_figures/trainable_decision_pipeline.png" alt="Fluxo Isomera"><div class="caption">Sequência operacional que será mostrada também na ferramenta.</div></div>
   </section>
   <section class="slide">
     <div class="eyebrow">1:10 - 1:55 | benchmarks</div>
@@ -98,13 +98,13 @@
           <li><strong>SparseGate:</strong> reduz peso de células vazias.</li>
         </ul>
       </div>
-      <div class="figure"><img src="vmamba_mesh_assets/tensor_channels_zoom.png" alt="Canais C0-C5"><div class="caption">C0 forward, C1 reverse, C2 layer, C3 degree, C4 route bias, C5 sparse mask.</div></div>
+      <div class="figure"><img src="vmamba_mesh_assets/final_paper_figures/sor16_tensor_channels_6ch.png" alt="Canais C0-C5"><div class="caption">C0 forward, C1 reverse, C2 layer, C3 degree, C4 route bias, C5 sparse mask.</div></div>
     </div>
   </section>
   <section class="slide">
     <div class="eyebrow">2:45 - 3:30 | modelos</div>
     <h2>V1, V2 e V3</h2>
-    <div class="figure"><img src="vmamba_mesh_assets/vmamba_mesh_model_evolution_v1_v3.png" alt="Evolução V1 V2 V3"><div class="caption">V1 é mais eficiente; V2 é melhor qualidade; V3 é calibração MPS com menos falsos positivos.</div></div>
+    <div class="figure"><img src="vmamba_mesh_assets/final_paper_figures/model_evolution_v1_v3.png" alt="Evolução V1 V2 V3"><div class="caption">V1 é mais eficiente; V2 é melhor qualidade; V3 é calibração MPS com menos falsos positivos.</div></div>
   </section>
   <section class="slide">
     <div class="eyebrow">3:30 - 4:40 | tabela decisiva</div>
@@ -133,8 +133,8 @@
     <div class="eyebrow">4:40 - 5:20 | interpretação dos resultados</div>
     <h2>Jaccard e SF-Jaccard contam histórias diferentes</h2>
     <div class="grid">
-      <div class="figure"><img src="vmamba_mesh_assets/vmamba_family_spec_v2_jaccard_comparison.png" alt="Jaccard"><div class="caption">Melhor qualidade pooled: V2 VMamba-Mesh-T CPU, Jaccard 0.4883.</div></div>
-      <div class="figure"><img src="vmamba_mesh_assets/vmamba_family_spec_v2_sf_jaccard_comparison.png" alt="SF-Jaccard"><div class="caption">Melhor eficiência: V1 VMamba-Mesh adapter, SF-Jaccard 5464.74.</div></div>
+      <div class="figure"><img src="vmamba_mesh_assets/final_paper_figures/spec_v2_jaccard_comparison.png" alt="Jaccard"><div class="caption">Melhor qualidade pooled: V2 VMamba-Mesh-T CPU, Jaccard 0.4883.</div></div>
+      <div class="figure"><img src="vmamba_mesh_assets/final_paper_figures/spec_v2_sf_jaccard_comparison.png" alt="SF-Jaccard"><div class="caption">Melhor eficiência: V1 VMamba-Mesh adapter, SF-Jaccard 5464.74.</div></div>
     </div>
   </section>
   <section class="slide">

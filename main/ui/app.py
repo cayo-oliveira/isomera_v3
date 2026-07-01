@@ -10898,27 +10898,26 @@ if st.session_state.active_module == "Logs":
 
 def _vmamba_presentation_figures() -> dict[str, Path]:
     root = PROJECT_ROOT / "docs" / "presentations" / "vmamba_mesh_assets"
-    evidence = root
-    presentation_assets = root
+    final_figures = root / "final_paper_figures"
     return {
-        "problem": root / "vmamba_mesh_problem_input_output.png",
-        "pipeline": root / "isomera_vmamba_pipeline.png",
+        "problem": final_figures / "sor16_lineage_graph.png",
+        "pipeline": final_figures / "trainable_decision_pipeline.png",
         "difference": root / "vmamba_vs_vmamba_mesh_difference.png",
         "cross_scan": root / "official_cross_scan_4x4_routes.png",
-        "tensor": root / "isomera_real_graph_tensor_channels.png",
-        "architecture": root / "vmamba_mesh_architecture_surgery_ieee_style.png",
+        "tensor": final_figures / "sor16_tensor_channels_6ch.png",
+        "architecture": final_figures / "vmamba_mesh_dual_architecture.png",
         "ablation": root / "vmamba_mesh_ablation_ladder_v2.png",
-        "lineage_graph": evidence / "sor16_lineage_graph.png",
-        "adjacency": evidence / "sor16_adjacency_matrix.png",
-        "erf_spec": presentation_assets / "sor16_d1_spec_genai_erf_proxy_rotated.png",
-        "routes_spec": evidence / "sor16_d1_spec_genai_ss2d_tensor_routes.png",
+        "lineage_graph": final_figures / "sor16_lineage_graph.png",
+        "adjacency": final_figures / "sor16_adjacency_matrix.png",
+        "erf_spec": final_figures / "sor16_neural_saliency.png",
+        "routes_spec": final_figures / "trainable_decision_pipeline.png",
         "spec_sf": root / "tpc_ds_genai_spec_v2_vmamba_mesh_combined_sf_jaccard.png",
         "spec_runtime": root / "tpc_ds_genai_spec_v2_vmamba_mesh_combined_quality_runtime.png",
         "full_line": root / "tpc_ds_genai_full_lineage_vmamba_mesh_combined_sf_jaccard_line.png",
-        "spec_trainable_sf": presentation_assets / "trainable_results" / "spec_v2_combined_sf_jaccard_with_trainable.png",
-        "spec_trainable_runtime": presentation_assets / "trainable_results" / "spec_v2_quality_runtime_with_trainable.png",
-        "full_trainable_sf": presentation_assets / "trainable_results" / "full_lineage_combined_sf_jaccard_with_trainable.png",
-        "full_trainable_runtime": presentation_assets / "trainable_results" / "full_lineage_quality_runtime_with_trainable.png",
+        "spec_trainable_sf": final_figures / "spec_v2_sf_jaccard_comparison.png",
+        "spec_trainable_runtime": final_figures / "spec_v2_jaccard_comparison.png",
+        "full_trainable_sf": root / "trainable_results" / "full_lineage_combined_sf_jaccard_with_trainable.png",
+        "full_trainable_runtime": root / "trainable_results" / "full_lineage_quality_runtime_with_trainable.png",
     }
 
 

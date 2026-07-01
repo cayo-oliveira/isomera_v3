@@ -31,11 +31,11 @@ Use this order when the goal is to produce a reproducible benchmark or paper sec
 
 The Isomera Staged Protocol avoids blindly training every hyperparameter combination.
 
-Article-ready protocol figures are generated in `research/img`:
+The public documentation uses the same final figures packaged for the app:
 
-![Isomera user workflow](../../../research/img/isomera_v2_usage_sequence.png)
+![Isomera trainable decision workflow](../presentations/vmamba_mesh_assets/final_paper_figures/trainable_decision_pipeline.png)
 
-![Isomera staged protocol pattern](../../../research/img/isomera_v2_protocol_architecture_pattern.png)
+![VMamba-Mesh architecture overview](../presentations/vmamba_mesh_assets/final_paper_figures/vmamba_mesh_dual_architecture.png)
 
 The first figure is the usage sequence: user request, Streamlit requestor, Scenario Materialization API, validation store, training service, benchmark/report service. The second figure is the protocol architecture pattern: sender, protocol controller, screening workers, router, and report receiver.
 

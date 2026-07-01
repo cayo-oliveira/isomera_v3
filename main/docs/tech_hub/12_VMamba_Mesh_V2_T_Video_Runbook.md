@@ -61,7 +61,7 @@ For GNN/GIN, the encoder batch is a batch of variable-size subgraphs collated in
 
 Pipeline figure for the video:
 
-![VMamba-T duplicate decision pipeline](../presentations/vmamba_mesh_assets/vmamba_t_duplicate_decision_pipeline.png)
+![VMamba-T duplicate decision pipeline](../presentations/vmamba_mesh_assets/final_paper_figures/trainable_decision_pipeline.png)
 
 ## Validated Reports
 
@@ -187,8 +187,8 @@ Important distinction: Vanilla VMamba does **not** beat VMamba-Mesh on SPEC v2 S
 
 Final figures added to Article IV and the presentation assets:
 
-- `main/docs/presentations/vmamba_mesh_assets/vmamba_family_spec_v2_jaccard_comparison.png`
-- `main/docs/presentations/vmamba_mesh_assets/vmamba_family_spec_v2_sf_jaccard_comparison.png`
+- `main/docs/presentations/vmamba_mesh_assets/final_paper_figures/spec_v2_jaccard_comparison.png`
+- `main/docs/presentations/vmamba_mesh_assets/final_paper_figures/spec_v2_sf_jaccard_comparison.png`
 
 Unified SPEC v2 comparison used in the article, professor presentation and video:
 
