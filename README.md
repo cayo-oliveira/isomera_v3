@@ -9,10 +9,11 @@
   <a href="https://streamlit.io/"><img alt="Streamlit" src="https://img.shields.io/badge/UI-Streamlit-FF4B4B?logo=streamlit&logoColor=white"></a>
   <a href="LICENSE"><img alt="License" src="https://img.shields.io/badge/License-MIT-green"></a>
   <a href="https://www.modcs.org/"><img alt="MoDCS" src="https://img.shields.io/badge/MoDCS-CIn%2FUFPE-blue"></a>
+  <a href="https://www.linkedin.com/in/cayo-oliveira/"><img alt="LinkedIn" src="https://img.shields.io/badge/LinkedIn-Cayo%20Oliveira-0A66C2?logo=linkedin&logoColor=white"></a>
 </p>
 
 <p align="center">
-  <img src="main/docs/presentations/vmamba_mesh_assets/final_paper_figures/vmamba_mesh_dual_architecture.png" alt="Isomera VMamba-Mesh architecture" width="92%">
+  <img src="main/docs/presentations/vmamba_mesh_assets/final_paper_figures/sor16_lineage_graph.png" alt="SOR16 lineage graph in Isomera" width="82%">
 </p>
 
 ## Why Isomera exists
@@ -29,6 +30,9 @@ For a data engineer, the practical question is:
 
 Isomera v3 is the public executable package for that workflow.
 
+> [!TIP]
+> **What makes Isomera useful quickly:** it runs several detector families in the same interface, including VF2, Node Match, GNN/GIN, Vanilla VMamba, VMamba-Mesh, VMamba-T and VMamba-Mesh-T. You can inspect packaged benchmarks, create new benchmark scenarios, validate duplicate-pair labels, register or route `.pkl` model artifacts, train supported model campaigns when dependencies are installed, and use optional LLM/OpenAI-assisted flows to help propose or review benchmark pairs when you provide an API key.
+
 ## The core idea
 
 Isomera represents a data architecture as a directed graph. In the packaged benchmarks, nodes usually appear as:
@@ -40,8 +44,7 @@ Isomera represents a data architecture as a directed graph. In the packaged benc
 Edges represent dependency: one table was created from, joined with, filtered from or aggregated from another table. Once the architecture is represented as a graph, duplicate-table detection becomes a pair problem: given two candidate nodes or subgraphs, decide whether they represent the same structural or semantic object.
 
 <p align="center">
-  <img src="main/docs/presentations/vmamba_mesh_assets/final_paper_figures/sor16_lineage_graph.png" alt="SOR16 lineage graph" width="47%">
-  <img src="main/docs/presentations/vmamba_mesh_assets/final_paper_figures/sor16_adjacency_matrix.png" alt="SOR16 adjacency matrix" width="47%">
+  <img src="main/docs/presentations/vmamba_mesh_assets/final_paper_figures/sor16_adjacency_matrix.png" alt="SOR16 adjacency matrix" width="72%">
 </p>
 
 This is where Isomera goes beyond a drawing tool. It can run exact graph baselines, graph neural baselines, deterministic VMamba-Mesh scoring and trainable PyTorch models over the same benchmark contract. The same pair can be inspected as a graph, as an adjacency matrix, as a six-channel tensor, as a model score and as an interpretability image.
@@ -81,7 +84,7 @@ graph pair
 ```
 
 <p align="center">
-  <img src="main/docs/presentations/vmamba_mesh_assets/final_paper_figures/trainable_decision_pipeline.png" alt="Trainable duplicate decision pipeline" width="92%">
+  <img src="main/docs/presentations/vmamba_mesh_assets/final_paper_figures/vmamba_mesh_dual_architecture.png" alt="VMamba-Mesh and VMamba-Mesh-T architecture" width="92%">
 </p>
 
 That means the output is not only a label. The app can show the score, the threshold, the model family, the device used, the benchmark scenario, the files generated and, when available, saliency maps showing which tensor regions affected the local decision.
@@ -89,6 +92,10 @@ That means the output is not only a label. The app can show the score, the thres
 ## What you can do with Isomera
 
 Isomera is organized as one Streamlit workspace. The main capabilities are:
+
+<p align="center">
+  <img src="main/docs/presentations/vmamba_mesh_assets/app_screenshots/isomera_home.png" alt="Isomera Home workspace" width="92%">
+</p>
 
 | Area | What it does |
 | --- | --- |
@@ -105,6 +112,10 @@ Isomera is organized as one Streamlit workspace. The main capabilities are:
 | **Logs** | Displays structured app and terminal logs for debugging and audit. |
 | **Help** | Shows the VMamba-Mesh presentation and the technical documentation hub inside the app. |
 | **About** | Documents version, authorship, research context and feature notes. |
+
+<p align="center">
+  <img src="main/docs/presentations/vmamba_mesh_assets/app_screenshots/isomera_study_lab.png" alt="Isomera Deep Learning Workbench" width="92%">
+</p>
 
 In short, Isomera can be used to:
 
@@ -157,6 +168,16 @@ main/docs/tech_hub/                    technical documentation for adapting the 
 ```
 
 If your environment already has lineage metadata from a catalog, orchestration tool or warehouse audit logs, the practical adaptation is to map that metadata into Isomera-style graph files and then reuse the model interface or the tensorization idea.
+
+## Benchmarks packaged in the app
+
+The repository includes curated benchmark families so a user can test the idea before adapting it to a company environment. `TPC-DS (default)` is the original executable benchmark family. `TPC-DS GenAI SPEC v2` focuses on semantic-product duplicates in the SPEC layer and was built with generated candidate pairs followed by validation. `TPC-DS GenAI Full Lineage` expands the comparison to SOR, SOT and SPEC nodes, which is harder because it mixes operational sources, transformations and semantic outputs.
+
+Inside `Benchmark & Examples`, the user can select a benchmark, inspect scenarios, run detector families, compare metrics, open article-style reproducibility manifests and save auditable outputs. When an OpenAI key is configured, LLM-assisted workflows can help propose or review candidate benchmark pairs; Isomera still keeps the graph, labels, metrics and manifests as the auditable layer.
+
+<p align="center">
+  <img src="main/docs/presentations/vmamba_mesh_assets/app_screenshots/isomera_benchmark_examples.png" alt="Isomera Benchmark and Article Reproducibility workspace" width="92%">
+</p>
 
 ## What you can reproduce
 
@@ -264,7 +285,8 @@ The MoDCS public site presents the group as a CIn/UFPE research group with proje
 - **Cayo Oliveira**, developer and graduate researcher, CIn/UFPE.  
   Email: [cflo@cin.ufpe.br](mailto:cflo@cin.ufpe.br), [cayo07@gmail.com](mailto:cayo07@gmail.com).  
   LinkedIn: [cayo-oliveira](https://www.linkedin.com/in/cayo-oliveira/).
-- **Prof. Jamilson Dantas**, advisor, CIn/UFPE.
+- **Prof. Jamilson Dantas**, advisor, CIn/UFPE.  
+  Email: [jrd@cin.ufpe.br](mailto:jrd@cin.ufpe.br).
 - **MoDCS Research Group**, CIn/UFPE: <https://www.modcs.org/>.
 
 ## Citation
