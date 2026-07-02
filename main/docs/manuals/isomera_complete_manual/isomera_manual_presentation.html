@@ -1,0 +1,169 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Isomera: Manual Visual e Estudo Teórico</title>
+  <style>
+    :root {
+      --bg: #f6f5f1;
+      --ink: #20231f;
+      --muted: #62695f;
+      --line: #d8d4ca;
+      --accent: #5d7f70;
+      --accent2: #a84e3d;
+      --panel: #ffffff;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background: var(--bg);
+      color: var(--ink);
+      line-height: 1.55;
+    }
+    nav {
+      position: sticky;
+      top: 0;
+      z-index: 5;
+      display: flex;
+      gap: 14px;
+      align-items: center;
+      padding: 14px 28px;
+      border-bottom: 1px solid var(--line);
+      background: rgba(246,245,241,.94);
+      backdrop-filter: blur(10px);
+    }
+    nav a { color: var(--ink); text-decoration: none; font-size: 14px; }
+    nav strong { margin-right: auto; color: var(--accent); }
+    header, section { max-width: 1180px; margin: 0 auto; padding: 42px 28px; }
+    header { padding-top: 56px; }
+    h1 { font-size: clamp(38px, 5vw, 72px); line-height: .98; margin: 0 0 18px; letter-spacing: 0; }
+    h2 { font-size: clamp(28px, 3vw, 42px); margin: 0 0 18px; }
+    h3 { font-size: 20px; margin: 22px 0 8px; }
+    p { max-width: 900px; }
+    .lead { font-size: 20px; color: var(--muted); max-width: 980px; }
+    .hero-img, .shot, .wide-img {
+      width: 100%;
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      background: var(--panel);
+      box-shadow: 0 14px 40px rgba(0,0,0,.08);
+    }
+    .grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 18px; }
+    .cards { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; }
+    .card {
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      background: var(--panel);
+      padding: 18px;
+    }
+    .callout {
+      border-left: 6px solid var(--accent);
+      background: #eef3ee;
+      padding: 18px 20px;
+      border-radius: 8px;
+      margin: 22px 0;
+    }
+    .route {
+      display: inline-block;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      padding: 3px 10px;
+      background: #fff;
+      font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+      font-size: 13px;
+    }
+    table { width: 100%; border-collapse: collapse; background: var(--panel); border: 1px solid var(--line); }
+    th, td { padding: 11px 12px; border-bottom: 1px solid var(--line); text-align: left; vertical-align: top; }
+    th { color: var(--accent); }
+    code, pre { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; }
+    pre { background: #20231f; color: #f5f2e9; padding: 18px; border-radius: 8px; overflow: auto; }
+    .caption { color: var(--muted); font-size: 14px; margin: 8px 0 24px; }
+    @media (max-width: 850px) {
+      nav { overflow-x: auto; }
+      .grid, .cards { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <nav>
+    <strong>Isomera Manual</strong>
+    <a href="#problema">Problema</a>
+    <a href="#teoria">Teoria</a>
+    <a href="#rotas">Rotas</a>
+    <a href="#modelos">Modelos</a>
+    <a href="#reproducibilidade">Reprodutibilidade</a>
+  </nav>
+
+  <header id="problema">
+    <h1>Isomera: manual visual e estudo teórico</h1>
+    <p class="lead">Uma leitura prática para entender o problema de tabelas duplicadas em arquiteturas de dados, abrir o Isomera, navegar por cada rota da ferramenta e reproduzir evidências com grafos, modelos, benchmarks, pickles, relatórios e interpretabilidade.</p>
+    <div class="callout">
+      <strong>Ideia central:</strong> o Isomera transforma uma arquitetura de dados em grafo de linhagem, compara pares candidatos com VF2, Node Match, GNN/GIN, VMamba e VMamba-Mesh, e registra a evidência para auditoria e reprodução.
+    </div>
+    <img class="hero-img" src="screenshots/01_home.png" alt="Home do Isomera">
+    <p class="caption">Tela inicial: ponto de entrada para benchmarks, criação de cenários, estudo de modelos, relatórios, administração e ajuda.</p>
+  </header>
+
+  <section id="teoria">
+    <h2>Da tabela ao grafo, do grafo ao tensor</h2>
+    <p>Em Data Mesh, domínios diferentes podem criar tabelas equivalentes com nomes e caminhos diferentes. Por isso o problema não é só textual. O Isomera representa SOR, SOT e SPEC como nós de um grafo dirigido e usa as arestas para mostrar dependência: uma tabela nasceu de outra, agregou outra, filtrou outra ou produziu um produto semântico.</p>
+    <div class="grid">
+      <div>
+        <img class="shot" src="screenshots/sor16_lineage_graph.png" alt="Grafo SOR16">
+        <p class="caption">Grafo SOR16-D1 usado no estudo: nós SOR/SOT/SPEC e dependências dirigidas.</p>
+      </div>
+      <div>
+        <img class="shot" src="screenshots/sor16_adjacency_matrix.png" alt="Matriz de adjacência SOR16">
+        <p class="caption">A mesma linhagem vista como matriz de adjacência canônica.</p>
+      </div>
+    </div>
+    <p>O VMamba-Mesh adiciona canais ao tensor para que o modelo não enxergue apenas zeros e arestas. C0 preserva adjacência direta, C1 adjacência reversa, C2 camada, C3 grau, C4 viés de rota de linhagem e C5 máscara de esparsidade.</p>
+    <img class="wide-img" src="screenshots/sor16_tensor_channels_6ch.png" alt="Canais C0-C5">
+    <p class="caption">Seis canais de entrada usados pela representação VMamba-Mesh.</p>
+  </section>
+
+  <section id="rotas">
+    <h2>Rotas principais dentro do app</h2>
+    <table>
+      <tr><th>Rota</th><th>Quando usar</th><th>O que observar</th></tr>
+      <tr><td><span class="route">Home</span></td><td>Começar a navegação.</td><td>Resumo operacional e atalhos para módulos.</td></tr>
+      <tr><td><span class="route">Benchmark & Examples</span></td><td>Executar e reproduzir benchmarks.</td><td>Conceitos, execução e Article Reproducibility.</td></tr>
+      <tr><td><span class="route">Scenario Studio</span></td><td>Criar, carregar e validar cenários.</td><td>Fonte, geração, validação, treinamento e publicação.</td></tr>
+      <tr><td><span class="route">Study Lab</span></td><td>Estudar VMamba/VMamba-Mesh e modelos treináveis.</td><td>Workbench, relatórios, interpretabilidade e KB.</td></tr>
+      <tr><td><span class="route">Model Lab</span></td><td>Inspecionar pickles e roteamento.</td><td>Famílias registradas, artefatos e cobertura por cenário.</td></tr>
+      <tr><td><span class="route">Research Reports</span></td><td>Ler pacotes gerados.</td><td>Markdown, PDF, manifest, ZIP e evidências.</td></tr>
+      <tr><td><span class="route">Admin</span></td><td>Ver estado técnico do backend.</td><td>Backend, warehouse, Neo4j e settings.</td></tr>
+      <tr><td><span class="route">Logs</span></td><td>Auditar execução.</td><td>Session log e terminal logs.</td></tr>
+      <tr><td><span class="route">Help</span></td><td>Usar apresentação e docs internas.</td><td>VMamba-Mesh Presentation e Tech Docs.</td></tr>
+    </table>
+  </section>
+
+  <section id="modelos">
+    <h2>Modelos, treino e interpretabilidade</h2>
+    <p>No Study Lab, a rota <span class="route">Deep Learning Workbench</span> permite comparar famílias de modelos em um cenário e par específico. O contrato prático é sempre o mesmo: o modelo precisa receber evidência do grafo e retornar pares previstos, scores e rastros compatíveis com benchmark.</p>
+    <img class="wide-img" src="screenshots/11_study_deep_learning_workbench.png" alt="Deep Learning Workbench">
+    <p class="caption">Deep Learning Workbench: seleção de benchmark, cenário, par duplicado e modelos A/B.</p>
+    <div class="cards">
+      <div class="card"><h3>Determinísticos</h3><p>VF2, Node Match e VMamba-Mesh adapter servem como baselines auditáveis e rápidos.</p></div>
+      <div class="card"><h3>Neurais</h3><p>GNN/GIN, VMamba-T e VMamba-Mesh-T usam artefatos treináveis e podem ser roteados por benchmark.</p></div>
+      <div class="card"><h3>Explicáveis</h3><p>Model Interpretability mostra grafo, matriz, canais, score, threshold e saliency quando o checkpoint permite.</p></div>
+    </div>
+    <img class="wide-img" src="screenshots/vmamba_mesh_dual_architecture.png" alt="Arquitetura VMamba-Mesh">
+    <p class="caption">Arquitetura operacional: adapter determinístico e caminho treinável VMamba-Mesh-T.</p>
+  </section>
+
+  <section id="reproducibilidade">
+    <h2>Benchmarks, relatórios e reprodução</h2>
+    <p>A rota <span class="route">Benchmark & Examples</span> reúne conceitos, execução e Article Reproducibility. Ali o usuário escolhe benchmark, modo, cenário, modelo e número de runs. O app registra parâmetros, arquivos, métricas e comparação com valores esperados.</p>
+    <img class="wide-img" src="screenshots/02_benchmark_article_reproducibility.png" alt="Article Reproducibility">
+    <p class="caption">Article Reproducibility: manifesto, benchmark, modo rápido/artigo e política de trace.</p>
+    <div class="grid">
+      <div><img class="shot" src="screenshots/spec_v2_jaccard_comparison.png" alt="Jaccard SPEC v2"></div>
+      <div><img class="shot" src="screenshots/spec_v2_sf_jaccard_comparison.png" alt="SF-Jaccard SPEC v2"></div>
+    </div>
+    <p>Jaccard mede qualidade dos pares duplicados identificados. SF-Jaccard combina acerto e tempo, ou seja, ajuda a decidir se um detector é útil para varrer muitos candidatos em uma operação real.</p>
+  </section>
+</body>
+</html>

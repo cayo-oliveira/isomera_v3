@@ -1,0 +1,1199 @@
+\documentclass[12pt,oneside]{book}
+\usepackage[a4paper,margin=2.35cm]{geometry}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{lmodern}
+\usepackage{graphicx}
+\usepackage{xcolor}
+\usepackage{hyperref}
+\usepackage{url}
+\usepackage{longtable}
+\usepackage{array}
+\usepackage{float}
+\usepackage{fancyhdr}
+\usepackage{titlesec}
+\usepackage{enumitem}
+
+\graphicspath{{screenshots/}}
+\hypersetup{colorlinks=true,linkcolor=teal!60!black,urlcolor=teal!60!black,citecolor=teal!60!black}
+\pagestyle{fancy}
+\linespread{1.08}
+\fancyhf{}
+\lhead{Isomera}
+\rhead{Manual visual e estudo teórico}
+\cfoot{\thepage}
+\setlist[itemize]{itemsep=2pt,topsep=4pt}
+\setlist[enumerate]{itemsep=2pt,topsep=4pt}
+\newcommand{\route}[1]{\texttt{#1}}
+\newcommand{\pngfile}[1]{{\footnotesize\path{#1}}}
+\newcommand{\clickbox}[1]{\par\noindent\fcolorbox{teal!45!black}{teal!5}{\parbox{0.96\linewidth}{\textbf{Onde clicar:} #1}}\par\vspace{0.4em}}
+\newcommand{\studybox}[1]{\par\noindent\fcolorbox{orange!70!black}{orange!8}{\parbox{0.96\linewidth}{#1}}\par\vspace{0.4em}}
+\newcommand{\practicebox}[1]{\par\noindent\fcolorbox{blue!55!black}{blue!5}{\parbox{0.96\linewidth}{\textbf{Na prática:} #1}}\par\vspace{0.4em}}
+\newcommand{\algobox}[1]{\par\noindent\fcolorbox{purple!55!black}{purple!5}{\parbox{0.96\linewidth}{\textbf{Por trás do clique:} #1}}\par\vspace{0.4em}}
+\newcommand{\tipbox}[1]{\par\noindent\fcolorbox{teal!55!black}{teal!6}{\parbox{0.96\linewidth}{\textbf{Dica!} #1}}\par\vspace{0.45em}}
+\newcommand{\cautionbox}[1]{\par\noindent\fcolorbox{red!55!black}{red!5}{\parbox{0.96\linewidth}{\textbf{Fique atento!} #1}}\par\vspace{0.45em}}
+\newcommand{\shot}[2]{\begin{figure}[H]\centering\includegraphics[width=0.96\linewidth]{#1}\caption{#2}\end{figure}}
+\newcommand{\widefig}[2]{\begin{figure}[H]\centering\includegraphics[width=0.98\linewidth]{#1}\caption{#2}\end{figure}}
+\newcommand{\screenwalk}[7]{
+\clearpage
+\section{#2}
+\clickbox{#3}
+\textbf{Quando usar.} #4
+
+\textbf{O que observar na tela.} #5
+
+\textbf{Teoria ou algoritmo por trás.} #6
+
+\textbf{Checklist de validação.} #7
+
+\begin{figure}[H]\centering\includegraphics[width=0.98\linewidth]{#1}\caption{Ficha visual: #2}\end{figure}
+}
+
+\title{\Huge Isomera\\[0.2em]\Large Manual visual e estudo teórico\\[0.5em]\large Detecção de tabelas duplicadas com grafos, benchmarks, modelos e interpretabilidade}
+\author{Cayo Oliveira\\Centro de Informática -- UFPE\\MoDCS Research Group}
+\date{Julho de 2026}
+
+\begin{document}
+\maketitle
+\tableofcontents
+
+\chapter*{Como ler este manual}
+\addcontentsline{toc}{chapter}{Como ler este manual}
+Este documento foi escrito para funcionar como manual de ferramenta e material de estudo. A leitura começa com o problema de negócio, passa pela teoria de grafos e modelos, e depois entra na navegação prática do Isomera. A intenção é que um engenheiro de dados, um pesquisador ou um avaliador consiga abrir a ferramenta, entender cada rota e reproduzir a lógica central do estudo.
+
+O manual usa capturas reais do Isomera. As caixas ``Onde clicar'' indicam a navegação dentro do aplicativo. As caixas de estudo explicam por que aquela tela existe e como ela se conecta à teoria.
+
+Este book não deve ser lido como um artigo científico. Ele é um guia de produto. O artigo aparece somente quando a ferramenta precisa explicar uma campanha de benchmark, uma métrica ou uma evidência de reprodutibilidade. O foco principal é outro: mostrar como o Isomera funciona, por que cada tela existe, como cada clique participa da jornada e o que acontece tecnicamente por trás da interface.
+
+Há três formas naturais de leitura. Quem quer usar a ferramenta pela primeira vez deve ler os capítulos iniciais e depois seguir o mapa das rotas. Quem quer gravar uma demonstração deve ir direto para o checklist e voltar às seções de Benchmark, Study Lab e Research Reports. Quem quer estudar a metodologia deve ler com calma os capítulos sobre grafo, matriz, tensor, modelos, métricas e interpretabilidade antes de abrir as telas.
+
+\tipbox{Escolha uma trilha antes de começar: demonstração, pesquisa ou implantação. Isso evita ler o manual como sequência obrigatória e ajuda a voltar às rotas certas depois.}
+
+\chapter{O problema: duplicidade em arquiteturas de dados}
+
+Em uma arquitetura de dados moderna, a mesma ideia analítica pode aparecer mais de uma vez. Um domínio cria uma tabela de resumo de clientes, outro domínio cria uma tabela parecida para um painel diferente, e uma terceira área cria uma agregação de vendas que já existia em outro lugar. Muitas vezes os nomes são diferentes, os caminhos de transformação não são idênticos e a documentação não mostra imediatamente que as tabelas são redundantes.
+
+O Isomera trata esse problema como um problema de linhagem. Em vez de comparar apenas nomes de tabelas, ele olha para a vizinhança estrutural: de onde a tabela veio, quais transformações a produziram, em qual camada ela está e quais padrões de dependência aparecem ao redor dela.
+
+Essa mudança de ponto de vista é pequena na frase, mas grande na prática. Uma tabela não é apenas um arquivo com colunas. Ela tem uma história: nasce de fontes operacionais, passa por transformações, é agregada, filtrada, juntada com outras tabelas e finalmente aparece como produto analítico. Quando duas tabelas contam praticamente a mesma história, existe uma chance real de redundância. O nome pode mudar, a ordem de algumas transformações pode mudar, mas a estrutura de dependência ainda carrega sinais.
+
+\tipbox{Ao apresentar o Isomera, comece pela história da tabela, não pelo algoritmo. A duplicidade fica mais clara quando o usuário entende origem, transformação e consumo do dado.}
+
+Em uma empresa, esse tipo de redundância costuma ficar invisível porque cada time olha para o próprio domínio. Um time de vendas enxerga o painel de vendas. Um time de clientes enxerga o resumo de clientes. Um time financeiro enxerga agregações de margem. O problema aparece quando os dados começam a divergir, quando o custo de processamento cresce ou quando alguém precisa explicar por que duas tabelas supostamente diferentes respondem à mesma pergunta.
+
+O Isomera nasce para apoiar esse tipo de investigação. Ele não substitui governança, catálogo, revisão humana ou conhecimento de domínio. Ele organiza essas peças em um fluxo rastreável: transformar arquitetura em grafo, gerar pares candidatos, executar detectores, medir resultados, salvar relatórios e permitir que o usuário volte ao par específico para entender por que ele foi marcado como duplicado.
+
+\studybox{\textbf{Ideia prática.} Se duas tabelas são duplicadas, elas podem não ser idênticas no SQL ou no nome. Mesmo assim, seus contextos de linhagem podem revelar que elas representam o mesmo produto de dados ou uma variação redundante do mesmo cálculo.}
+
+\widefig{01_home.png}{Tela inicial do Isomera. O menu lateral organiza o uso por módulos: benchmark, criação de cenários, estudo, modelos, relatórios, administração, logs, ajuda e informações do projeto.}
+
+\section{O que o Isomera tenta responder}
+
+A pergunta operacional é simples: dado um par de tabelas, o par deve ser tratado como duplicado? A resposta, porém, precisa ser bem formada. Não basta dizer ``sim'' ou ``não''. Um detector útil precisa informar qual benchmark foi usado, qual cenário estava ativo, qual modelo tomou a decisão, qual threshold foi aplicado, quais métricas foram obtidas e quais evidências visuais sustentam a análise.
+
+No Isomera, essa resposta aparece em várias camadas. Na camada mais direta, o modelo retorna pares duplicados por meio do contrato \route{predict\_pairs(graph)}. Na camada de benchmark, esses pares são comparados com o ground truth e viram métricas como Jaccard, SF-Jaccard e tempo de execução. Na camada de estudo, o usuário abre o par e observa grafo, matriz, canais e interpretabilidade. Na camada de relatório, a execução vira um pacote com CSV, JSON, Markdown, figuras e manifest.
+
+\practicebox{Quando estiver usando a ferramenta, pense sempre em quatro perguntas: qual grafo estou analisando, qual par estou comparando, qual modelo está decidindo e qual evidência eu consigo mostrar depois?}
+
+\chapter{Da tabela ao grafo}
+
+O Isomera representa a arquitetura como um grafo dirigido. Cada nó é uma entidade da arquitetura de dados, e cada aresta representa dependência. Nos benchmarks usados neste estudo, os nós geralmente aparecem como:
+
+\begin{itemize}
+  \item \textbf{SOR}: origem operacional, extração ou tabela de sistema.
+  \item \textbf{SOT}: transformação, tabela intermediária ou camada confiável.
+  \item \textbf{SPEC}: produto semântico ou tabela analítica final.
+\end{itemize}
+
+Essa representação transforma uma pergunta difusa, ``esta tabela é duplicada?'', em uma pergunta comparável: dado um par de nós ou subgrafos, o par representa uma duplicidade estrutural ou semântica?
+
+Um grafo dirigido é uma forma natural de representar linhagem porque dependência tem direção. Se uma tabela analítica foi criada a partir de duas tabelas intermediárias, as arestas apontam das entradas para a saída. Quando isso se repete em várias camadas, o grafo registra o caminho de formação do dado. O Isomera usa essa estrutura para comparar contextos, não apenas objetos isolados.
+
+\tipbox{Leia o grafo como evidência de linhagem: nós são entidades, arestas são dependências e a direção explica como o dado se forma.}
+
+Formalmente, o cenário pode ser tratado como um grafo dirigido rotulado
+\(G=(V,E,\ell_V,\ell_E)\), em que \(V\) é o conjunto de tabelas ou entidades,
+\(E \subseteq V \times V\) é o conjunto de dependências dirigidas,
+\(\ell_V\) associa cada nó a metadados como camada, domínio e tipo,
+e \(\ell_E\) pode representar o tipo de dependência ou transformação.
+Para um nó \(v\), o grau de entrada \(d^{-}(v)\) mede quantas fontes alimentam
+\(v\), enquanto o grau de saída \(d^{+}(v)\) mede quantos objetos dependem dele.
+Um caminho dirigido é uma sequência de nós conectados por arestas na mesma direção,
+e uma vizinhança de linhagem é o subgrafo usado para contextualizar uma tabela antes
+da comparação de duplicidade.
+
+O ponto central é que a duplicidade não precisa acontecer no grafo inteiro. Em muitos casos, a redundância está em uma região: duas tabelas finais compartilham fontes, passam por transformações parecidas e chegam a produtos parecidos. Por isso a ferramenta trabalha com pares e subgrafos. O par indica quais nós estão sendo comparados; o subgrafo carrega o contexto necessário para a decisão.
+
+\widefig{sor16_lineage_graph.png}{Grafo SOR16-D1 usado no estudo. O mesmo cenário aparece em várias telas do Isomera para manter a explicação consistente.}
+
+A matriz de adjacência é outra forma de ver o mesmo grafo. Cada linha e coluna representa um nó ordenado. Uma célula ativa indica dependência entre dois nós. Essa matriz é útil porque permite conectar teoria de grafos, imagens/tensores e modelos neurais.
+
+Essa matriz é mais do que uma figura. Ela é um contrato computacional. Se os nós forem ordenados de qualquer forma, a matriz muda demais entre cenários e fica difícil aprender padrões. Por isso entra a ideia de ordenação canônica. O Isomera organiza os nós para que regiões da matriz tenham significado estável: fontes próximas de fontes, transformações próximas de transformações e produtos semânticos próximos de produtos semânticos. Essa estabilidade é essencial para comparar cenários e para alimentar modelos que leem tensores.
+
+\cautionbox{A matriz de adjacência depende da ordenação dos nós. Duas matrizes podem representar o mesmo grafo se diferirem apenas por uma permutação de linhas e colunas. Por isso, CanonSort não é detalhe visual: ele reduz variação artificial antes do modelo aprender padrões.}
+
+\widefig{sor16_adjacency_matrix.png}{Matriz de adjacência canônica do SOR16-D1. Ela é a ponte entre grafo de linhagem e entrada matricial.}
+
+\section{Como interpretar grafo e matriz lado a lado}
+
+No grafo, o olhar humano entende fluxo: esquerda para direita, camada por camada, fontes até produtos. Na matriz, o olhar técnico entende posição: linha, coluna, diagonal e densidade. As duas visões são complementares. O grafo ajuda a explicar o domínio. A matriz ajuda a transformar o domínio em entrada de algoritmo.
+
+Quando a matriz tem muitos zeros, isso não significa ausência de informação. Significa que a arquitetura é esparsa, como costuma acontecer em linhagens reais. Poucas dependências são ativas entre todas as combinações possíveis de tabelas. Essa esparsidade precisa ser tratada com cuidado, porque um modelo ingênuo pode aprender mais sobre o vazio do que sobre o padrão estrutural. É por isso que canais como máscara esparsa e viés de rota existem no VMamba-Mesh.
+
+\algobox{O clique que mostra a matriz está conectado a uma transformação formal: o grafo \(G=(V,E)\) vira uma matriz \(A\), em que \(A_{ij}=1\) quando existe uma aresta dirigida do nó \(i\) para o nó \(j\). A qualidade dessa matriz depende da ordem dos nós, por isso o CanonSort aparece antes dos canais.}
+
+\chapter{Do grafo ao tensor VMamba-Mesh}
+
+O VMamba original lê mapas bidimensionais. O VMamba-Mesh adapta essa ideia para grafos de linhagem. A pergunta é: se um grafo pode virar matriz, e se uma matriz pode virar tensor, então um backbone inspirado em VMamba pode aprender padrões de duplicidade em arquiteturas de dados?
+
+O motivo para trazer uma arquitetura visual para esse problema é direto: uma matriz de adjacência é um campo 2D. Ela não é uma foto, mas possui linhas, colunas, regiões, diagonais, densidade e padrões espaciais. O VMamba foi criado para trabalhar com mapas bidimensionais usando blocos de espaço de estados visuais. A adaptação para Data Mesh não consiste em fingir que o grafo é uma imagem comum. A adaptação consiste em construir uma representação matricial que preserve a semântica da linhagem.
+
+Por isso o VMamba-Mesh não usa apenas a matriz de adjacência. Ele adiciona canais. Cada canal responde a uma pergunta diferente sobre o mesmo grafo. Existe aresta direta? Existe dependência reversa? Qual camada está na diagonal? Qual é a assinatura de grau? Por onde a rota de linhagem tende a passar? Esta célula está vazia ou contém evidência estrutural? A rede passa a receber um tensor, não uma única imagem.
+
+\tipbox{Não trate os canais como imagens separadas. Eles são perguntas diferentes feitas ao mesmo grafo: direção, camada, grau, rota e esparsidade.}
+
+Na linguagem de aprendizado supervisionado, a tensorização define uma função de representação \(\phi(G,u,v)\), que transforma o grafo e um par candidato \((u,v)\) em um tensor \(X\). O modelo treinável aprende uma função \(f_\theta(X)\rightarrow z\), em que \(z\) é o logit. A decisão final não está apenas no tensor, mas na composição entre representação, parâmetros aprendidos, sigmoid e threshold. Essa separação é central em aprendizado de máquina: features não são decisão; features são a forma como o problema é apresentado ao classificador.
+
+Para isso, o Isomera usa uma representação com seis canais:
+
+\begin{longtable}{p{0.12\linewidth}p{0.78\linewidth}}
+\textbf{Canal} & \textbf{Função} \\
+\hline
+C0 & Adjacência direta. Preserva o sentido original das arestas. \\
+C1 & Adjacência reversa. Permite observar dependência no sentido oposto. \\
+C2 & Diagonal de camada. Marca posições SOR, SOT e SPEC. \\
+C3 & Impressão de grau. Expõe conectividade, fan-in e fan-out. \\
+C4 & Viés de rota de linhagem. Ajuda o scan a seguir trajetórias coerentes com SOR--SOT--SPEC. \\
+C5 & Máscara esparsa. Diferencia célula vazia de evidência estrutural real. \\
+\end{longtable}
+
+\widefig{sor16_tensor_channels_6ch.png}{Canais C0--C5. O modelo deixa de olhar somente para zeros e arestas, e passa a receber direção, camada, grau, rota e máscara.}
+
+\section{Leitura dos canais}
+
+O canal C0 é a adjacência direta. Ele preserva o caminho natural da linhagem. Se uma tabela A alimenta uma tabela B, a célula correspondente fica ativa. Sem esse canal, o modelo perderia o esqueleto principal do grafo.
+
+O canal C1 é a adjacência reversa. Ele permite olhar o mesmo fluxo de trás para frente. Isso é importante porque, em duplicidade, às vezes a pergunta começa no produto final e volta para as fontes. Dois produtos podem parecer diferentes olhando para frente, mas revelar contexto parecido quando olhamos seus ancestrais.
+
+O canal C2 marca a diagonal de camada. A diagonal é um espaço especial porque identifica posições dos próprios nós. Ao marcar SOR, SOT e SPEC, o tensor informa ao modelo onde estão fontes, transformações e produtos. Isso reduz ambiguidade entre cenários.
+
+O canal C3 é a impressão de grau. Ele resume conectividade: quantas entradas e saídas aparecem ao redor de um nó. Tabelas com fan-in alto podem representar agregações; tabelas com fan-out alto podem representar fontes reutilizadas. Esses sinais ajudam a diferenciar coincidência de redundância.
+
+O canal C4 é o viés de rota de linhagem. Ele orienta a leitura para caminhos coerentes com a progressão SOR--SOT--SPEC. Isso importa porque a matriz é 2D, mas a história do dado tem direção e camadas. O canal não cria uma aresta nova; ele informa ao modelo quais trajetórias são mais compatíveis com a arquitetura.
+
+O canal C5 é a máscara esparsa. Ele separa vazio real de evidência estrutural. Em matrizes de adjacência, a maioria das células está vazia. A máscara ajuda o modelo a não tratar todo zero como informação igualmente relevante.
+
+\practicebox{Quando apresentar a ferramenta, use o grafo para explicar o domínio, a matriz para explicar a entrada computacional e os canais para explicar por que VMamba-Mesh é diferente de usar uma imagem simples do grafo.}
+
+O caminho treinável usado nas versões VMamba-T e VMamba-Mesh-T é:
+
+\begin{verbatim}
+par de grafos/subgrafos
+-> CanonSort
+-> tensor C0-C5
+-> patch embedding
+-> blocos estilo VSS/SS2D
+-> pooling
+-> head neural de par
+-> logit
+-> sigmoid
+-> score contínuo
+-> threshold
+-> duplicado / não duplicado
+\end{verbatim}
+
+\widefig{vmamba_mesh_dual_architecture.png}{Arquitetura operacional: caminho determinístico VMamba-Mesh e caminho treinável VMamba-Mesh-T.}
+
+\section{O que entra e o que sai do modelo}
+
+A unidade de decisão é sempre um par. O usuário pode olhar para dois nós, duas tabelas ou dois contextos de linhagem. O Isomera extrai o contexto do par, ordena os nós, monta os canais e entrega o tensor ao modelo. Na versão determinística, as features estruturais alimentam um score ponderado. Na versão treinável, os canais passam pelo backbone neural.
+
+Na versão treinável, o fluxo é: tensor 2D, patch embedding, blocos VSS/SS2D, pooling e head neural. O head produz um logit. O logit passa por uma sigmoid e vira um score contínuo entre 0 e 1. Depois entra o threshold. Se o score for maior ou igual ao threshold, o par é classificado como duplicado. Se for menor, o par fica fora da lista de duplicidades.
+
+Essa saída contínua é importante porque permite calibração. Dois pares podem ser positivos, mas com confiança diferente. Dois pares podem ficar perto do threshold e merecer revisão humana. O Isomera preserva esse caminho porque, em governança de dados, a decisão precisa ser auditável.
+
+\chapter{Mapa geral do aplicativo}
+
+\section{Home}
+\clickbox{Abrir o aplicativo e permanecer em \route{Home}.}
+
+A tela inicial resume o fluxo operacional. Ela mostra que o Isomera não é apenas uma tela de visualização: ele conecta materialização de grafos, validação de pares, treino de modelos, benchmark e geração de evidências.
+
+A Home deve ser lida como uma mesa de controle. O menu lateral separa módulos de trabalho, e cada módulo representa uma etapa da vida de um estudo. Primeiro vem a escolha ou criação do cenário. Depois vem a execução dos detectores. Em seguida aparecem treino, análise, relatórios, administração e documentação. Essa organização evita que a ferramenta vire apenas uma coleção de scripts: cada função tem uma rota visível, uma intenção e um lugar para voltar.
+
+Para um usuário novo, a Home responde a três perguntas. A primeira é onde começo. A resposta depende do objetivo: se quer executar algo pronto, comece em Benchmark; se quer criar um cenário, comece em Scenario Studio; se quer estudar VMamba-Mesh, comece em Study Lab. A segunda é onde verifico os resultados. A resposta é Research Reports e Model Reports. A terceira é onde vejo estado técnico e logs. A resposta é Admin e Logs.
+
+\widefig{01_home.png}{Home do Isomera. O menu lateral é a referência principal de navegação.}
+
+\section{Jornadas principais}
+
+O Isomera pode ser usado por jornadas. A jornada de demonstração começa em Home, passa por Benchmark, abre Study Lab para explicar o modelo, mostra Model Interpretability e termina em Research Reports. A jornada de pesquisa começa em Scenario Studio, cria ou carrega cenários, valida pares, treina modelos, executa benchmarks e salva relatórios. A jornada de engenharia começa em Admin, confere conexões, abre Scenario Studio para materialização, registra modelos no Model Lab e configura execução no Benchmark.
+
+Essa separação é importante porque a mesma interface atende públicos diferentes. Um professor ou avaliador quer ver evidência e método. Um engenheiro de dados quer saber como conectar a ferramenta a uma arquitetura real. Um pesquisador quer reproduzir números, alterar hiperparâmetros e comparar versões. O manual usa as mesmas telas, mas explica o que cada público deve observar.
+
+\tipbox{Para uma primeira demonstração, siga uma linha simples: Home, Benchmark, Study Lab, Interpretability e Research Reports. Essa ordem conta o produto sem interromper a narrativa.}
+
+\section{Rotas principais}
+
+\begin{longtable}{p{0.24\linewidth}p{0.66\linewidth}}
+\textbf{Rota} & \textbf{Uso} \\
+\hline
+\route{Benchmark \& Examples} & Executar benchmarks, comparar detectores e reproduzir campanhas salvas. \\
+\route{Scenario Studio} & Criar, carregar, validar e publicar cenários de grafo. \\
+\route{Study Lab} & Estudar VMamba, VMamba-Mesh, canais, treino, relatórios e interpretabilidade. \\
+\route{Model Lab} & Ver pickles, famílias registradas e roteamento de modelos por cenário. \\
+\route{Research Reports} & Abrir relatórios, Markdown, PDFs, manifests e pacotes ZIP. \\
+\route{Admin} & Ver backend, warehouse de cenários, Neo4j e configurações. \\
+\route{Logs} & Auditar logs da sessão e logs de terminal. \\
+\route{Help} & Abrir apresentação VMamba-Mesh e Tech Docs. \\
+\route{About} & Ver versão, autores, contexto e notas de funcionalidades. \\
+\end{longtable}
+
+\section{Cobertura visual deste manual}
+
+A tabela abaixo funciona como inventário de cobertura. Cada rota principal foi aberta no Isomera, capturada em PNG e associada a uma explicação operacional. Para páginas longas, o manual também mantém capturas com scroll. Isso é importante porque várias funcionalidades ficam abaixo da primeira dobra da tela, principalmente treino, relatórios, administração e documentação técnica.
+
+\small
+\begin{longtable}{p{0.24\linewidth}p{0.30\linewidth}p{0.36\linewidth}}
+\textbf{Rota ou aba} & \textbf{PNG principal} & \textbf{Validação visual} \\
+\hline
+Home & \pngfile{01_home.png} & Menu lateral, cartões de jornada e acesso às áreas principais. \\
+Benchmark / Reproducibility & \pngfile{02_benchmark_article_reproducibility.png} & Manifesto, artigo, modo de execução e trace reprodutível. \\
+Benchmark / Run & \pngfile{03_benchmark_run.png} & Seletor de benchmark, modelos, política e execução. \\
+Benchmark / Concepts & \pngfile{04_benchmark_concepts.png} & Conceitos, cenários, pares reais e matriz de benchmark. \\
+Scenario Studio & \pngfile{06_scenario_studio_overview.png} & Entrada por warehouse, GML ou construtor manual. \\
+Scenario Studio / scroll & \pngfile{07_scenario_studio_source_scroll.png}; \pngfile{08_scenario_studio_validation_scroll.png}; \pngfile{10_scenario_model_training.png} & Etapas de origem, validação e treino no fluxo vertical. \\
+Study / Workbench & \pngfile{11_study_deep_learning_workbench.png} & Comparação lado a lado de modelos e pares. \\
+Study / Original VMamba & \pngfile{12_study_original_vmamba.png} & Conceitos do VMamba original e partes da arquitetura. \\
+Study / Official Runtime & \pngfile{13_study_official_runtime.png} & Runtime oficial como referência externa opcional. \\
+Study / SS2D & \pngfile{14_study_ss2d_demo.png} & Demonstração de scan 2D em linhagem. \\
+Study / Mesh Changes & \pngfile{15_study_mesh_changes.png} & CanonSort, DiagFP, MeshSS2D, HierInit e SparseGate. \\
+Study / Train & \pngfile{16_study_train_model_adapter.png} & Treino, device, batches, loss, negative ratio e artefatos. \\
+Study / Reports & \pngfile{17_study_model_reports.png} & Campanhas, CSVs, figuras e manifests. \\
+Study / Interpretability & \pngfile{18_study_model_interpretability.png} & Grafo, matriz, canais, saliency e trace. \\
+Study / Knowledge Base & \pngfile{19_study_knowledge_base.png} & KBs internas sobre VMamba e VMamba-Mesh. \\
+Model Lab & \pngfile{20_model_lab.png} & Pickles, famílias de modelos e roteamento. \\
+Research Reports & \pngfile{21_research_reports.png} & Pacotes de relatório, Markdown, anexos e ZIP. \\
+Admin & \pngfile{22_admin_overview.png}--\pngfile{26_admin_settings.png} & Stores, warehouse, Neo4j e configurações. \\
+Logs & \pngfile{27_logs_session.png}, \pngfile{28_logs_terminal.png} & Auditoria da sessão e logs de terminal. \\
+Help & \pngfile{29_help_presentation.png}, \pngfile{30_help_tech_docs.png} & Apresentação e documentação técnica. \\
+About & \pngfile{31_about.png} & Versão, autores e notas de funcionalidades. \\
+\end{longtable}
+\normalsize
+
+\chapter{Benchmark \& Examples}
+
+\clickbox{Menu lateral $\rightarrow$ \route{Benchmark \& Examples}.}
+
+Essa área responde à pergunta: ``como executo e comparo detectores nos benchmarks empacotados?'' Ela possui três abas conceituais: \route{Article Reproducibility}, \route{Run Benchmark} e \route{Concepts}.
+
+O Benchmark é o lugar onde o Isomera deixa de ser apenas exploratório e passa a ser mensurável. Uma hipótese de modelo só tem valor se puder ser testada contra cenários conhecidos. Por isso a tela começa pedindo um benchmark. O benchmark define quais grafos existem, quais pares são considerados verdadeiros, quais famílias de modelo podem rodar e quais resultados podem ser comparados.
+
+Na prática, o usuário não deve abrir essa tela pensando apenas em apertar um botão. Ele deve ler a tela como um contrato experimental. O benchmark escolhido define o universo do teste. O modelo escolhido define a estratégia de detecção. A política de execução define se o app vai rodar algo rápido, algo completo ou algo já preparado para reprodutibilidade. O resultado só é comparável se essas três decisões forem explícitas.
+
+\tipbox{Antes de executar, confirme três escolhas: benchmark, modelo e política de execução. Sem isso, o número final perde contexto.}
+
+\algobox{Quando um benchmark roda, o Isomera carrega o grafo do cenário, enumera pares candidatos, chama o detector registrado e compara a lista retornada com o ground truth. A partir dessa comparação nascem \(TP\), \(FP\), \(FN\), tempo de execução e métricas agregadas.}
+
+\section{Article Reproducibility}
+\clickbox{\route{Benchmark \& Examples} $\rightarrow$ \route{Article Reproducibility}.}
+
+Aqui o usuário escolhe um manifesto de reprodução, seleciona modo rápido, evidência do artigo ou pacote completo, e executa uma reprodução com trace auditável. O trace registra parâmetros, seeds, arquivos lidos, arquivos escritos, métricas, valores esperados, tolerâncias e status de comparação.
+
+Essa tela existe para resolver um problema comum em pesquisa aplicada: depois que um resultado aparece em gráfico ou relatório, alguém precisa conseguir repetir o caminho. O manifesto de reprodução é a peça que guarda essa memória. Ele diz qual campanha deve ser rodada, quais cenários entram, quais modelos estão habilitados, quais seeds foram usadas, quais artefatos são esperados e quais tolerâncias fazem sentido.
+
+A palavra ``reproducibility'' aqui não significa apenas gerar o mesmo número. Significa registrar o caminho. Se um cenário não estiver disponível, o status precisa mostrar isso. Se uma métrica ficar dentro da tolerância, o trace deve indicar. Se uma figura não existir, o pacote deve mostrar que ela não foi produzida. Esse comportamento é fundamental para a ferramenta ser usada em banca, laboratório ou empresa.
+
+\practicebox{Para uma demonstração curta, use o modo rápido com um cenário/par. Para validar um resultado de relatório, use o modo de campanha. Para fechar um pacote completo, use a reprodução completa e depois abra Research Reports.}
+
+\widefig{02_benchmark_article_reproducibility.png}{Article Reproducibility. A tela mostra manifesto, benchmarks, modelos, cenários, seeds e política de trace.}
+\widefig{02_benchmark_article_reproducibility_scroll.png}{Article Reproducibility com scroll. A captura confirma que a rota mostra controles e evidências abaixo da primeira dobra da tela.}
+
+\section{Run Benchmark}
+\clickbox{\route{Benchmark \& Examples} $\rightarrow$ \route{Run Benchmark}.}
+
+Essa aba executa detectores sobre o benchmark selecionado. O usuário escolhe dataset, política de execução, família de modelo e opções de roteamento. É a rota para medir Jaccard, SF-Jaccard, tempo mediano e métricas por cenário.
+
+O Run Benchmark é a tela de execução direta. Ela é mais operacional do que a reprodução por manifesto. Aqui o usuário quer saber: com este benchmark e este modelo, o que acontece agora? A tela precisa deixar claro quais modelos estão disponíveis, quais dependências estão presentes, se o detector é determinístico ou treinável, e onde o resultado será registrado.
+
+Os detectores têm naturezas diferentes. VF2 e Node Match são baselines determinísticos. Eles ajudam a entender casos estruturais exatos ou quase exatos. GNN e GIN são modelos treinados sobre representações de grafo. VMamba e VMamba-Mesh trabalham com tensorização matricial. VMamba-T e VMamba-Mesh-T usam rede neural treinável. O valor do Run Benchmark é colocar todos sob o mesmo contrato de saída: uma lista de pares considerados duplicados.
+
+\algobox{A interface não compara modelos por opinião. Ela transforma a decisão de cada detector em conjunto de pares e calcula métricas. Isso permite dizer que um modelo foi melhor em Jaccard, outro foi melhor em tempo, e outro teve melhor SF-Jaccard.}
+
+\widefig{03_benchmark_run.png}{Run Benchmark. Esta rota concentra execução, roteamento de modelos e comparação operacional.}
+\widefig{03_benchmark_run_scroll.png}{Run Benchmark com scroll. Use esta área para conferir opções adicionais de execução e o espaço de resultados.}
+
+\section{Concepts}
+\clickbox{\route{Benchmark \& Examples} $\rightarrow$ \route{Concepts}.}
+
+A aba de conceitos documenta o que o benchmark representa, quais famílias de detectores existem e por que a comparação precisa registrar métricas e contexto.
+
+Essa aba é útil antes de executar. Ela explica o que significa um nome de cenário, como \route{graph\_SOR16\_D1\_seed42}. O número depois de SOR indica a quantidade de fontes. O número depois de D indica domínios. A seed permite reconstrução controlada. Quando alguém olha apenas para uma métrica final, perde essa informação. O Concepts existe para recuperar o contexto.
+
+Também é nessa visão que o usuário entende cobertura de roteamento. Um modelo pode existir, mas não estar mapeado para todos os cenários. Um pickle pode cobrir um subconjunto. Uma família pode estar registrada, mas incompleta. A tabela de cobertura evita que o usuário confunda ausência de rota com resultado ruim de modelo.
+
+\practicebox{Antes de rodar um benchmark novo, abra Concepts. Verifique cenários, pares reais, matriz SOR x Domínios e cobertura de roteamento. Isso evita interpretar resultado parcial como resultado final.}
+
+\widefig{04_benchmark_concepts.png}{Concepts. O objetivo é explicar o benchmark antes de executar.}
+\widefig{04_benchmark_concepts_scroll.png}{Concepts com scroll. A tela expande explicações de cenários, pares reais e matriz de benchmark.}
+
+\chapter{Scenario Studio}
+
+\clickbox{Menu lateral $\rightarrow$ \route{Scenario Studio}.}
+
+O Scenario Studio é a rota para preparar cenários. Ele é importante porque nenhum detector é melhor do que o benchmark e os labels que o alimentam. Aqui entram fontes, grafos, pares candidatos, validação humana ou assistida por LLM e publicação para o benchmark.
+
+Se o Benchmark é o lugar de medir, o Scenario Studio é o lugar de construir o que será medido. Ele organiza a entrada de dados, a materialização do grafo, a inspeção visual, a escolha de pares candidatos e o preparo para treino. Em uma empresa, essa etapa corresponderia ao momento em que a equipe conecta catálogo, warehouse, linhagem ou arquivo GML e decide quais tabelas precisam entrar no estudo.
+
+\tipbox{Não avance para treino com um grafo mal validado. O Scenario Studio define o chão do experimento: fonte, pares, filtros e ground truth.}
+
+O usuário deve olhar essa tela com atenção porque ela controla o ground truth. Um benchmark com pares mal definidos pode favorecer o modelo errado, penalizar um modelo correto ou produzir uma conclusão que não se sustenta fora do laboratório. Por isso a jornada é vertical e explícita: primeiro entra o cenário, depois aparecem filtros, depois vem revisão, depois publicação e, quando fizer sentido, treino.
+
+\widefig{06_scenario_studio_overview.png}{Scenario Studio. Espaço de criação e validação de cenários.}
+
+\section{Fluxo vertical do Scenario Studio}
+
+O Scenario Studio não é um conjunto de abas horizontais. Ele funciona como uma jornada vertical. No topo, o usuário escolhe a fonte do cenário. No meio, valida o grafo, os pares candidatos e os filtros. No fim, registra treino e publicação. Por isso a cobertura visual usa capturas com scroll.
+
+Essa escolha de design é intencional. Uma aba horizontal daria a sensação de etapas independentes. No Scenario Studio, as etapas são dependentes. Não faz sentido revisar pares antes de carregar o grafo. Não faz sentido treinar antes de publicar ou selecionar cenários. Não faz sentido medir um modelo sem saber de onde vieram os labels. A tela vertical força uma leitura sequencial.
+
+\clickbox{\route{Scenario Studio} $\rightarrow$ escolher \route{Input method}.}
+
+As opções principais são \route{Scenario Warehouse}, \route{GML Catalog} e \route{Manual Builder}. A primeira é o caminho de produção para benchmarks materializados em banco relacional. A segunda carrega grafos portáveis. A terceira é útil para criação manual ou demonstrações pequenas.
+
+No modo \route{Scenario Warehouse}, o app conversa com um banco relacional. Cada cenário pode existir como schema, com tabelas e metadados próprios. Esse caminho é o mais próximo de um uso corporativo, porque preserva a ideia de que a arquitetura real vive em bancos, catálogos e contratos de dados. No modo \route{GML Catalog}, o grafo já está exportado e pode ser carregado diretamente. No modo \route{Manual Builder}, o usuário cria ou ajusta um caso pequeno para estudo.
+
+\algobox{Ao carregar um cenário, o Isomera materializa um grafo dirigido. A materialização normaliza nós, arestas, camadas e metadados. Depois guarda esse grafo em sessão para que as etapas seguintes usem exatamente a mesma estrutura.}
+
+\widefig{07_scenario_studio_source_scroll.png}{Scenario Studio com scroll na área de origem. A tela mostra engine, banco, schema e carregamento do cenário.}
+
+\clickbox{Continuar descendo a página até filtros, pares candidatos e validação.}
+
+Depois que o cenário é carregado, o Isomera permite revisar pares candidatos. Essa parte é essencial para benchmarks confiáveis: o modelo só aprende corretamente se o ground truth for rastreável e se as regras de candidatura forem claras.
+
+Os filtros de pares existem para reduzir ruído. Em um grafo com muitos nós, comparar todos contra todos pode gerar uma explosão de pares sem significado. O usuário pode restringir por camada, domínio, grau, assinatura de pais ou assinatura de filhos. Cada filtro representa uma hipótese. Se o filtro exige mesma camada, ele assume que duplicidade costuma ocorrer entre objetos do mesmo nível. Se exige mesmo domínio, assume que duplicidade é mais provável dentro de um recorte de negócio. Se permite SPEC completo, a ferramenta olha para o contexto upstream, não apenas para o nó final.
+
+A revisão de pares é onde o conhecimento humano entra. A ferramenta sugere candidatos e organiza evidências, mas a validação final de ground truth precisa ser rastreável. Esse cuidado é o que permite depois treinar modelos e dizer que as métricas medem algo real, e não apenas uma coincidência estrutural.
+
+\widefig{08_scenario_studio_validation_scroll.png}{Scenario Studio na área de validação. O usuário controla camadas, filtros e fila de revisão de pares.}
+
+\section{Model Training no Scenario Studio}
+\clickbox{\route{Scenario Studio} $\rightarrow$ \route{Model Training}, quando disponível.}
+
+Essa rota concentra treinamento de artefatos \texttt{.pkl} e preparação de modelos para o Model Lab e o Benchmark. Quando as dependências estão instaladas, o usuário pode treinar modelos e registrar hiperparâmetros, progresso e artefatos.
+
+O treino dentro do Scenario Studio foi pensado para modelos que dependem diretamente dos cenários publicados. O usuário escolhe família, parâmetros, loss, otimizador, split de treino, estratégia de balanceamento e device. A interface registra esses valores porque, sem hiperparâmetros, um pickle é apenas um arquivo. Com hiperparâmetros e manifest, ele vira um artefato reprodutível.
+
+Em modelos de duplicidade, o desbalanceamento é uma preocupação constante. Normalmente existem muito mais pares não duplicados do que duplicados. Por isso aparecem opções de balanceamento, loss ponderada, negative ratio e hard negatives. Essas opções alteram o tipo de erro que o modelo aprende a evitar. Um negative ratio alto expõe o modelo a mais exemplos negativos; hard negatives forçam atenção a pares que parecem positivos, mas não são.
+
+\practicebox{Para uso real, nunca salve um modelo sem registrar benchmark, cenários usados, seed, loss, otimizador, epochs, device e política de negativos. Esses dados precisam aparecer no relatório para que outra pessoa entenda o que foi treinado.}
+
+\widefig{10_scenario_model_training.png}{Model Training. Caminho prático para produzir artefatos treináveis.}
+
+\chapter{Study Lab}
+
+\clickbox{Menu lateral $\rightarrow$ \route{Study Lab}.}
+
+O Study Lab é o laboratório de aprendizado e validação do VMamba-Mesh. Ele une explicação conceitual, workbench de comparação, treino, relatórios, interpretabilidade e base de conhecimento.
+
+Essa é a área mais didática do Isomera. Ela foi criada para responder a uma pergunta que não aparece em uma métrica final: o que está acontecendo dentro do modelo? O Study Lab permite sair do resultado agregado e voltar ao par, ao cenário, ao tensor, ao canal, ao score e à explicação local. É onde a ferramenta deixa de ser uma caixa de execução e vira material de estudo.
+
+Para quem está aprendendo, o caminho recomendado é começar pelo Deep Learning Workbench, passar por Original VMamba, rodar a demo SS2D, abrir VMamba-Mesh Changes, depois Train Model Adapter, Model Reports, Model Interpretability e Knowledge Base. Esse caminho reproduz a história da adaptação: primeiro comparar modelos, depois entender a inspiração, depois ver a leitura 2D, depois ver o que foi alterado, depois treinar, depois analisar.
+
+\tipbox{Use o Study Lab para explicar o ``porquê'' antes do ``quanto''. Primeiro mostre grafo, matriz e canais; depois mostre score, métricas e relatórios.}
+
+\section{Deep Learning Workbench}
+\clickbox{\route{Study Lab} $\rightarrow$ \route{Deep Learning Workbench}.}
+
+O Workbench permite selecionar benchmark, cenário, par e modelos A/B. Ele é útil para mostrar, em uma mesma tela, como a decisão nasce do grafo e como os modelos diferem.
+
+O Deep Learning Workbench é uma bancada de comparação. O usuário escolhe um par e coloca dois modelos lado a lado. Isso permite observar diferenças que uma tabela final não mostra. Um modelo pode selecionar mais pares, outro pode ser mais conservador. Um pode ter score alto no par escolhido, outro pode ficar próximo do threshold. Um pode usar apenas C0/C1; outro pode usar C0--C5.
+
+Esse tipo de comparação é útil em vídeo, aula e depuração. Em vez de falar abstratamente que VMamba-Mesh usa canais, o usuário aponta para o par, muda o modelo e observa a saída. Em vez de explicar apenas que um threshold existe, ele pode mostrar o score contínuo e a decisão binária.
+
+\algobox{Internamente, o Workbench chama os mesmos contratos usados no benchmark. Isso é importante: a tela não deve ser uma simulação desconectada. Ela precisa refletir o comportamento dos modelos registrados, dos benchmarks disponíveis e dos artefatos salvos.}
+
+\widefig{11_study_deep_learning_workbench.png}{Deep Learning Workbench. Exemplo com benchmark, cenário, par, modelos e features do par selecionado.}
+
+\section{Original VMamba}
+\clickbox{\route{Study Lab} $\rightarrow$ \route{Original VMamba}.}
+
+Esta aba é a referência didática do VMamba original. Ela mostra o papel de patch embedding, VSS block, SS2D e head de classificação. O ponto mais importante para o Isomera é entender a analogia: no VMamba, a rede lê campos 2D; no Isomera, o grafo de linhagem vira campo 2D por meio de matriz de adjacência e canais estruturais.
+
+O VMamba original trabalha sobre imagens ou mapas de features. A imagem entra como tensor, passa por patch embedding, atravessa blocos visuais de espaço de estados e chega a um head de classificação. A inspiração para o Isomera vem daí: se a linhagem pode ser representada como matriz, e se a matriz pode ser enriquecida com canais, então a leitura 2D pode ser reaproveitada em um domínio de governança de dados.
+
+A adaptação, porém, não é copiar a rede e trocar a imagem por uma matriz qualquer. O grafo tem semântica. A diagonal tem papel. As camadas SOR, SOT e SPEC importam. A direção da aresta importa. A esparsidade importa. Por isso a aba Original VMamba aparece antes das mudanças: ela cria a base conceitual para entender o que precisa ser preservado e o que precisa ser alterado.
+
+\widefig{12_study_original_vmamba.png}{Original VMamba. A aba mostra pseudocódigo educacional e mapeia cada parte para a adaptação VMamba-Mesh.}
+
+\section{Run SS2D Demo}
+\clickbox{\route{Study Lab} $\rightarrow$ \route{Run SS2D Demo}.}
+
+Essa rota explica o papel do scan 2D. No VMamba original, o scan percorre imagens. No Isomera, a ideia é transferida para uma matriz/tensor de linhagem.
+
+O scan 2D é uma forma de percorrer o campo em rotas. Em uma imagem, isso ajuda a capturar contexto horizontal, vertical e reverso. Em uma matriz de linhagem, a rota precisa respeitar o fato de que linhas e colunas representam nós ordenados. Quando o usuário muda a rota, o decaimento de memória, o ganho de entrada ou a força do SparseGate, ele está observando como o contexto se propaga pela matriz.
+
+A demo SS2D é educacional, mas tem papel prático. Ela mostra por que a ordem dos nós muda a leitura, por que células vazias podem contaminar contexto e por que rotas múltiplas podem capturar padrões que uma varredura única perderia.
+
+\practicebox{Use esta aba quando precisar explicar para alguém técnico por que o Isomera não está simplesmente aplicando um classificador qualquer. A rota SS2D mostra a ponte entre matriz e leitura contextual.}
+
+\widefig{14_study_ss2d_demo.png}{Run SS2D Demo. Demonstração didática de leitura 2D sobre representação de linhagem.}
+
+\section{VMamba-Mesh Changes}
+\clickbox{\route{Study Lab} $\rightarrow$ \route{VMamba-Mesh Changes}.}
+
+Essa aba documenta as adaptações: CanonSort, DiagFP, MeshSS2D, SparseGate e contrato de exportação. Ela serve como ponte entre teoria e implementação.
+
+Cada mudança tem um papel. CanonSort estabiliza a ordem dos nós. DiagFP usa a diagonal para carregar sinais de identidade estrutural. MeshSS2D ajusta a leitura para rotas de linhagem. HierInit ajuda a inicializar o contexto respeitando camadas. SparseGate reduz a influência do vazio. O contrato de exportação garante que, depois de tudo isso, o modelo ainda possa ser chamado pelo benchmark como qualquer outro detector.
+
+Essa aba é importante porque evita uma confusão comum: VMamba-Mesh não é apenas ``VMamba aplicado em grafo''. É um conjunto de adaptações para que o grafo se torne um tensor informativo e para que o tensor continue compatível com o ecossistema do Isomera.
+
+\widefig{15_study_mesh_changes.png}{VMamba-Mesh Changes. Registro das mudanças necessárias para adaptar VMamba ao Isomera.}
+
+\section{Official Runtime}
+\clickbox{\route{Study Lab} $\rightarrow$ \route{Official Runtime}.}
+
+O runtime oficial é mantido como referência de estudo e comparação. Ele não é obrigatório para executar o benchmark do Isomera, porque o Isomera usa contratos próprios de modelo, pickles e \route{predict\_pairs(graph)}. Mesmo assim, essa tela é importante para deixar claro de onde veio a inspiração técnica e onde consultar o código aberto original do VMamba.
+
+Em máquinas com Linux e CUDA, o runtime oficial pode ser estudado com seus kernels e dependências próprias. No Mac, o Isomera usa PyTorch e pode resolver device como CPU ou MPS/Metal quando disponível. Essa distinção precisa ficar clara: a ferramenta implementa um caminho neural treinável real, mas não depende do kernel CUDA/Triton oficial para ser executável no ambiente local.
+
+O valor dessa aba é separar referência de produto. A referência oficial ajuda a estudar a arquitetura original. O produto Isomera precisa ser estável para benchmark, relatório e demonstração. Por isso os dois mundos aparecem conectados, mas não misturados de forma frágil.
+
+\widefig{13_study_official_runtime.png}{Official Runtime. Rota opcional para checar ou instalar a referência oficial do VMamba.}
+
+\section{Train Model Adapter}
+\clickbox{\route{Study Lab} $\rightarrow$ \route{Train Model Adapter}.}
+
+Essa rota permite configurar treino e registrar artefatos. O usuário deve observar hiperparâmetros, benchmark escolhido, dispositivo, número de épocas, loss, negative ratio e local de saída.
+
+O Train Model Adapter é a tela onde a hipótese vira artefato. Antes dela, temos teoria e simulação. Depois dela, temos um modelo salvo que pode ser chamado pelo Benchmark. Essa transição exige disciplina. Um treino sem seed não é reprodutível. Um treino sem manifest não é auditável. Um treino sem informação de device não explica diferença de tempo. Um treino sem política de negativos não explica comportamento de precisão e recall.
+
+As opções de device têm leitura prática. CPU costuma ser estável e pode ser mais rápida em cenários pequenos, porque evita overhead de despacho. MPS pode ajudar quando batches são grandes o suficiente para aproveitar o Metal. Por isso a tela expõe device, inference batch e encoder batch. O usuário consegue testar se o gargalo está na tensorização, no encoder, no head ou no overhead.
+
+As opções de loss e balanceamento também mudam a história do modelo. Weighted BCE dá mais peso à classe minoritária. Focal loss tenta concentrar aprendizado em exemplos difíceis. Negative ratio controla quantos negativos entram para cada positivo. Hard negatives aproximam o treino de casos confusos, nos quais o grafo parece semelhante, mas o label é negativo.
+
+\widefig{16_study_train_model_adapter.png}{Train Model Adapter. Rota para treino e criação de artefatos compatíveis com benchmark.}
+\widefig{16_study_train_model_adapter_scroll.png}{Train Model Adapter com scroll. A captura valida que a tela inclui hiperparâmetros, device, batches, loss, hard negatives e saída de artefatos.}
+
+\section{Model Reports}
+\clickbox{\route{Study Lab} $\rightarrow$ \route{Model Reports}.}
+
+Model Reports centraliza evidências de campanhas. É a rota certa para mostrar resultados sem retreinar modelos longos durante uma apresentação.
+
+Em uso real, nem todo resultado deve ser recalculado ao vivo. Treinos podem demorar, benchmarks completos podem ser pesados e relatórios precisam preservar o estado da campanha. Model Reports resolve isso: ele permite abrir o que já foi executado, conferir tabelas, gráficos, manifests e decisões sem depender de uma nova execução.
+
+Essa rota também ajuda a separar treino de evidência. Treinar é produzir o artefato. Rodar benchmark é medir o artefato. Abrir relatório é explicar o que aconteceu. Quando essas etapas ficam misturadas, a apresentação perde clareza. Quando ficam separadas, o usuário consegue mostrar a ferramenta com segurança.
+
+\widefig{17_study_model_reports.png}{Model Reports. Relatórios e campanhas salvas.}
+\widefig{17_study_model_reports_scroll.png}{Model Reports com scroll. A rota permite inspecionar campanhas longas sem retreinar durante a apresentação.}
+
+\section{Model Interpretability}
+\clickbox{\route{Study Lab} $\rightarrow$ \route{Model Interpretability}.}
+
+Interpretabilidade é a etapa que transforma um score em evidência auditável. O usuário escolhe benchmark, cenário, par e modelo; o app mostra grafo, matriz, canais e saliency quando disponível.
+
+No Isomera, interpretabilidade é local. Isso significa que ela explica um par específico, em um cenário específico, usando um artefato específico. A saliency não prova causalidade universal. Ela mostra sensibilidade local: quais regiões do tensor influenciaram o score daquele par naquela execução. Essa distinção é importante para evitar exagero na leitura.
+
+\tipbox{Explique saliency como sensibilidade local, não como prova causal. Ela ajuda a revisar uma decisão específica de par, modelo e cenário.}
+
+O fluxo ideal começa pelo par. Primeiro o usuário entende quais duas tabelas estão sendo comparadas. Depois olha o grafo para entender a história de linhagem. Depois observa a matriz para ver a estrutura canônica. Depois vê os canais para saber quais sinais chegaram ao modelo. Por fim, olha a saliency para entender onde o score foi mais sensível. Esse caminho é didático e auditável.
+
+\algobox{A saliency é calculada a partir do gradiente do score em relação ao tensor de entrada. Em termos práticos, ela pergunta: se eu alterasse levemente esta célula/canal, quanto o score mudaria? Cores mais fortes indicam maior sensibilidade local.}
+
+Como saliency baseada em gradiente depende de \(\partial f_\theta(X)/\partial X\), ela mede sensibilidade local ao redor da entrada analisada. Essa leitura tem limites: gradientes podem ser pequenos por saturação da sigmoid, regiões fortes podem refletir escala dos canais, e mapas semelhantes não equivalem a explicação causal. Por isso, saliency deve ser usada junto com grafo, matriz, canais, score, threshold e análise de erros.
+
+\widefig{18_study_model_interpretability.png}{Model Interpretability. Caminho para inspecionar decisão de par com saliency e trace.}
+\widefig{18_study_model_interpretability_scroll.png}{Model Interpretability com scroll. A captura confirma os controles de benchmark, cenário, par, modelo e artefatos de interpretabilidade.}
+
+\section{Knowledge Base}
+\clickbox{\route{Study Lab} $\rightarrow$ \route{Knowledge Base}.}
+
+A base de conhecimento resume VMamba, VMamba-Mesh, encoding, reprodutibilidade e interpretabilidade. Ela serve para manter a teoria dentro do aplicativo, não apenas nos PDFs.
+
+Essa tela evita que o conhecimento fique espalhado. Quando o usuário esquece o papel de um canal, abre a Knowledge Base. Quando precisa lembrar como a reprodução foi organizada, abre a Knowledge Base. Quando quer revisar Mamba, VMamba, SS2D ou interpretabilidade, abre a Knowledge Base. A documentação fica perto da ação.
+
+Em produto de pesquisa, essa proximidade importa. Se a explicação está apenas em um PDF externo, a ferramenta vira caixa-preta. Se a explicação está dentro do app, o usuário consegue alternar entre teoria e prática sem sair do fluxo.
+
+\widefig{19_study_knowledge_base.png}{Knowledge Base. Material teórico embutido no Study Lab.}
+\widefig{19_study_knowledge_base_scroll.png}{Knowledge Base com scroll. As KBs ficam navegáveis dentro do aplicativo para consulta durante estudo ou banca.}
+
+\chapter{Model Lab}
+
+\clickbox{Menu lateral $\rightarrow$ \route{Model Lab}.}
+
+O Model Lab mostra os detectores registrados e os pickles disponíveis. Em um ambiente corporativo, essa é uma das rotas mais importantes: ela mostra quais artefatos podem ser reutilizados, quais cenários estão cobertos e como o benchmark roteia cada modelo.
+
+O Model Lab é o inventário técnico dos modelos. Em uma ferramenta pequena, talvez bastasse uma pasta com arquivos. Em uma ferramenta de governança, isso não é suficiente. O usuário precisa saber quais modelos existem, quais famílias eles representam, quais benchmarks cobrem, qual política de roteamento está ativa e se o pickle carrega corretamente.
+
+Essa rota é especialmente importante quando existem modelos especializados por cenário. Um GNN pode ter sido treinado para uma família de grafos. Um VMamba-Mesh-T pode ter sido treinado com canais C0--C5 e threshold específico. Um modelo pode estar mapeado para 20 cenários, outro para apenas um. Se o benchmark rodar sem esse controle, o resultado fica difícil de interpretar.
+
+\tipbox{Quando um resultado parecer estranho, confira o Model Lab antes de culpar o modelo. O problema pode estar no roteamento, no pickle ou na cobertura do cenário.}
+
+\algobox{O roteamento liga benchmark, cenário e artefato. Na execução, o Isomera pergunta qual modelo deve ser usado para aquele cenário. Se houver rota explícita, usa o pickle mapeado. Se houver política best-of, seleciona conforme configuração. Se não houver cobertura, o status precisa indicar que o modelo não está disponível para aquele caso.}
+
+\widefig{20_model_lab.png}{Model Lab. Registro e validação de pickles e famílias de modelo.}
+\widefig{20_model_lab_scroll.png}{Model Lab com scroll. A imagem mostra que o usuário pode verificar roteamento e cobertura por benchmark.}
+
+\chapter{Research Reports}
+
+\clickbox{Menu lateral $\rightarrow$ \route{Research Reports}.}
+
+Research Reports é o arquivo vivo do Isomera. Cada execução relevante pode gerar Markdown, CSV, JSON, figuras, manifest e pacote ZIP. O usuário não precisa procurar manualmente em pastas: a interface lista os pacotes e mostra a narrativa.
+
+Essa tela é o equivalente a uma bancada de evidências. Ela existe porque resultado científico e resultado de engenharia precisam de rastro. Uma execução sem relatório é difícil de defender. Um relatório sem manifest é difícil de reproduzir. Um gráfico sem CSV é difícil de auditar. Um CSV sem contexto é difícil de explicar.
+
+Quando o usuário abre um pacote em Research Reports, ele deve procurar quatro coisas. Primeiro, o resumo narrativo: o que foi executado e por quê. Segundo, os arquivos tabulares: métricas, comparações, ablations e cenários. Terceiro, as figuras: gráficos, matrizes, canais e saliency. Quarto, o manifest: parâmetros, seeds, device, modelos e caminhos de artefatos.
+
+\tipbox{Um bom relatório deve responder sem abrir o código: o que rodou, com quais parâmetros, quais arquivos gerou e quais evidências sustentam o resultado.}
+
+Essa organização também ajuda na rotina de vídeo ou banca. Em vez de retreinar, o apresentador mostra a campanha salva, abre as tabelas, mostra os gráficos e depois volta ao Study Lab para explicar um par específico. Assim a demonstração fica dinâmica sem sacrificar reprodutibilidade.
+
+\widefig{21_research_reports.png}{Research Reports. Leitura de pacotes gerados por execuções e estudos.}
+\widefig{21_research_reports_scroll.png}{Research Reports com scroll. Use esta área para abrir detalhes, anexos e relatórios longos.}
+
+\chapter{Admin}
+
+\clickbox{Menu lateral $\rightarrow$ \route{Admin}.}
+
+Admin mostra o estado técnico da ferramenta. Essa rota é útil para depuração, demonstração de maturidade e entendimento de onde ficam backend, warehouse e configurações.
+
+O Admin não é a parte mais chamativa da ferramenta, mas é uma das mais importantes para operação. Ele responde a perguntas que normalmente só apareceriam no terminal: qual backend está ativo, quantos cenários estão registrados, se o warehouse está acessível, se há integração graph-native prevista e quais URLs/configurações estão em uso.
+
+Em ambientes de pesquisa, Admin ajuda a detectar diferença entre máquinas. Em ambientes corporativos, ajuda a separar store de produto, warehouse de cenários e configurações. Esse isolamento reduz risco de confundir dados de benchmark com dados operacionais.
+
+\tipbox{Use Admin como verificação de ambiente. Ele ajuda a separar erro de dados, erro de configuração e erro de execução.}
+
+\widefig{22_admin_overview.png}{Admin Overview. Visão geral de stores e entidades.}
+
+\section{Backend Store}
+\clickbox{\route{Admin} $\rightarrow$ \route{Backend Store}.}
+
+O Backend Store guarda metadados de produto: cenários, labels, runs, logs, reports, modelos e artefatos.
+
+Pense no Backend Store como o caderno de bordo do aplicativo. Ele não é necessariamente onde vivem todos os grafos ou todos os dados brutos. Ele guarda o que o produto precisa para se lembrar do que aconteceu: quais runs existiram, quais relatórios foram gerados, quais modelos foram registrados e quais artefatos foram rastreados.
+
+\practicebox{Se algo parece ter rodado, mas não aparece em relatório ou benchmark, verifique o Backend Store. Ele ajuda a diferenciar problema de execução, problema de registro e problema de visualização.}
+
+\widefig{23_admin_backend_store.png}{Backend Store. Tabelas e registros operacionais.}
+\widefig{23_admin_backend_store_scroll.png}{Backend Store com scroll. A captura valida entidades, contadores e tabelas abaixo da área inicial.}
+
+\section{Scenario Warehouse}
+\clickbox{\route{Admin} $\rightarrow$ \route{Scenario Warehouse}.}
+
+O Scenario Warehouse mostra schemas relacionais de cenários. Essa rota conecta a ferramenta a bancos e materializações SQL.
+
+O Scenario Warehouse representa a ponte com o mundo relacional. A linhagem pode nascer em um banco, em schemas, em tabelas e em contratos. Ao mostrar esses schemas, o Isomera deixa claro que o grafo não precisa ser desenhado manualmente. Ele pode ser materializado a partir de estruturas reais.
+
+Essa tela também ajuda a explicar como o benchmark pode ser construído a partir de dados persistidos. Cada cenário pode ser representado de forma isolada, com suas tabelas, metadados e relações. Depois o Scenario Studio transforma isso em grafo e o Benchmark usa esse grafo para avaliar detectores.
+
+\widefig{24_admin_scenario_warehouse.png}{Scenario Warehouse. Estado do warehouse de cenários.}
+\widefig{24_admin_scenario_warehouse_scroll.png}{Scenario Warehouse com scroll. A tela apoia auditoria de schemas e materialização relacional.}
+
+\section{Neo4j e Settings}
+\clickbox{\route{Admin} $\rightarrow$ \route{Neo4j} ou \route{Settings}.}
+
+Neo4j aparece como espaço reservado para exploração graph-native. Settings centraliza conexões e perfis de backend.
+
+Neo4j aparece como uma direção natural para evolução. Como o domínio é grafo, uma base graph-native pode facilitar consultas exploratórias, vizinhanças, caminhos e visualizações. Mesmo que a execução atual não dependa dela, a tela indica que a arquitetura foi pensada para crescer.
+
+Settings é a parte onde a ferramenta deixa de ser apenas local e passa a aceitar perfis. URLs, conexões e stores precisam ser configuráveis porque o mesmo Isomera pode rodar em máquina de pesquisa, ambiente de demonstração ou servidor de laboratório.
+
+\widefig{25_admin_neo4j.png}{Neo4j. Espaço de integração graph-native.}
+\widefig{26_admin_settings.png}{Settings. Configurações de conexão e runtime.}
+\widefig{26_admin_settings_scroll.png}{Settings com scroll. A captura mostra configurações e perfis adicionais de runtime.}
+
+\chapter{Logs}
+
+\clickbox{Menu lateral $\rightarrow$ \route{Logs}.}
+
+Logs ajudam a explicar o que aconteceu sem abrir o terminal. Eles são relevantes para depuração e também para auditoria de execução.
+
+Logs são a memória de baixo nível da ferramenta. Se um botão foi clicado, se uma rota foi aberta, se uma execução falhou ou se um arquivo foi lido, a sessão deve registrar o suficiente para investigação. Isso é importante porque ferramentas interativas podem esconder erro visualmente: um botão pode parecer não fazer nada quando, na verdade, houve falha de dependência, caminho ou permissão.
+
+\tipbox{Comece pelo Session Log para entender a ação do usuário. Só depois vá ao Terminal Logs para investigar erro bruto ou dependência ausente.}
+
+O Session Log tem foco em eventos estruturados do app. O Terminal Logs mostra saídas mais próximas do processo. Na prática, o usuário começa pelo Session Log para entender a ação e desce para Terminal Logs quando precisa ver erro bruto.
+
+\widefig{27_logs_session.png}{Session Log. Eventos estruturados da sessão.}
+\widefig{28_logs_terminal.png}{Terminal Logs. Logs de terminal quando disponíveis.}
+
+\chapter{Help e About}
+
+\section{Help}
+\clickbox{Menu lateral $\rightarrow$ \route{Help}.}
+
+Help concentra apresentação e documentação técnica. A apresentação ajuda em demonstrações; Tech Docs abre os arquivos Markdown do hub técnico.
+
+Help é a área de apoio ao usuário. Ela não deve ser vista como enfeite. Em uma ferramenta de pesquisa aplicada, a documentação precisa estar acessível dentro do produto, porque o usuário alterna constantemente entre conceito e execução. Uma aba explica o roteiro de apresentação; a outra abre a documentação técnica.
+
+Quando uma pessoa nova entra no projeto, Help é o primeiro lugar para aprender vocabulário. Quando uma pessoa técnica precisa revisar uma decisão de arquitetura, Tech Docs é o caminho. Quando uma banca ou professor pede para mostrar o que foi feito, a apresentação embutida ajuda a manter o fluxo.
+
+\tipbox{Em apresentações, use Help para guiar a narrativa e About para fixar a versão demonstrada. Isso evita confusão entre builds e campanhas.}
+
+\widefig{29_help_presentation.png}{Help: apresentação VMamba-Mesh.}
+\widefig{30_help_tech_docs.png}{Help: Tech Docs.}
+\widefig{30_help_tech_docs_scroll.png}{Tech Docs com scroll. A rota mostra documentação Markdown longa diretamente dentro do Isomera.}
+
+\section{About}
+\clickbox{Menu lateral $\rightarrow$ \route{About}.}
+
+About documenta versão, codinome, autor, orientador, contexto do projeto e notas de funcionalidades.
+
+About fecha o ciclo de produto. Ele informa versão, autoria, contexto e notas. Essa tela é útil em gravações, apresentações e entregas públicas porque identifica claramente o que está sendo executado. Em projetos de pesquisa, isso evita confusão entre versões, especialmente quando o mesmo estudo evolui por meses.
+
+\widefig{31_about.png}{About. Informações de versão, autoria e contexto.}
+\widefig{31_about_scroll.png}{About com scroll. A captura preserva notas de funcionalidades e informações de projeto.}
+
+\chapter{Métricas e resultados}
+
+O Isomera usa métricas de qualidade e eficiência. Jaccard mede a qualidade dos pares duplicados identificados:
+
+\[
+J = \frac{TP}{TP + FP + FN}
+\]
+
+Aqui, \(TP\) são pares que o modelo marcou como duplicados e realmente eram duplicados. \(FP\) são pares marcados como duplicados mas que não eram. \(FN\) são pares que o modelo deixou de marcar como duplicados, embora fossem duplicados.
+
+SF-Jaccard combina acerto e tempo. A leitura prática é: quantos pares duplicados corretos por segundo o detector consegue entregar, ponderando a qualidade da identificação.
+
+\tipbox{Não escolha modelo por uma métrica isolada. Jaccard mostra qualidade do conjunto; tempo mostra viabilidade; SF-Jaccard ajuda a comparar eficiência.}
+
+O Jaccard é uma métrica de conjunto. Ele compara o conjunto de pares que o modelo marcou como duplicado com o conjunto de pares que realmente eram duplicados. Se o modelo marca muitos pares errados, o \(FP\) cresce e o Jaccard cai. Se deixa de marcar pares verdadeiros, o \(FN\) cresce e o Jaccard também cai. Por isso ele é uma métrica adequada quando a pergunta principal é qualidade da identificação.
+
+O tempo mediano de execução mede custo operacional. Ele não diz se o modelo está certo, mas diz se o modelo é viável. Em uma empresa, um detector excelente mas lento demais pode ser ruim para uso recorrente. Um detector rápido mas impreciso pode ser útil como filtro inicial. O Isomera mantém essas dimensões separadas para evitar conclusões simplistas.
+
+O SF-Jaccard junta qualidade e velocidade. Ele não substitui o Jaccard, mas ajuda a enxergar eficiência: quantos pares corretamente identificados por segundo o método entrega, levando em conta a qualidade. Um modelo pode ter Jaccard um pouco menor e SF-Jaccard maior se for muito rápido. Outro pode ter Jaccard melhor e SF-Jaccard menor se custar mais. A escolha depende da aplicação.
+
+Intervalos de confiança representam incerteza estatística sobre a métrica estimada. Se dois modelos têm médias diferentes, mas intervalos amplamente sobrepostos, a evidência de superioridade deve ser tratada com cautela. No Isomera, ICs são úteis para distinguir ganho consistente de variação causada por cenário, seed, amostragem de pares ou ruído experimental.
+
+\cautionbox{Não interprete uma diferença pequena de Jaccard como vitória automática. Verifique intervalo de confiança, número de cenários, número de runs, seed, variação entre cenários e custo operacional.}
+
+\studybox{\textbf{Como ler os resultados.} Para pesquisa, olhe primeiro Jaccard e intervalos de confiança. Para produção, olhe também ET e SF-Jaccard. Para explicação de modelo, volte ao Study Lab e abra um par específico.}
+
+\widefig{spec_v2_jaccard_comparison.png}{Comparação de Jaccard no SPEC v2.}
+\widefig{spec_v2_sf_jaccard_comparison.png}{Comparação de SF-Jaccard no SPEC v2.}
+
+\chapter{Famílias de modelos no Isomera}
+
+O Isomera foi desenhado para comparar modelos diferentes sob o mesmo contrato. Essa decisão é mais importante do que parece. Se cada modelo tivesse uma entrada, uma saída e uma métrica diferente, a ferramenta viraria um conjunto de experimentos isolados. Ao exigir que todos os detectores retornem pares por meio de um contrato comum, o Isomera permite comparar abordagens determinísticas, modelos de grafo e modelos neurais de tensor no mesmo benchmark.
+
+\tipbox{Leia as famílias como uma escada de comparação: baselines simples, modelos de grafo, tensorização e versões treináveis. Cada degrau responde uma pergunta diferente.}
+
+\section{VF2}
+
+VF2 é um algoritmo clássico de isomorfismo de grafos. Ele tenta verificar correspondência estrutural entre grafos ou subgrafos. No contexto do Isomera, VF2 funciona como baseline auditável. Quando ele marca um par, a decisão está ligada à estrutura e às restrições de matching. Isso é útil para casos em que a duplicidade se parece muito com equivalência estrutural.
+
+O limite do VF2 aparece quando a duplicidade é parcial, semântica ou ruidosa. Duas tabelas podem ser redundantes mesmo que uma transformação intermediária tenha mudado de nome, que uma aresta esteja ausente ou que uma fonte adicional tenha sido incorporada. Nesses casos, matching exato pode ser rígido demais. Ainda assim, VF2 é indispensável porque dá uma referência: se até o baseline determinístico encontra o par, provavelmente o caso é estruturalmente forte.
+
+\section{Node Match}
+
+Node Match é uma família de comparação mais direta. Ela usa propriedades dos nós, rótulos, camadas e vizinhança para encontrar candidatos. É menos expressiva que uma rede neural, mas mais simples de explicar. Em governança, simplicidade importa. Um método simples pode ser usado como triagem, como controle ou como ferramenta de depuração.
+
+Quando Node Match falha, a falha também ensina. Se dois nós parecem duplicados para o especialista, mas não compartilham sinais suficientes para Node Match, talvez a duplicidade esteja em contexto mais amplo. Se Node Match encontra muitos falsos positivos, talvez os rótulos ou camadas estejam genéricos demais. O Isomera usa esse tipo de baseline para não depender apenas de modelos treináveis.
+
+\section{GNN e GIN}
+
+GNNs aprendem representações de grafos por propagação de mensagens. Cada nó agrega informação dos vizinhos, atualiza embeddings e produz uma representação que pode ser usada para classificar pares. GIN é uma variante forte para distinguir estruturas, por isso faz sentido como baseline neural de grafo.
+
+No Isomera, o GNN/GIN é importante porque trabalha diretamente sobre grafo, enquanto VMamba-Mesh transforma grafo em tensor. Essa diferença cria uma comparação científica interessante. O GNN pergunta: o padrão de duplicidade está melhor representado por mensagens em vizinhança? O VMamba-Mesh pergunta: o padrão de duplicidade está melhor representado por campos matriciais e canais estruturais?
+
+O treino de GNN também exige cuidado com negativos. Como pares duplicados são raros, o modelo pode aprender a dizer ``não duplicado'' para tudo e ainda parecer bom em acurácia simples. Por isso métricas como Jaccard e SF-Jaccard são mais informativas para a tarefa.
+
+\section{Vanilla VMamba}
+
+O Vanilla VMamba no Isomera representa a ideia de usar uma leitura inspirada em VMamba sem todos os canais de malha. Ele serve como ponto de comparação. A pergunta é: se eu transformar a estrutura em uma imagem ou campo mais simples, quanto consigo detectar? Esse baseline ajuda a medir a contribuição dos canais do VMamba-Mesh.
+
+O nome ``vanilla'' não significa inútil. Pelo contrário: em alguns cenários ele pode ser rápido e eficiente. O importante é entender o que ele vê. Ele não recebe o mesmo conjunto completo C0--C5 do VMamba-Mesh-T. Portanto, se ele se sai bem em eficiência, isso mostra que há sinais fortes na representação mais simples. Se perde qualidade em certos casos, isso sugere que direção, camada, grau, rota e máscara ajudam.
+
+\section{VMamba-Mesh adapter}
+
+O VMamba-Mesh adapter é determinístico. Ele não é a rede neural treinável. Ele calcula features estruturais a partir do tensor e gera um score ponderado. Esse caminho foi importante porque permitiu validar a engenharia da representação antes de treinar a versão neural. Em pesquisa aplicada, essa etapa é saudável: primeiro se prova que a representação faz sentido; depois se coloca aprendizado treinável em cima.
+
+O adapter também é útil operacionalmente porque tende a ser simples, rápido e explicável. O usuário consegue entender que o score vem de similaridades estruturais, canais e pesos. Ele não substitui o modelo neural, mas ajuda a mostrar a contribuição da tensorização.
+
+\section{VMamba-T}
+
+VMamba-T é a versão treinável que usa um subconjunto mais simples de canais, normalmente C0 e C1. Ela serve para separar dois efeitos. O primeiro efeito é ter uma rede neural treinável. O segundo efeito é ter canais VMamba-Mesh completos. Se VMamba-T melhora em relação a baselines simples, há ganho do caminho neural. Se VMamba-Mesh-T melhora em relação a VMamba-T, há evidência de ganho dos canais adicionais.
+
+O fluxo de decisão é neural. O tensor entra, passa por patch embedding, blocos VSS/SS2D, pooling e head de par. A saída é um logit. A sigmoid transforma o logit em score contínuo. O threshold transforma score em decisão binária.
+
+\section{VMamba-Mesh-T}
+
+VMamba-Mesh-T é a versão treinável completa. Ela usa C0--C5 como entrada e aplica o backbone neural sobre a representação enriquecida. Essa é a versão que mais se aproxima da proposta final de combinar governança de dados, grafos de linhagem e redes neurais visuais.
+
+A diferença central entre VMamba-T e VMamba-Mesh-T está no que a rede recebe. VMamba-T enxerga direção básica. VMamba-Mesh-T enxerga direção, reverso, camada, grau, rota e máscara. Isso dá ao modelo mais sinais para distinguir duplicidade real de semelhança superficial.
+
+\studybox{\textbf{Resumo da família.} VF2 e Node Match são controles determinísticos. GNN/GIN aprende sobre grafo. Vanilla VMamba testa leitura matricial simplificada. VMamba-Mesh adapter valida features estruturais. VMamba-T testa rede neural treinável com canais básicos. VMamba-Mesh-T testa rede neural treinável com canais completos.}
+
+\chapter{Treinamento, hiperparâmetros e ablation}
+
+Treinar um modelo no Isomera não significa apenas apertar um botão. Significa definir um protocolo. O protocolo precisa dizer quais cenários entram, como pares positivos e negativos são formados, qual loss será usada, qual otimizador atualiza pesos, quantas épocas serão executadas, qual device será utilizado e como o threshold será escolhido.
+
+\tipbox{Um treino sem seed, hiperparâmetros e manifest não é um experimento reprodutível. Registre o protocolo antes de comparar resultados.}
+
+\section{Dataset supervisionado}
+
+A base supervisionada nasce dos pares rotulados. Pares positivos são aqueles que o ground truth considera duplicados. Pares negativos são aqueles que não devem ser classificados como duplicados. Como o número de negativos possíveis costuma ser muito maior, o Isomera usa políticas de negative ratio e hard negatives para formar um conjunto de treino controlado.
+
+Um negative ratio de 4, por exemplo, significa usar quatro negativos para cada positivo. Isso aumenta a exposição do modelo a exemplos não duplicados sem deixar a classe negativa dominar completamente. Hard negatives são negativos parecidos com positivos. Eles são úteis porque forçam o modelo a aprender detalhes, não apenas diferenças óbvias.
+
+\section{Loss e otimizador}
+
+Weighted BCE é adequada quando há desbalanceamento. Ela mantém a forma da binary cross entropy, mas ajusta pesos para reduzir o efeito de classe majoritária. Focal loss é útil quando o modelo precisa concentrar aprendizado em exemplos difíceis. BCE simples é referência, mas pode ser insuficiente quando positivos são raros.
+
+AdamW é usado porque combina adaptação de taxa de aprendizado com weight decay desacoplado. Em modelos neurais pequenos e médios, costuma ser uma escolha estável. O learning rate controla o tamanho dos passos. Weight decay ajuda a regularizar. Epochs controlam quantas passagens o modelo faz sobre o dataset.
+
+Para um par com rótulo \(y\in\{0,1\}\) e probabilidade estimada \(\hat{y}=\sigma(z)\), a binary cross entropy é:
+\[
+\mathcal{L}_{BCE} = -[y\log(\hat{y}) + (1-y)\log(1-\hat{y})].
+\]
+Na Weighted BCE, os termos positivos e negativos recebem pesos diferentes, o que é útil quando pares duplicados são raros. Em cenários desbalanceados, acurácia pode ser enganosa: um modelo que prediz sempre ``não duplicado'' pode obter alta acurácia e ainda assim ser inútil para encontrar duplicidades.
+
+\cautionbox{Loss baixa não garante bom detector de duplicidade. Em dados desbalanceados, o modelo pode reduzir a perda aprendendo bem a classe majoritária. Por isso, loss, Jaccard, falsos positivos, falsos negativos e threshold precisam ser lidos em conjunto.}
+
+\section{Device: CPU, MPS e auto}
+
+CPU é o caminho mais previsível. Em cenários pequenos, pode ser mais rápido porque não paga overhead de enviar operações para GPU. MPS usa Apple Metal no Mac quando PyTorch o expõe. MPS pode ajudar quando há batches maiores, modelos mais largos ou campanhas longas. O modo auto tenta resolver o melhor dispositivo disponível.
+
+O ponto importante é que device não muda a definição do modelo. Ele muda onde as operações rodam. Se CPU e MPS produzem números próximos, a diferença principal deve aparecer em tempo. Se há diferença relevante de qualidade, é preciso investigar determinismo, seed, precisão numérica e caminho de execução.
+
+\section{Batching}
+
+Batching existe para reduzir overhead. Em vez de calcular um par por vez, o Isomera pode processar embeddings ou pares em blocos. Isso é especialmente importante para MPS. Sem batching suficiente, o custo de despacho pode superar o ganho de paralelismo. Com batching maior, o hardware passa a ser melhor aproveitado.
+
+No manual, o usuário deve lembrar de duas variáveis: encoder batch e inference batch. Encoder batch controla quantos contextos são codificados juntos. Inference batch controla quantos pares são avaliados em bloco. Ajustar esses valores é parte da engenharia de performance.
+
+\section{Ablation}
+
+Ablation é o estudo de remover ou alterar componentes para entender contribuição. No Isomera, ablations podem envolver canais, loss, negative ratio, hard negatives, device, batch size, epochs, threshold e replay de falsos positivos. O objetivo não é apenas procurar um número maior; é entender por que uma mudança melhora uma métrica e piora outra.
+
+Um bom ablation precisa registrar antes e depois. Se uma configuração aumenta SF-Jaccard mas reduz Jaccard, ela pode ser boa para triagem rápida e ruim para decisão conservadora. Se melhora tempo em MPS mas mantém qualidade, pode ser boa para campanhas longas. Se melhora qualidade mas o intervalo de confiança ainda cruza zero, a evidência deve ser apresentada com cuidado.
+
+Um estudo de ablation deve alterar uma variável por vez sempre que possível. Se canais, loss, threshold e negative ratio mudam simultaneamente, o resultado não identifica qual componente causou a diferença observada. A comparação mais forte é do tipo controle versus variante: manter dataset, seed, split, modelo-base e métrica constantes, alterando apenas o componente investigado.
+
+\practicebox{Ao usar a tela de treino, anote: benchmark, cenários, modelo, canais, loss, otimizador, learning rate, weight decay, epochs, negative ratio, hard negatives, threshold, device, encoder batch, inference batch e seed. Esses campos são a diferença entre experimento e lembrança solta.}
+
+\chapter{Playbooks de uso}
+
+\tipbox{Use os playbooks como roteiro de operação, não como teoria. Eles são úteis para gravação, aula, banca e onboarding de novos usuários.}
+
+\section{Playbook 1: primeira abertura}
+
+Abra o Isomera e permaneça na Home. Antes de clicar em qualquer execução, observe o menu lateral. A ferramenta está organizada em módulos porque cada módulo representa um papel. Benchmark mede. Scenario Studio cria. Study Lab explica. Model Lab registra. Research Reports arquiva. Admin configura. Logs auditam. Help ensina. About identifica.
+
+Depois, abra Benchmark \& Examples e vá para Concepts. Essa é a melhor segunda tela para quem está começando. Ela explica cenários, nomes, camadas e cobertura de modelos. Não rode nada ainda. Entenda primeiro o que será medido.
+
+Em seguida, abra Study Lab. Passe pelas abas sem executar treino. Veja Deep Learning Workbench, Original VMamba, SS2D Demo e VMamba-Mesh Changes. O objetivo é entender o vocabulário. Só depois disso faz sentido abrir Train Model Adapter ou Model Interpretability.
+
+\section{Playbook 2: executar um benchmark pronto}
+
+Entre em Benchmark \& Examples. Escolha o benchmark. Abra Run Benchmark. Verifique se a família de modelo está disponível. Se houver aviso de dependência, não ignore. Dependências como torch ou torch-geometric alteram quais modelos conseguem rodar.
+
+Escolha uma política de execução adequada. Para teste rápido, use cenário pequeno ou execução limitada. Para resultado de campanha, use configuração registrada. Depois de rodar, leia métricas e salve relatório. Não copie apenas o número final; confira também tempo, pares encontrados, status e manifest.
+
+Depois da execução, vá para Research Reports. Abra o pacote gerado. Confirme se existem CSV, JSON, Markdown e figuras. Se algo não apareceu, volte aos logs. Esse caminho é o ciclo básico de execução auditável.
+
+\section{Playbook 3: explicar VMamba-Mesh}
+
+Comece mostrando o grafo e a matriz. Explique que o grafo mostra a história da tabela e a matriz transforma essa história em campo computacional. Depois mostre os canais C0--C5. Cada canal adiciona uma visão: direção, reverso, camada, grau, rota e máscara.
+
+Abra Study Lab. Em Original VMamba, explique que a inspiração vem de modelos visuais que leem mapas 2D. Em Run SS2D Demo, mostre como rotas percorrem a matriz. Em VMamba-Mesh Changes, explique CanonSort, DiagFP, MeshSS2D, HierInit e SparseGate. Por fim, vá para Deep Learning Workbench e compare dois modelos no mesmo par.
+
+\section{Playbook 4: treinar modelo}
+
+Abra Study Lab e entre em Train Model Adapter. Escolha benchmark, cenário e família. Se escolher VMamba-T, lembre que a entrada é mais simples. Se escolher VMamba-Mesh-T, a entrada usa C0--C5. Configure loss, otimizador, learning rate, epochs, negative ratio e device.
+
+Antes de rodar, leia o aviso de tempo. Se estiver em Mac, teste CPU e MPS com batches adequados. Para uma gravação curta, não treine do zero; mostre a tela, explique os parâmetros e depois abra Model Reports com a campanha salva.
+
+Depois do treino, confira se o pickle foi salvo e se o manifest registra hiperparâmetros. Em seguida, abra Model Lab para verificar se o artefato aparece. Por fim, rode Benchmark para medir o modelo.
+
+\section{Playbook 5: analisar interpretabilidade}
+
+Abra Study Lab e entre em Model Interpretability. Escolha benchmark, cenário, par e modelo. O ideal é usar um par conhecido, como SOR16-D1, porque o grafo e os canais já aparecem em outros materiais. Primeiro leia o par. Depois observe o grafo. Em seguida veja a matriz. Só então interprete saliency.
+
+Ao olhar a saliency, não diga que ela prova causalidade. Diga que ela mostra sensibilidade local do score. Se a região forte aparece em canais coerentes, isso sugere que o modelo está usando evidência estrutural. Se aparece em regiões vazias, isso pode indicar problema de treino ou representação.
+
+\section{Playbook 6: criar cenário novo}
+
+Abra Scenario Studio. Escolha a fonte: Scenario Warehouse, GML Catalog ou Manual Builder. Carregue o grafo e confira visualmente. Se a estrutura não faz sentido, pare. Não avance para labels ou treino com um grafo ruim.
+
+Depois configure filtros de pares. Comece conservador: mesma camada, domínio relevante e assinaturas estruturais. Revise pares candidatos. Publique o cenário apenas quando o ground truth estiver claro. Depois disso, o cenário poderá aparecer no Benchmark e no treino.
+
+\section{Playbook 7: usar em uma empresa}
+
+Comece com uma prova de conceito em um domínio. Extraia linhagem, gere grafo, rotule poucos pares e rode baselines. Mostre achados para especialistas de negócio. Ajuste regras de candidatura. Só depois treine modelos neurais.
+
+Em produção, integre com catálogo e processos de governança. O Isomera pode apontar duplicidades, mas a decisão de consolidar tabelas precisa passar por owners, impacto downstream, contratos de dados e comunicação com consumidores.
+
+\chapter{Glossário operacional}
+
+\tipbox{Consulte o glossário quando um termo aparecer em várias telas. Ele padroniza o vocabulário entre produto, relatório e artigo.}
+
+\begin{longtable}{p{0.25\linewidth}p{0.65\linewidth}}
+\textbf{Termo} & \textbf{Significado no Isomera} \\
+\hline
+Benchmark & Conjunto de cenários, grafos, pares reais e regras de execução usado para comparar detectores. \\
+Cenário & Um grafo específico de linhagem, geralmente identificado por quantidade de SOR, domínios e seed. \\
+Ground truth & Lista de pares considerados duplicados de acordo com validação ou contrato do estudo. \\
+Detector & Algoritmo ou modelo que recebe grafo e retorna pares candidatos a duplicidade. \\
+Pickle & Artefato serializado de modelo, usado para carregar pesos, parâmetros ou objeto executor. \\
+Manifest & Arquivo de rastreabilidade com parâmetros, seeds, artefatos, métricas e contexto de execução. \\
+CanonSort & Ordenação canônica dos nós antes de construir matriz/tensor. \\
+DiagFP & Marcação diagonal com sinais de camada e identidade estrutural. \\
+MeshSS2D & Adaptação da leitura SS2D para rotas coerentes com linhagem. \\
+SparseGate & Mecanismo para reduzir influência de células vazias em matriz esparsa. \\
+Hard negative & Par negativo difícil, estruturalmente parecido com positivo, usado para treinar melhor o classificador. \\
+Logit & Saída bruta do head neural antes da sigmoid. \\
+Sigmoid & Função que transforma logit em score contínuo entre 0 e 1. \\
+Threshold & Corte usado para transformar score em decisão duplicado/não duplicado. \\
+Saliency & Mapa de sensibilidade local do score em relação ao tensor de entrada. \\
+SF-Jaccard & Métrica que combina qualidade de Jaccard com tempo para estimar eficiência de pares corretos por segundo. \\
+\end{longtable}
+
+\chapter{Catálogo visual tela a tela}
+
+Este capítulo é um manual de campo. Ele repete as telas principais em formato de ficha para que o leitor consiga estudar a ferramenta como estudaria um produto corporativo: uma página por rota, com intenção, controles, teoria e checklist. A repetição é proposital. Nos capítulos anteriores, as telas aparecem dentro da narrativa. Aqui, elas aparecem como referência rápida para operação e treinamento.
+
+\tipbox{Este catálogo é para consulta rápida. Use as fichas quando precisar lembrar onde clicar, o que observar e como validar uma tela específica.}
+
+\screenwalk{01_home.png}
+{Home}
+{Abrir o Isomera e permanecer na tela inicial.}
+{Use esta tela para explicar o produto inteiro antes de entrar em detalhes. Ela é o ponto de partida para usuário novo, demonstração, aula ou revisão de versão.}
+{Observe o menu lateral, a separação entre módulos centrais e suporte, o controle de captura e o botão de parada. A Home mostra que a ferramenta não é apenas benchmark: ela cobre criação, estudo, modelos, relatórios, administração e documentação.}
+{A Home organiza uma arquitetura de produto em torno do ciclo de vida do experimento: criar cenário, executar detector, estudar modelo, salvar relatório e auditar execução.}
+{Verificar se o menu lateral está visível, se a versão/codinome aparecem, se os módulos principais abrem e se o app está responsivo.}
+
+\screenwalk{02_benchmark_article_reproducibility.png}
+{Benchmark: reprodução de campanha}
+{\route{Benchmark \& Examples} $\rightarrow$ \route{Article Reproducibility}.}
+{Use quando quiser repetir uma campanha salva ou mostrar que o resultado não depende de memória informal.}
+{Observe seletor de artigo/campanha, benchmark, cenário, modelo, seed e modo de execução. A tela deve deixar claro o que será reproduzido antes de rodar.}
+{A reprodução é baseada em manifestos. O manifesto transforma uma execução em objeto auditável: entradas, parâmetros, artefatos, métricas esperadas e tolerâncias.}
+{Conferir campanha selecionada, modo de execução, cenário, modelo e se o trace aparece depois da execução.}
+
+\screenwalk{03_benchmark_run.png}
+{Benchmark: execução direta}
+{\route{Benchmark \& Examples} $\rightarrow$ \route{Run Benchmark}.}
+{Use quando quiser rodar um detector agora, sem necessariamente seguir um pacote de reprodução completo.}
+{Observe benchmark ativo, modelos disponíveis, política de execução, roteamento e área de resultados.}
+{A execução chama o contrato de cada detector, recebe pares previstos e compara com ground truth. Daí nascem TP, FP, FN, Jaccard, tempo e SF-Jaccard.}
+{Verificar se o benchmark correto está selecionado, se o modelo tem dependências instaladas e se o relatório foi salvo após a execução.}
+
+\screenwalk{04_benchmark_concepts.png}
+{Benchmark: conceitos}
+{\route{Benchmark \& Examples} $\rightarrow$ \route{Concepts}.}
+{Use antes de executar um benchmark novo ou quando precisar explicar cenário, pares e cobertura.}
+{Observe nomes de cenários, matriz SOR x Domínios, pares reais e cobertura de roteamento por família de modelo.}
+{A tela conecta estrutura experimental com interpretação. O nome do cenário codifica fontes, domínios e seed; a matriz ajuda a entender o espaço de avaliação.}
+{Confirmar cenários, ground truth, cobertura de modelos e se os pares reais podem ser inspecionados.}
+
+\screenwalk{06_scenario_studio_overview.png}
+{Scenario Studio: visão geral}
+{\route{Scenario Studio}.}
+{Use para criar, carregar ou revisar cenários antes de qualquer benchmark.}
+{Observe a jornada vertical, o método de entrada e as etapas de fonte, validação e treino.}
+{O Scenario Studio materializa grafos e prepara ground truth. Ele é a etapa em que dados brutos viram benchmark treinável.}
+{Confirmar fonte do cenário, carregamento do grafo, filtros de pares e destino de publicação.}
+
+\screenwalk{07_scenario_studio_source_scroll.png}
+{Scenario Studio: fonte relacional}
+{\route{Scenario Studio} $\rightarrow$ escolher \route{Scenario Warehouse}.}
+{Use quando o cenário vem de banco relacional, schemas ou materialização persistida.}
+{Observe engine, database, schema, status de conexão e detalhes da estrutura.}
+{A fonte relacional permite transformar arquiteturas de dados reais em grafos. Cada tabela vira nó; dependências viram arestas.}
+{Verificar conexão, schema correto, quantidade de tabelas e se o carregamento do cenário conclui sem erro.}
+
+\screenwalk{08_scenario_studio_validation_scroll.png}
+{Scenario Studio: validação de pares}
+{\route{Scenario Studio} $\rightarrow$ descer até filtros e validação.}
+{Use depois de carregar um grafo, antes de publicar o benchmark.}
+{Observe filtros por camada, domínio, grau, assinatura de pais/filhos e fila de revisão.}
+{A validação cria ground truth. Bons labels dependem de filtros claros e revisão humana ou assistida por LLM.}
+{Conferir quantidade de pares antes/depois dos filtros, pares revisados e destino do benchmark.}
+
+\screenwalk{10_scenario_model_training.png}
+{Scenario Studio: treinamento}
+{\route{Scenario Studio} $\rightarrow$ seção \route{Model Training}.}
+{Use para treinar modelos vinculados aos cenários publicados.}
+{Observe família de modelo, protocolo, parâmetros, loss, otimizador, balanceamento, device e destino do pickle.}
+{O treinamento transforma pares rotulados em artefato reutilizável. O manifest precisa registrar hiperparâmetros e contexto.}
+{Confirmar cenários de treino, seed, device, batch, loss, otimizador, nome do artefato e registro final.}
+
+\screenwalk{11_study_deep_learning_workbench.png}
+{Study Lab: Deep Learning Workbench}
+{\route{Study Lab} $\rightarrow$ \route{Deep Learning Workbench}.}
+{Use para comparar modelos no mesmo benchmark, cenário e par.}
+{Observe seletores de benchmark, cenário, par, modelo A, modelo B, features e outputs lado a lado.}
+{A bancada usa o mesmo contrato do benchmark, mas em escala local. Ela é a ponte entre métrica agregada e caso específico.}
+{Selecionar par conhecido, comparar modelos e verificar se score/decisão mudam de forma coerente.}
+
+\screenwalk{12_study_original_vmamba.png}
+{Study Lab: Original VMamba}
+{\route{Study Lab} $\rightarrow$ \route{Original VMamba}.}
+{Use para explicar a inspiração da arquitetura antes de falar das mudanças Mesh.}
+{Observe pseudocódigo, partes da arquitetura e tabela com patch embedding, VSS block, SS2D e head.}
+{VMamba lê mapas 2D com blocos visuais de espaço de estados. Isomera adapta a ideia para matrizes de linhagem.}
+{Confirmar que a explicação diferencia inspiração arquitetural de dependência do runtime oficial.}
+
+\screenwalk{14_study_ss2d_demo.png}
+{Study Lab: SS2D Demo}
+{\route{Study Lab} $\rightarrow$ \route{Run SS2D Demo}.}
+{Use para mostrar como uma matriz pode ser percorrida por rotas de scan.}
+{Observe controles de domínio, SOR por domínio, resolução, rota, decaimento, ganho e SparseGate.}
+{SS2D propaga contexto por rotas 2D. No Isomera, essas rotas são aplicadas sobre matriz/tensor de linhagem.}
+{Alterar rota ou SparseGate e observar mudança em métricas e heatmaps.}
+
+\screenwalk{15_study_mesh_changes.png}
+{Study Lab: mudanças VMamba-Mesh}
+{\route{Study Lab} $\rightarrow$ \route{VMamba-Mesh Changes}.}
+{Use para explicar exatamente o que foi adaptado em relação ao VMamba original.}
+{Observe seletor de mudança, toggles de CanonSort, DiagFP, HierInit, SparseGate e comparação de métricas conceituais.}
+{As mudanças preservam semântica de linhagem: ordem canônica, diagonal informativa, rota hierárquica e tratamento de esparsidade.}
+{Ativar/desativar mudanças e observar se contraste entre células ativas e vazias faz sentido.}
+
+\screenwalk{13_study_official_runtime.png}
+{Study Lab: runtime oficial}
+{\route{Study Lab} $\rightarrow$ \route{Official Runtime}.}
+{Use para mostrar onde fica a referência externa do VMamba e como ela se separa do produto Isomera.}
+{Observe status do runtime, comandos de instalação e referências.}
+{O runtime oficial orienta estudo da arquitetura original; o Isomera mantém caminho próprio para benchmark reprodutível.}
+{Verificar status, referências e explicar que CPU/MPS no Mac não é o mesmo stack CUDA/Triton oficial.}
+
+\screenwalk{16_study_train_model_adapter.png}
+{Study Lab: treino VMamba}
+{\route{Study Lab} $\rightarrow$ \route{Train Model Adapter}.}
+{Use para treinar ou explicar como treinar VMamba-T e VMamba-Mesh-T.}
+{Observe benchmark, cenário, família, positive pairs, tensor resolution, preset, patch size, loss, optimizer, negative ratio, hard negatives e device.}
+{O treino gera um modelo de par: tensor entra, backbone produz embeddings, head gera logit, sigmoid gera score e threshold decide.}
+{Conferir hiperparâmetros, aviso de tempo, destino de saída e relatório salvo.}
+
+\screenwalk{17_study_model_reports.png}
+{Study Lab: relatórios de modelo}
+{\route{Study Lab} $\rightarrow$ \route{Model Reports}.}
+{Use para abrir campanhas já executadas sem retreinar durante uma apresentação.}
+{Observe seletor de relatório, tabelas, gráficos e manifests disponíveis.}
+{Relatórios separam execução pesada de comunicação. Eles preservam contexto e evidência para revisão posterior.}
+{Confirmar que o relatório certo está aberto e que CSV, figuras e manifest correspondem à campanha esperada.}
+
+\screenwalk{18_study_model_interpretability.png}
+{Study Lab: interpretabilidade}
+{\route{Study Lab} $\rightarrow$ \route{Model Interpretability}.}
+{Use para explicar uma decisão de par com grafo, matriz, canais e saliency.}
+{Observe seletores de benchmark, cenário, par, modelo e artefato.}
+{A interpretabilidade usa sensibilidade local do score em relação ao tensor de entrada. Ela mostra onde a decisão foi mais sensível.}
+{Escolher par conhecido, gerar figuras e verificar se saliency, matriz e canais aparecem juntos.}
+
+\screenwalk{19_study_knowledge_base.png}
+{Study Lab: Knowledge Base}
+{\route{Study Lab} $\rightarrow$ \route{Knowledge Base}.}
+{Use para estudar teoria dentro do próprio aplicativo.}
+{Observe tópicos de fundação, encoding, reprodutibilidade, interpretabilidade e runbook.}
+{A Knowledge Base conecta documentação local com telas de execução, reduzindo dependência de PDFs externos.}
+{Abrir cada KB e confirmar que os caminhos apontam para arquivos existentes.}
+
+\screenwalk{20_model_lab.png}
+{Model Lab}
+{\route{Model Lab}.}
+{Use para inspecionar pickles, famílias e roteamento por benchmark.}
+{Observe lista de artefatos, tamanhos, status, cobertura e tabela de roteamento.}
+{Model Lab é o registro de modelos. Ele liga artefatos a benchmarks e evita rodar modelo fora do escopo.}
+{Validar pickle, conferir família, verificar cobertura e confirmar política de roteamento.}
+
+\screenwalk{21_research_reports.png}
+{Research Reports}
+{\route{Research Reports}.}
+{Use para abrir resultados, pacotes, anexos e manifests de execuções.}
+{Observe seletor de pacote, viewer Markdown, arquivos brutos e downloads.}
+{Research Reports preserva a evidência. Um resultado deve ser acompanhado por narrativa, CSV, JSON, figuras e manifest.}
+{Abrir pacote correto, conferir arquivos e baixar ZIP quando necessário.}
+
+\screenwalk{22_admin_overview.png}
+{Admin: Overview}
+{\route{Admin} $\rightarrow$ \route{Overview}.}
+{Use para verificar o estado geral técnico do Isomera.}
+{Observe contadores de stores, cenários, runs e entidades do backend.}
+{Admin separa store de produto, warehouse de cenários e configurações. Isso facilita depuração.}
+{Conferir se stores estão acessíveis e se os contadores fazem sentido.}
+
+\screenwalk{23_admin_backend_store.png}
+{Admin: Backend Store}
+{\route{Admin} $\rightarrow$ \route{Backend Store}.}
+{Use para auditar metadados de produto.}
+{Observe tabelas de cenários, labels, runs, logs, reports, modelos e artefatos.}
+{O backend guarda rastreabilidade da ferramenta. Ele não substitui o warehouse; ele registra a operação do produto.}
+{Verificar runs recentes, modelos registrados e relatórios vinculados.}
+
+\screenwalk{24_admin_scenario_warehouse.png}
+{Admin: Scenario Warehouse}
+{\route{Admin} $\rightarrow$ \route{Scenario Warehouse}.}
+{Use para verificar schemas e materializações de cenário.}
+{Observe status do banco, schemas disponíveis e relação com Scenario Studio.}
+{O warehouse é a ponte relacional: tabelas e schemas viram grafos de benchmark.}
+{Confirmar conexão, schemas esperados e consistência com cenários listados.}
+
+\screenwalk{25_admin_neo4j.png}
+{Admin: Neo4j}
+{\route{Admin} $\rightarrow$ \route{Neo4j}.}
+{Use para entender a direção graph-native da ferramenta.}
+{Observe status da integração e mensagens de disponibilidade.}
+{Neo4j é uma evolução natural para consultas de caminhos, vizinhanças e exploração graph-native.}
+{Verificar se a tela deixa claro se a integração está ativa ou reservada.}
+
+\screenwalk{26_admin_settings.png}
+{Admin: Settings}
+{\route{Admin} $\rightarrow$ \route{Settings}.}
+{Use para revisar conexões, stores e perfis de runtime.}
+{Observe URLs, configurações e campos editáveis.}
+{Settings torna o Isomera portável entre ambiente local, laboratório e possível instalação corporativa.}
+{Conferir variáveis sensíveis, conexões e se alterações exigem reinício.}
+
+\screenwalk{27_logs_session.png}
+{Logs: Session Log}
+{\route{Logs} $\rightarrow$ \route{Session Log}.}
+{Use para auditar ações do app.}
+{Observe eventos, timestamps, payloads e registros estruturados.}
+{O Session Log registra a sequência de ações de interface e execução, ajudando a reproduzir ou depurar fluxo.}
+{Procurar evento esperado, payload coerente e ausência de erros silenciosos.}
+
+\screenwalk{28_logs_terminal.png}
+{Logs: Terminal Logs}
+{\route{Logs} $\rightarrow$ \route{Terminal Logs}.}
+{Use quando o erro precisa ser lido no nível de processo.}
+{Observe saída bruta de terminal, warnings, traceback e logs de launcher.}
+{Terminal Logs complementam o log estruturado; são úteis para dependências, falhas de import e processos longos.}
+{Verificar mensagens recentes, dependências ausentes e fim correto de execução.}
+
+\screenwalk{29_help_presentation.png}
+{Help: Presentation}
+{\route{Help} $\rightarrow$ \route{VMamba-Mesh Presentation}.}
+{Use para apresentação guiada ou ensaio de vídeo.}
+{Observe roteiro, imagens e botões que levam para Study Lab, Benchmark e Reports.}
+{A apresentação embutida conecta narrativa e ferramenta, evitando trocar entre muitos arquivos durante a fala.}
+{Confirmar se imagens carregam e se botões de navegação levam às rotas corretas.}
+
+\screenwalk{30_help_tech_docs.png}
+{Help: Tech Docs}
+{\route{Help} $\rightarrow$ \route{Tech Docs}.}
+{Use para abrir documentação técnica Markdown dentro do app.}
+{Observe lista de documentos, viewer e caminhos de origem.}
+{Tech Docs mantém arquitetura, algoritmos e notas próximas da execução.}
+{Abrir documentos principais e verificar se o conteúdo aparece sem links quebrados.}
+
+\screenwalk{31_about.png}
+{About}
+{\route{About}.}
+{Use para identificar versão, autoria e contexto do projeto.}
+{Observe versão, codinome, release date, autores, links e notas de funcionalidades.}
+{About é parte da rastreabilidade. Em gravações e entregas, ele confirma qual build está sendo mostrado.}
+{Conferir versão, autores, contatos e notas antes de publicar ou gravar.}
+
+\chapter{Interpretabilidade}
+
+O objetivo da interpretabilidade no Isomera não é provar causalidade absoluta. O objetivo é transformar uma decisão neural em uma evidência local que pode ser revisada. Para um par selecionado, a saliency mostra quais regiões do tensor mais influenciaram o score.
+
+Essa distinção precisa ser repetida: interpretabilidade não é verdade absoluta. Ela é uma ferramenta de inspeção. Se a saliency aparece forte em regiões coerentes com a linhagem, isso aumenta a confiança de que o modelo está olhando para sinais relevantes. Se aparece forte apenas em regiões vazias ou sem significado, isso sinaliza problema de representação, treino ou threshold.
+
+No fluxo ideal, a interpretabilidade vem depois da decisão. Primeiro o modelo identifica pares. Depois o usuário escolhe um par relevante. Em seguida abre a análise local. Essa sequência evita olhar para saliency sem pergunta. O objetivo não é gerar uma imagem bonita, mas responder: por que este par recebeu este score?
+
+As cores devem ser lidas como intensidade de sensibilidade. Regiões mais fortes indicam que pequenas mudanças ali teriam maior impacto no score. Quando essa intensidade se concentra em canais como adjacência, rota ou máscara, o usuário consegue discutir se o modelo está usando estrutura de linhagem, densidade, camada ou grau.
+
+\cautionbox{Mapas de saliency são diagnósticos locais. Eles não substituem validação estatística, revisão de falsos positivos ou análise de ground truth. Use-os para investigar uma decisão, não para declarar que o modelo aprendeu uma regra causal universal.}
+
+\widefig{sor16_neural_saliency.png}{Saliency neural para o par SOR16-D1. Cores mais fortes indicam maior sensibilidade local do score.}
+
+O fluxo recomendado é:
+
+\begin{enumerate}
+  \item abrir \route{Study Lab};
+  \item entrar em \route{Model Interpretability};
+  \item escolher benchmark e cenário;
+  \item escolher o par candidato;
+  \item selecionar modelo e artefato;
+  \item rodar a geração;
+  \item comparar grafo, matriz, canais, score, threshold e saliency.
+\end{enumerate}
+
+\chapter{Como aplicar em uma empresa}
+
+\tipbox{Comece pequeno: um domínio, poucas tabelas, alguns pares rotulados e baselines simples. Expanda só depois que os critérios de duplicidade estiverem claros.}
+
+Para aplicar a ideia fora do benchmark, o time precisa exportar a linhagem da empresa como grafo. A origem pode ser catálogo de dados, dbt, Airflow, logs de warehouse, OpenLineage, banco relacional ou ferramenta interna. O contrato mínimo é:
+
+\begin{enumerate}
+  \item cada tabela vira nó;
+  \item cada dependência vira aresta dirigida;
+  \item pares candidatos são definidos por domínio, nome, camada, semântica ou sugestão LLM;
+  \item um conjunto pequeno de pares é rotulado como duplicado ou não duplicado;
+  \item o grafo é convertido para matriz/tensor;
+  \item detectores são executados;
+  \item scores e decisões são revisados;
+  \item manifests são salvos para reprodução.
+\end{enumerate}
+
+Se a empresa já possui pickles treinados, eles podem ser registrados no Model Lab. Se precisa treinar novos modelos, o caminho passa por Scenario Studio e Study Lab.
+
+\section{Roteiro corporativo recomendado}
+
+O primeiro passo é mapear fontes de linhagem. Se a empresa usa dbt, o manifesto pode fornecer dependências. Se usa Airflow, DAGs podem indicar transformações. Se usa catálogo de dados, relacionamentos e owners podem virar metadados. Se usa warehouse, views e queries podem revelar dependências. O Isomera não exige uma origem única; ele exige que, ao final, seja possível montar nós e arestas.
+
+O segundo passo é escolher um escopo pequeno. Não comece por toda a empresa. Escolha um domínio, uma camada ou um conjunto de produtos analíticos. Gere o grafo, revise visualmente e rotule alguns pares. Esse primeiro escopo serve para calibrar nomes, camadas, regras de candidatura e critérios de duplicidade.
+
+O terceiro passo é rodar detectores determinísticos. VF2 e Node Match dão uma linha de base auditável. Eles ajudam a encontrar casos óbvios e a entender o formato do grafo. Depois entram GNN, VMamba, VMamba-Mesh e versões treináveis. A comparação só faz sentido quando todos usam o mesmo ground truth.
+
+O quarto passo é transformar achados em ação de governança. Um par duplicado pode virar recomendação de consolidação, revisão de owner, documentação cruzada, alerta de custo ou criação de regra no catálogo. O Isomera identifica e explica; a decisão de remover, consolidar ou manter duplicidade controlada continua sendo de governança.
+
+\section{Cuidados antes de produção}
+
+Não use o primeiro modelo treinado como decisão automática. Use como apoio de triagem. Revise falsos positivos e falsos negativos. Meça estabilidade por domínio. Verifique se o threshold faz sentido para o risco da empresa. Em alguns ambientes, falso positivo é mais caro porque pode sugerir remoção indevida. Em outros, falso negativo é mais caro porque deixa redundância continuar.
+
+Também é importante separar ambiente de pesquisa e ambiente de operação. Benchmarks servem para comparar modelos. Produção exige dados atuais, monitoramento, governança de acesso, trilha de auditoria e integração com processos. O Isomera oferece a base técnica, mas a implantação precisa respeitar políticas internas.
+
+\chapter{Checklist de demonstração}
+
+\tipbox{Para uma demonstração curta, não treine ao vivo. Mostre o fluxo, abra relatórios salvos e use interpretabilidade para explicar um par concreto.}
+
+\begin{enumerate}
+  \item Abrir o Isomera e mostrar a Home.
+  \item Explicar que o problema é duplicidade por linhagem, não apenas nome.
+  \item Mostrar grafo SOR16 e matriz de adjacência.
+  \item Abrir \route{Benchmark \& Examples} e mostrar \route{Article Reproducibility}.
+  \item Abrir \route{Study Lab} e mostrar \route{Deep Learning Workbench}.
+  \item Explicar C0--C5 e VMamba-Mesh.
+  \item Abrir \route{Model Reports} para resultados salvos.
+  \item Abrir \route{Model Interpretability} para saliency.
+  \item Abrir \route{Model Lab} para pickles e roteamento.
+  \item Abrir \route{Research Reports} para pacotes.
+  \item Fechar com \route{Help} e \route{Tech Docs}.
+\end{enumerate}
+
+\section{Checklist de estudo individual}
+
+Para estudar a ferramenta sem pressa, use este caminho. Primeiro leia os capítulos de problema, grafo, matriz e tensor. Depois abra a Home e entenda o menu. Em seguida abra Concepts no Benchmark para ver os cenários. Vá para Study Lab e leia Original VMamba, SS2D e VMamba-Mesh Changes. Depois abra Deep Learning Workbench e compare dois modelos no mesmo par. Só então vá para Model Reports, Interpretability e Research Reports.
+
+Esse caminho evita decorar telas sem entender o motivo. O Isomera tem muitas rotas porque o problema tem várias camadas. O usuário precisa entender dados, grafo, modelo, benchmark, métrica, relatório e interpretabilidade. Quando essa ordem é respeitada, a ferramenta fica mais simples.
+
+\chapter{Referências internas e materiais de apoio}
+
+Este manual foi construído a partir dos materiais finais do Isomera, das bases de conhecimento, dos relatórios de campanha, dos materiais de apresentação, dos documentos de estudo e das capturas reais da ferramenta. Os artigos e relatórios entram aqui como evidência e documentação complementar, não como ponto de partida do manual.
+
+\tipbox{Use estas referências para rastrear a origem dos materiais do manual: capturas, bases de conhecimento, relatórios e documentação técnica.}
+
+\begin{itemize}
+  \item Workspace final do Article IV no TeXLab: pacote \route{v2\_t}.
+  \item \route{main/docs/tech\_hub}
+  \item \route{.github/knowledge\_bases}
+  \item \route{main/docs/manuals/isomera\_complete\_manual}
+\end{itemize}
+
+\section{Referências conceituais recomendadas}
+
+Para aprofundar a parte de aprendizado de máquina e redes neurais, leia Goodfellow, Bengio e Courville, \textit{Deep Learning}, MIT Press, 2016. O livro é a referência clássica para logits, funções de ativação, otimização, gradientes, representação e regularização.
+
+Para classificação supervisionada, decisão estatística e fundamentos probabilísticos, leia Bishop, \textit{Pattern Recognition and Machine Learning}, Springer, 2006. Ele ajuda a entender por que score, threshold, função de perda e incerteza precisam ser tratados separadamente.
+
+Para aprendizado em grafos, leia Hamilton, \textit{Graph Representation Learning}, Morgan \& Claypool, 2020. Ele fornece a base para pensar em vizinhança, embeddings de nós, mensagem em grafos e limites de representações puramente estruturais.
+
+Para uma visão aplicada de treinamento, validação, desbalanceamento, pipelines e uso prático de deep learning, leia Géron, \textit{Hands-On Machine Learning with Scikit-Learn, Keras, and TensorFlow}, O'Reilly, 3rd ed., 2022.
+
+\end{document}
