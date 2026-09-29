@@ -1,7 +1,7 @@
 """Metrics and timing utilities for isomorphism analysis."""
 from __future__ import annotations
 
-from collections.abc import Iterable
+from collections.abc import Callable, Iterable
 from time import perf_counter
 
 import networkx as nx
@@ -108,15 +108,18 @@ def execution_times(
     graph: nx.DiGraph,
     algorithms: Iterable[str],
     runs: int = 25,
+    progress_callback: Callable[[str, int, int], None] | None = None,
 ) -> dict[str, list[float]]:
     """Measure execution times for each algorithm."""
     times: dict[str, list[float]] = {algo: [] for algo in algorithms}
 
     for algo in algorithms:
-        for _ in range(runs):
+        for run_index in range(runs):
             start = perf_counter()
             find_isomorphic_pairs(graph, algorithm=algo)
             times[algo].append(perf_counter() - start)
+            if progress_callback is not None:
+                progress_callback(algo, run_index + 1, runs)
     return times
 
 

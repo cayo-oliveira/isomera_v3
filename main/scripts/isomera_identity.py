@@ -57,6 +57,18 @@ def terminal_banner(title: str = "BOOT") -> str:
 """.strip("\n")
 
 
+def terminal_status_banner(title: str, message: str) -> str:
+    """Repeat the Isomera splash screen with a readable lifecycle milestone."""
+    width = 72
+    text = " ".join(str(message).split())
+    if len(text) > width - 4:
+        text = text[: width - 7].rstrip() + "..."
+    top = "╭" + "─" * (width - 2) + "╮"
+    bottom = "╰" + "─" * (width - 2) + "╯"
+    line = "│ " + text.center(width - 4) + " │"
+    return f"{terminal_banner(title)}\n{top}\n{line}\n{bottom}"
+
+
 def compact_identity_line() -> str:
     identity = load_identity()
     return (

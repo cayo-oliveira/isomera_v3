@@ -327,6 +327,19 @@ def _info_popover(markdown_text: str, *, key: str | None = None) -> None:
     )
 
 
+def _benchmark_error_summary(exc: BaseException) -> str:
+    message = str(exc)
+    if "size mismatch for" in message:
+        detail = next(
+            (line.strip() for line in message.splitlines() if "size mismatch for" in line),
+            "saved tensor dimensions differ from the current model",
+        )
+        return f"Checkpoint architecture mismatch: {detail}"
+    if "Error(s) in loading state_dict for" in message:
+        return "Checkpoint architecture mismatch: saved weights do not match the current model."
+    return message.splitlines()[0][:500] or type(exc).__name__
+
+
 def _model_help_text(model_label: str) -> str:
     if model_label == "VF2":
         return (
@@ -3608,6 +3621,7 @@ def _register_benchmark_model(
         "active": True,
     }
     _save_benchmark_manifest(benchmark_name, manifest)
+    st.session_state.pop(f"_benchmark_model_clusters::{benchmark_name}", None)
 
 
 def _list_benchmark_models(benchmark_name: str) -> list[dict[str, object]]:
@@ -3788,7 +3802,22 @@ def _infer_model_family(pickle_path: Path, scenario_name: str | None, metadata: 
     return normalized or "GNN custom cluster"
 
 
-def _benchmark_model_clusters(benchmark_name: str) -> list[dict[str, object]]:
+def _benchmark_model_clusters(
+    benchmark_name: str,
+    _progress_callback: object | None = None,
+) -> list[dict[str, object]]:
+    def report_progress(fraction: float, message: str) -> None:
+        if callable(_progress_callback):
+            _progress_callback(fraction, message)
+
+    cache_key = f"_benchmark_model_clusters::{benchmark_name}"
+    cached_entry = st.session_state.get(cache_key)
+    if isinstance(cached_entry, dict) and time.monotonic() - float(cached_entry.get("created_at", 0)) < 60:
+        cached_clusters = list(cached_entry.get("clusters") or [])
+        report_progress(1.0, f"Reused model scan: {len(cached_clusters)} model family/families ready.")
+        return cached_clusters
+
+    report_progress(0.03, "Reading benchmark scenarios and model manifests…")
     benchmark_scenarios = _benchmark_scenario_names(benchmark_name)
     clusters: dict[str, dict[str, object]] = {}
 
@@ -3801,6 +3830,8 @@ def _benchmark_model_clusters(benchmark_name: str) -> list[dict[str, object]]:
         route_mode: str,
         pickle_module: str | None = None,
     ) -> None:
+        if not pickle_path.is_file() or pickle_path.stat().st_size <= 0:
+            return
         cluster = clusters.setdefault(
             family,
             {
@@ -3850,6 +3881,7 @@ def _benchmark_model_clusters(benchmark_name: str) -> list[dict[str, object]]:
         cluster["selection_metric"] = selection_metric
 
     baseline_root = _app_path("core/algorithms/pickle/gin_gnn/modelos_gnn_separados")
+    report_progress(0.12, "Checking registered baseline pickle files…")
     if baseline_root.exists():
         for scenario in benchmark_scenarios:
             pickle_path = baseline_root / f"{scenario}.pkl"
@@ -3865,7 +3897,14 @@ def _benchmark_model_clusters(benchmark_name: str) -> list[dict[str, object]]:
                 )
 
     seen_paths: set[str] = set()
-    for model in _list_benchmark_models(benchmark_name):
+    registered_models = _list_benchmark_models(benchmark_name)
+    report_progress(0.22, f"Validating {len(registered_models)} registered model pickle(s)…")
+    for model_index, model in enumerate(registered_models, start=1):
+        if model_index == 1 or model_index == len(registered_models) or model_index % 10 == 0:
+            report_progress(
+                0.22 + 0.12 * model_index / max(1, len(registered_models)),
+                f"Reading registered pickle metadata {model_index}/{len(registered_models)}…",
+            )
         pickle_path = Path(str(model["pickle_path"]))
         seen_paths.add(str(pickle_path.resolve()))
         metadata = _read_model_metadata(model.get("metadata_path"))
@@ -3890,15 +3929,42 @@ def _benchmark_model_clusters(benchmark_name: str) -> list[dict[str, object]]:
     arch = _get_architecture(benchmark_name)
     root = Path(arch["root"]) if arch else _benchmark_root(benchmark_name)
     model_roots = [root / "models"]
-    for global_models_root in _all_architecture_model_roots():
-        if global_models_root not in model_roots:
-            model_roots.append(global_models_root)
-    for models_root in model_roots:
+    # The operational smoke catalog must exercise its own registered routes.
+    # Same-named scenarios from other catalogs can bring incompatible checkpoints.
+    if benchmark_name != "smoke_operational":
+        for global_models_root in _all_architecture_model_roots():
+            if global_models_root not in model_roots:
+                model_roots.append(global_models_root)
+    pickle_paths_by_root: list[tuple[Path, list[Path]]] = []
+    for root_index, models_root in enumerate(model_roots, start=1):
+        report_progress(
+            0.36 + 0.12 * (root_index - 1) / max(1, len(model_roots)),
+            f"Searching for `.pkl` files, model folder {root_index}/{len(model_roots)}…",
+        )
         if models_root.exists():
             pickle_iter = sorted(models_root.rglob("*.pkl"))
         else:
             pickle_iter = []
+        pickle_paths_by_root.append((models_root, pickle_iter))
+        report_progress(
+            0.36 + 0.12 * root_index / max(1, len(model_roots)),
+            f"Found {sum(len(paths) for _, paths in pickle_paths_by_root)} pickle file(s); checking model metadata…",
+        )
+
+    discovered_pickle_count = sum(len(paths) for _, paths in pickle_paths_by_root)
+    processed_pickle_count = 0
+    for models_root, pickle_iter in pickle_paths_by_root:
         for pickle_path in pickle_iter:
+            processed_pickle_count += 1
+            if (
+                processed_pickle_count == 1
+                or processed_pickle_count == discovered_pickle_count
+                or processed_pickle_count % max(1, discovered_pickle_count // 20) == 0
+            ):
+                report_progress(
+                    0.50 + 0.43 * processed_pickle_count / max(1, discovered_pickle_count),
+                    f"Checking pickle metadata {processed_pickle_count}/{discovered_pickle_count}…",
+                )
             resolved = str(pickle_path.resolve())
             if resolved in seen_paths:
                 continue
@@ -3936,7 +4002,7 @@ def _benchmark_model_clusters(benchmark_name: str) -> list[dict[str, object]]:
                 candidate_path = Path(str(candidate_payload.get("pickle_path") or ""))
                 if not candidate_path.is_absolute():
                     candidate_path = (_benchmark_storage_root(benchmark_name) / candidate_path).resolve()
-                if candidate_path.exists():
+                if candidate_path.is_file() and candidate_path.stat().st_size > 0:
                     candidate_paths.append(candidate_path)
             if candidate_paths:
                 add_candidate_cluster(
@@ -3955,7 +4021,7 @@ def _benchmark_model_clusters(benchmark_name: str) -> list[dict[str, object]]:
             pickle_path = Path(str(route_payload.get("pickle_path") or ""))
             if not pickle_path.is_absolute():
                 pickle_path = (_benchmark_storage_root(benchmark_name) / pickle_path).resolve()
-            if not pickle_path.exists():
+            if not pickle_path.is_file() or pickle_path.stat().st_size <= 0:
                 continue
             metadata_path_raw = route_payload.get("metadata_path")
             metadata_path = Path(str(metadata_path_raw)) if metadata_path_raw else None
@@ -3971,6 +4037,7 @@ def _benchmark_model_clusters(benchmark_name: str) -> list[dict[str, object]]:
                 _pickle_module_for_path(pickle_path, metadata_path if metadata_path and metadata_path.exists() else None),
             )
 
+    report_progress(0.96, "Preparing model choices and scenario routes…")
     ordered: list[dict[str, object]] = []
     for family, cluster in sorted(clusters.items()):
         routes = dict(cluster.get("routes") or {})
@@ -3999,6 +4066,8 @@ def _benchmark_model_clusters(benchmark_name: str) -> list[dict[str, object]]:
                 else "partial",
             }
         )
+    st.session_state[cache_key] = {"created_at": time.monotonic(), "clusters": ordered}
+    report_progress(1.0, f"Model files ready: {len(ordered)} model family/families available.")
     return ordered
 
 
@@ -4368,6 +4437,7 @@ st.markdown(
     """
     <style>
     :root {
+        color-scheme: light;
         --iso-bg: #F5F5F3;
         --iso-surface: #ECECE8;
         --iso-surface-2: #E3E3DE;
@@ -4380,6 +4450,11 @@ st.markdown(
         --iso-warn: #A27A3F;
         --iso-error: #8A4D4D;
         --iso-sidebar: #E7E7E1;
+        --iso-control-bg: #35596F;
+        --iso-control-hover: #4F7489;
+        --iso-control-active: #29495F;
+        --iso-control-border: #29495F;
+        --iso-control-text: #FFFFFF;
     }
 
     html, body, [class*='css'] {
@@ -4717,6 +4792,204 @@ st.markdown(
         color: var(--iso-text) !important;
     }
 
+    /* Keep dropdown choices readable even when the browser uses a dark native theme. */
+    [data-baseweb="select"] > div {
+        background: var(--iso-control-bg) !important;
+        color: var(--iso-control-text) !important;
+        border-color: var(--iso-control-border) !important;
+    }
+    [data-baseweb="select"] [data-baseweb="single-value"],
+    [data-baseweb="select"] [data-baseweb="tag"],
+    [data-baseweb="select"] [data-baseweb="tag"] *,
+    [data-baseweb="select"] input,
+    [data-baseweb="select"] svg {
+        background: transparent !important;
+        color: var(--iso-control-text) !important;
+        fill: var(--iso-control-text) !important;
+        caret-color: var(--iso-control-text) !important;
+    }
+    [data-baseweb="select"] * {
+        background-color: transparent !important;
+        color: var(--iso-control-text) !important;
+    }
+    [data-baseweb="menu"],
+    [data-baseweb="popover"] [role="listbox"],
+    [data-baseweb="popover"] [role="listbox"] ul {
+        background: var(--iso-control-bg) !important;
+        color: var(--iso-control-text) !important;
+        border-color: var(--iso-control-border) !important;
+    }
+    [data-baseweb="menu"] [role="option"],
+    [data-baseweb="popover"] [role="option"],
+    [data-baseweb="menu"] [role="option"] *,
+    [data-baseweb="popover"] [role="option"] * {
+        background: transparent !important;
+        color: var(--iso-control-text) !important;
+    }
+    [data-baseweb="menu"] [role="option"]:hover,
+    [data-baseweb="menu"] [role="option"][aria-selected="true"],
+    [data-baseweb="popover"] [role="option"]:hover,
+    [data-baseweb="popover"] [role="option"][aria-selected="true"] {
+        background: var(--iso-control-hover) !important;
+        color: var(--iso-control-text) !important;
+    }
+    [data-baseweb="menu"] [role="option"]:hover *,
+    [data-baseweb="menu"] [role="option"][aria-selected="true"] *,
+    [data-baseweb="popover"] [role="option"]:hover *,
+    [data-baseweb="popover"] [role="option"][aria-selected="true"] * {
+        background: transparent !important;
+        color: var(--iso-control-text) !important;
+    }
+    [data-testid="stSegmentedControl"] button {
+        background: var(--iso-control-bg) !important;
+        color: var(--iso-control-text) !important;
+        border-color: var(--iso-control-border) !important;
+    }
+    [data-testid="stSegmentedControl"] button[aria-pressed="true"] {
+        background: var(--iso-control-active) !important;
+        color: var(--iso-control-text) !important;
+        border-color: #8CB0C1 !important;
+        box-shadow: inset 0 0 0 1px #8CB0C1 !important;
+    }
+    [data-testid="stSegmentedControl"] button *,
+    [data-testid="stSegmentedControl"] button[aria-pressed="true"] * {
+        color: var(--iso-control-text) !important;
+        fill: var(--iso-control-text) !important;
+    }
+    [data-testid="stRadio"] label {
+        background: var(--iso-control-bg) !important;
+        color: var(--iso-control-text) !important;
+        border-color: var(--iso-control-border) !important;
+    }
+    [data-testid="stRadio"] label[data-selected="true"] {
+        background: var(--iso-control-active) !important;
+        border-color: #8CB0C1 !important;
+        box-shadow: inset 0 0 0 1px #8CB0C1 !important;
+    }
+    [data-testid="stRadio"] label[data-selected="true"] *,
+    [data-testid="stRadio"] label * {
+        color: var(--iso-control-text) !important;
+    }
+    [data-testid="stHeader"] button,
+    [data-testid="stToolbar"] button,
+    [data-testid="stStatusWidget"] button {
+        background: var(--iso-control-bg) !important;
+        color: var(--iso-control-text) !important;
+        border: 1px solid var(--iso-control-border) !important;
+    }
+    [data-testid="stHeader"] button *,
+    [data-testid="stToolbar"] button *,
+    [data-testid="stStatusWidget"] button * {
+        color: var(--iso-control-text) !important;
+        fill: var(--iso-control-text) !important;
+    }
+    [data-testid="stMain"] [data-testid="stBaseButton-primary"],
+    [data-testid="stMain"] button[kind="primary"] {
+        background: var(--iso-control-bg) !important;
+        color: var(--iso-control-text) !important;
+        border-color: var(--iso-control-border) !important;
+    }
+    [data-testid="stMain"] [data-testid="stBaseButton-primary"] *,
+    [data-testid="stMain"] button[kind="primary"] * {
+        background: transparent !important;
+        color: var(--iso-control-text) !important;
+        fill: var(--iso-control-text) !important;
+    }
+    /* Streamlit 1.64 uses React Aria controls instead of BaseWeb widgets. */
+    [data-testid="stSelectbox"] input[role="combobox"],
+    [data-testid="stMultiSelect"] input[role="combobox"] {
+        background: var(--iso-control-bg) !important;
+        color: var(--iso-control-text) !important;
+        border: 1px solid var(--iso-control-border) !important;
+        border-radius: 0.5rem !important;
+        caret-color: var(--iso-control-text) !important;
+        -webkit-text-fill-color: var(--iso-control-text) !important;
+    }
+    [data-testid="stSelectbox"] input[role="combobox"]::placeholder,
+    [data-testid="stMultiSelect"] input[role="combobox"]::placeholder {
+        color: #E3EDF2 !important;
+        -webkit-text-fill-color: #E3EDF2 !important;
+        opacity: 1 !important;
+    }
+    [data-testid="stSelectbox"] input[role="combobox"]:focus,
+    [data-testid="stMultiSelect"] input[role="combobox"]:focus {
+        outline: none !important;
+        border-color: #8CB0C1 !important;
+        box-shadow: 0 0 0 2px #8CB0C1 !important;
+    }
+    [role="listbox"] {
+        background: var(--iso-control-bg) !important;
+        color: var(--iso-control-text) !important;
+        border: 1px solid var(--iso-control-border) !important;
+        box-shadow: 0 12px 32px rgba(20, 43, 57, 0.28) !important;
+    }
+    [role="option"] {
+        background: var(--iso-control-bg) !important;
+        color: var(--iso-control-text) !important;
+    }
+    [role="option"] *,
+    [role="option"] [data-item-hl] {
+        background: transparent !important;
+        color: var(--iso-control-text) !important;
+    }
+    [role="option"]:hover,
+    [role="option"][aria-selected="true"],
+    [role="option"][data-selected="true"],
+    [role="option"][data-focused="true"] {
+        background: var(--iso-control-hover) !important;
+        color: var(--iso-control-text) !important;
+    }
+    [role="option"]:hover *,
+    [role="option"][aria-selected="true"] *,
+    [role="option"][data-selected="true"] *,
+    [role="option"][data-focused="true"] * {
+        background: transparent !important;
+        color: var(--iso-control-text) !important;
+    }
+    [data-testid="stMain"] [role="radiogroup"] label,
+    [data-testid="stMain"] [role="radiogroup"] button,
+    [data-testid="stMain"] button[role="radio"] {
+        background: var(--iso-control-bg) !important;
+        color: var(--iso-control-text) !important;
+        border: 1px solid var(--iso-control-border) !important;
+    }
+    [data-testid="stMain"] [role="radiogroup"] label *,
+    [data-testid="stMain"] [role="radiogroup"] button *,
+    [data-testid="stMain"] button[role="radio"] * {
+        background: transparent !important;
+        color: var(--iso-control-text) !important;
+        fill: var(--iso-control-text) !important;
+    }
+    [data-testid="stMain"] [role="radiogroup"] [aria-checked="true"],
+    [data-testid="stMain"] [role="radiogroup"] [aria-pressed="true"],
+    [data-testid="stMain"] [role="radiogroup"] [data-selected="true"],
+    [data-testid="stMain"] button[role="radio"][aria-checked="true"] {
+        background: var(--iso-control-active) !important;
+        color: var(--iso-control-text) !important;
+        border-color: #8CB0C1 !important;
+        box-shadow: inset 0 0 0 1px #8CB0C1 !important;
+    }
+    [data-testid="stMain"] [role="checkbox"][aria-checked="true"],
+    [data-testid="stMain"] [role="checkbox"][data-selected="true"],
+    [data-testid="stMain"] [data-testid="stCheckboxIndicator"][data-selected="true"],
+    [data-testid="stMain"] [data-testid="stCheckbox"] input:checked + div {
+        background: var(--iso-control-bg) !important;
+        border-color: var(--iso-control-border) !important;
+        color: var(--iso-control-text) !important;
+    }
+    [data-testid="stMain"] [role="checkbox"][aria-checked="true"] *,
+    [data-testid="stMain"] [role="checkbox"][data-selected="true"] *,
+    [data-testid="stMain"] [role="checkbox"][aria-checked="true"] svg {
+        color: var(--iso-control-text) !important;
+        fill: var(--iso-control-text) !important;
+        stroke: var(--iso-control-text) !important;
+    }
+    [data-testid="stMain"] [role="checkbox"]:focus-visible,
+    [data-testid="stMain"] [role="radio"]:focus-visible {
+        outline: 2px solid #8CB0C1 !important;
+        outline-offset: 2px !important;
+    }
+
     [data-baseweb="tag"] {
         background: var(--iso-surface-2) !important;
         color: var(--iso-text) !important;
@@ -4801,9 +5074,9 @@ st.markdown(
         min-height: 1.15rem !important;
         border-radius: 999px !important;
         padding: 0 !important;
-        background: transparent !important;
-        color: #2F6FED !important;
-        border: 0 !important;
+        background: #2F6FED !important;
+        color: #FFFFFF !important;
+        border: 1px solid #244FBE !important;
         box-shadow: none !important;
         font-size: 0.72rem !important;
         line-height: 1 !important;
@@ -4816,15 +5089,15 @@ st.markdown(
     [data-testid="stTooltipHoverTarget"] *,
     [data-testid="stTooltipHoverTarget"] svg,
     [data-testid="stTooltipHoverTarget"] svg path {
-        color: #2F6FED !important;
-        fill: #2F6FED !important;
-        stroke: #2F6FED !important;
+        color: #FFFFFF !important;
+        fill: #FFFFFF !important;
+        stroke: #FFFFFF !important;
     }
 
     [data-testid="stPopoverButton"] button:hover,
     [data-testid="stTooltipHoverTarget"]:hover {
-        background: transparent !important;
-        border-color: transparent !important;
+        background: #244FBE !important;
+        border-color: #173C91 !important;
     }
 
     .iso-info-wrap {
@@ -4881,11 +5154,13 @@ st.markdown(
     .iso-info-panel {
         display: none;
         position: absolute;
-        top: 1.45rem;
-        right: 0;
+        top: auto;
+        bottom: 0;
+        left: 1.35rem;
+        right: auto;
         width: min(34rem, calc(100vw - 3rem));
         max-width: min(34rem, calc(100vw - 3rem));
-        max-height: 34rem;
+        max-height: min(34rem, calc(100vh - 2rem));
         overflow-y: auto;
         background: #F7F6F2;
         color: var(--iso-text);
@@ -5274,10 +5549,7 @@ st.markdown(
     }
 
     .iso-device-badge {
-        position: fixed;
-        top: 0.55rem;
-        right: 5.25rem;
-        z-index: 100000;
+        position: static;
         display: inline-flex;
         align-items: center;
         gap: 0.35rem;
@@ -5291,6 +5563,7 @@ st.markdown(
         font-size: 0.72rem;
         line-height: 1;
         white-space: nowrap;
+        margin: 0.2rem 0 0.55rem auto;
     }
 
     .iso-device-badge strong {
@@ -5311,6 +5584,119 @@ st.markdown(
 
     h1, h2, h3 {
         color: var(--iso-text);
+    }
+
+    /* Keep Streamlit's sidebar toggle recognizable beside Deploy. */
+    button[data-testid="stExpandSidebarButton"] {
+        background: var(--iso-control-bg) !important;
+        color: #FFFFFF !important;
+        border: 1px solid var(--iso-control-border) !important;
+        border-radius: 0.55rem !important;
+        box-shadow: none !important;
+    }
+    button[data-testid="stExpandSidebarButton"] svg,
+    button[data-testid="stExpandSidebarButton"] svg *,
+    button[data-testid="stExpandSidebarButton"] [data-testid="stIconMaterial"] {
+        color: #FFFFFF !important;
+        fill: #FFFFFF !important;
+        stroke: #FFFFFF !important;
+    }
+    button[data-testid="stMainMenuButton"] {
+        position: relative !important;
+        font-size: 0 !important;
+    }
+    button[data-testid="stMainMenuButton"] svg,
+    button[data-testid="stMainMenuButton"] [data-testid="stIconMaterial"] {
+        display: none !important;
+    }
+    button[data-testid="stMainMenuButton"]::after {
+        content: "";
+        display: block;
+        width: 5px;
+        height: 18px;
+        margin: auto;
+        border-radius: 999px;
+        background: radial-gradient(circle, #FFFFFF 1.6px, transparent 1.9px) center top / 5px 6px repeat-y;
+    }
+
+    /* Keep React Aria and native select menus away from the unreadable dark default. */
+    select,
+    select option,
+    [data-testid="stSelectbox"] [role="button"],
+    [data-testid="stMultiSelect"] [role="button"],
+    [role="listbox"],
+    [role="listbox"] *,
+    [role="option"],
+    [role="option"] * {
+        background-color: var(--iso-control-bg) !important;
+        color: #FFFFFF !important;
+        -webkit-text-fill-color: #FFFFFF !important;
+    }
+    [role="option"]:hover,
+    [role="option"][aria-selected="true"],
+    [role="option"][data-selected="true"],
+    [role="option"][data-focused="true"],
+    select option:checked,
+    select option:hover {
+        background-color: var(--iso-control-hover) !important;
+        color: #FFFFFF !important;
+        -webkit-text-fill-color: #FFFFFF !important;
+    }
+    [data-testid="stSelectbox"]:focus-within,
+    [data-testid="stMultiSelect"]:focus-within,
+    [data-testid="stSelectbox"] [role="group"][data-focus-within="true"],
+    [data-testid="stMultiSelect"] [role="group"][data-focus-within="true"],
+    [data-testid="stSelectbox"] [data-focus-visible="true"],
+    [data-testid="stMultiSelect"] [data-focus-visible="true"] {
+        outline: 2px solid #8CB0C1 !important;
+        outline-offset: 1px !important;
+        border-color: #8CB0C1 !important;
+        box-shadow: 0 0 0 2px rgba(140, 176, 193, 0.24) !important;
+    }
+
+    /* Normalize checked controls after Streamlit's widget styles. */
+    [data-testid="stCheckbox"] [role="checkbox"],
+    [data-testid="stCheckbox"] [data-testid="stCheckboxIndicator"] {
+        background-color: #F0EFE9 !important;
+        border: 1px solid #71808A !important;
+        color: #263946 !important;
+        box-shadow: none !important;
+    }
+    [data-testid="stCheckbox"] input[type="checkbox"],
+    [data-testid="stRadio"] input[type="radio"] {
+        accent-color: var(--iso-control-bg) !important;
+    }
+    /* Streamlit 1.64 renders the check mark in the div after a visually-hidden input. */
+    [data-testid="stCheckbox"] label:has(input[type="checkbox"]:checked) > div:first-of-type,
+    [data-testid="stCheckbox"] label[data-selected="true"] > div:first-of-type,
+    [data-testid="stCheckbox"] label[aria-checked="true"] > div:first-of-type {
+        background-color: var(--iso-control-bg) !important;
+        border-color: var(--iso-control-bg) !important;
+        color: #FFFFFF !important;
+    }
+    [data-testid="stCheckbox"] label:has(input[type="checkbox"]:checked) > div:first-of-type svg,
+    [data-testid="stCheckbox"] label:has(input[type="checkbox"]:checked) > div:first-of-type svg polyline {
+        opacity: 1 !important;
+        stroke: #FFFFFF !important;
+    }
+    [data-testid="stCheckbox"] [role="checkbox"][aria-checked="true"],
+    [data-testid="stCheckbox"] [role="checkbox"][data-selected="true"],
+    [data-testid="stCheckbox"] [data-testid="stCheckboxIndicator"][data-selected="true"],
+    [data-testid="stCheckbox"] input[type="checkbox"]:checked + div,
+    [data-testid="stCheckbox"] input[type="checkbox"]:checked ~ div {
+        background-color: var(--iso-control-bg) !important;
+        border-color: var(--iso-control-bg) !important;
+        color: #FFFFFF !important;
+    }
+    [data-testid="stCheckbox"] [role="checkbox"][aria-checked="true"] svg,
+    [data-testid="stCheckbox"] [role="checkbox"][aria-checked="true"] svg *,
+    [data-testid="stCheckbox"] [role="checkbox"][data-selected="true"] svg,
+    [data-testid="stCheckbox"] [data-testid="stCheckboxIndicator"][data-selected="true"] svg,
+    [data-testid="stCheckbox"] input[type="checkbox"]:checked ~ div svg {
+        opacity: 1 !important;
+        color: #FFFFFF !important;
+        fill: #FFFFFF !important;
+        stroke: #FFFFFF !important;
     }
     </style>
     """,
@@ -5343,9 +5729,6 @@ def _render_runtime_device_badge() -> None:
         f'<div class="iso-device-badge {css_class}" title="{html.escape(title)}">Device <strong>{html.escape(resolved)}</strong></div>',
         unsafe_allow_html=True,
     )
-
-
-_render_runtime_device_badge()
 
 
 def _init_session_log() -> None:
@@ -5400,7 +5783,7 @@ def _validate_database_url(database_url: str) -> str:
         engine.dispose()
     except ModuleNotFoundError as exc:
         raise RuntimeError(
-            f"Database driver missing: {exc.name}. Install requirements and run Isomera with `.venv`."
+            f"Database driver missing: {exc.name}. Install requirements and run Isomera with its launcher-managed Python environment."
         ) from exc
     return cleaned
 
@@ -6527,12 +6910,15 @@ def _build_graph_from_warehouse_contract(database_url: str, schema_name: str) ->
     return materialized.graph, metadata
 
 
-def _benchmark_algorithm_variants(benchmark_arch: str) -> list[dict[str, object]]:
+def _benchmark_algorithm_variants(
+    benchmark_arch: str,
+    _progress_callback: object | None = None,
+) -> list[dict[str, object]]:
     variants: list[dict[str, object]] = [
         {"label": "VF2", "kind": "builtin", "algorithm": "VF2"},
         {"label": "Node Match (Custom)", "kind": "builtin", "algorithm": "Node Match (Custom)"},
     ]
-    for cluster in _benchmark_model_clusters(benchmark_arch):
+    for cluster in _benchmark_model_clusters(benchmark_arch, _progress_callback=_progress_callback):
         family = str(cluster["family"])
         variants.append(
             {
@@ -6548,6 +6934,8 @@ def _benchmark_algorithm_variants(benchmark_arch: str) -> list[dict[str, object]
                 "route_policy": cluster.get("route_policy"),
                 "selection_metric": cluster.get("selection_metric") or "sf_jaccard",
                 "source": cluster.get("source"),
+                "covered": int(cluster.get("covered", 0) or 0),
+                "total": int(cluster.get("total", 0) or 0),
                 "coverage": f"{cluster.get('covered', 0)}/{cluster.get('total', 0)}",
                 "coverage_status": cluster.get("status"),
             }
@@ -6835,12 +7223,21 @@ def _log_action(
     _log_event(action, payload)
 
 
-def _log_exception(context: str, exc: Exception) -> None:
+def _log_exception(
+    context: str,
+    exc: Exception,
+    run_context: dict[str, object] | None = None,
+    *,
+    set_last_error: bool = True,
+) -> None:
     message = f"{type(exc).__name__}: {exc}"
     trace = traceback.format_exc()
     payload = {"context": context, "error": message, "traceback": trace}
+    if run_context:
+        payload["run_context"] = run_context
     _log_event("error", payload)
-    st.session_state.last_error = f"{message}\n\n{trace}"
+    if set_last_error:
+        st.session_state.last_error = f"{message}\n\n{trace}"
 
 
 def _check_optional_deps() -> None:
@@ -7089,6 +7486,8 @@ if "all_pairs" not in st.session_state:
     st.session_state.all_pairs = None
 if "benchmark_results" not in st.session_state:
     st.session_state.benchmark_results = None
+if "benchmark_failures" not in st.session_state:
+    st.session_state.benchmark_failures = []
 if "benchmark_best_of_selection_results" not in st.session_state:
     st.session_state.benchmark_best_of_selection_results = None
 if "validation_scenario" not in st.session_state:
@@ -7235,12 +7634,17 @@ with st.sidebar:
         _reset_session_state()
         _log_event("reset_app")
         st.rerun()
-    st.checkbox(
+    capture_toggle_col, capture_info_col = st.columns([5.5, 0.65], gap="small")
+    capture_toggle_col.checkbox(
         "Article Capture",
         value=st.session_state.article_capture_enabled,
         key="article_capture_enabled",
-        help="Store structured curation and benchmark summaries for later article/report use.",
     )
+    with capture_info_col:
+        _info_popover(
+            "Store structured curation and benchmark summaries for later article/report use.",
+            key="article_capture_info",
+        )
     if st.session_state.get("last_article_capture"):
         last_capture = st.session_state["last_article_capture"]
         st.caption(
@@ -7700,7 +8104,10 @@ if st.session_state.active_module in {"Benchmark & Examples", "Scenario Studio"}
     with step1_block:
         if st.session_state.active_module == "Benchmark & Examples":
             st.caption("Benchmark Workspace")
-            st.subheader("Benchmark & Examples")
+            heading_cols = st.columns([5, 1], vertical_alignment="center")
+            heading_cols[0].subheader("Benchmark & Examples")
+            with heading_cols[1]:
+                _render_runtime_device_badge()
         else:
             st.subheader("Scenario Studio")
         benchmark_dir = "data/architectures/tpc_ds/gml"
@@ -7720,7 +8127,7 @@ if st.session_state.active_module in {"Benchmark & Examples", "Scenario Studio"}
                 ),
                 key="benchmark_catalog_select",
             )
-            st.caption("Select the benchmark dataset first. Run options, model routing, and execution policy appear in the Run tab.")
+            st.caption("Choose the dataset, configure the detector families below, then use the blue Run benchmark button. This screen opens on Run Benchmark; article reproduction and concepts remain available in the other sections.")
             selected_benchmark = _get_architecture(selected_benchmark_arch) if benchmark_labels else None
             st.session_state.benchmark_catalog_name = selected_benchmark_arch
             benchmark_root = Path(selected_benchmark["root"]) if selected_benchmark else DEFAULT_ARCH_ROOT
@@ -7728,13 +8135,37 @@ if st.session_state.active_module in {"Benchmark & Examples", "Scenario Studio"}
             gml_root = benchmark_root / "gml"
             real_pairs_root = benchmark_root / "real_pairs"
             gml_files = sorted(gml_root.glob("*.gml")) if gml_root.exists() else []
-            benchmark_algorithm_variants_all = _benchmark_algorithm_variants(selected_benchmark_arch)
+            model_loading_progress = st.progress(0.01, text="Finding and checking trained `.pkl` models…")
+
+            def update_model_loading_progress(fraction: float, message: str) -> None:
+                model_loading_progress.progress(
+                    min(max(float(fraction), 0.0), 1.0),
+                    text=message,
+                )
+
+            benchmark_algorithm_variants_all = _benchmark_algorithm_variants(
+                selected_benchmark_arch,
+                _progress_callback=update_model_loading_progress,
+            )
+            routed_pickle_paths = {
+                str(path)
+                for variant in benchmark_algorithm_variants_all
+                if variant.get("kind") == "routed_gnn_cluster"
+                for path in [
+                    *list(variant.get("candidate_paths") or []),
+                    *list(dict(variant.get("routes") or {}).values()),
+                ]
+            }
+            model_loading_progress.progress(
+                1.0,
+                text=f"Model files ready: {len(routed_pickle_paths)} `.pkl` file(s) across {max(0, len(benchmark_algorithm_variants_all) - 2)} learned model family/families.",
+            )
             benchmark_algorithm_variants = list(benchmark_algorithm_variants_all)
             bench_section = _segmented_choice(
                 "Benchmark section",
                 options=["Article Reproducibility", "Run Benchmark", "Concepts"],
                 key="benchmark_section_select",
-                default="Article Reproducibility",
+                default="Run Benchmark",
             )
 
             if bench_section == "Concepts":
@@ -7856,6 +8287,48 @@ if st.session_state.active_module in {"Benchmark & Examples", "Scenario Studio"}
                                 st.success(f"Matrix saved to {out_path}")
 
             elif bench_section == "Run Benchmark":
+                st.subheader("Start the benchmark")
+                st.caption(
+                    "The model pickle scan is complete. Available families start selected; "
+                    "families without a local checkpoint for every scenario are disabled."
+                )
+                action_panel = st.container(border=True)
+                with action_panel:
+                    action_cols = st.columns([1.1, 2.2, 1.1], gap="medium", vertical_alignment="bottom")
+                    benchmark_runs = action_cols[0].number_input(
+                        "Executions per algorithm",
+                        min_value=1,
+                        max_value=200,
+                        value=10,
+                        key="benchmark_runs",
+                    )
+                    enabled_before_run = sum(
+                        bool(
+                            st.session_state.get(
+                                "benchmark_model_enabled_"
+                                + f"{selected_benchmark_arch}_{variant_index}_"
+                                + re.sub(r"[^A-Za-z0-9_]+", "_", str(variant["label"])),
+                                True,
+                            )
+                        )
+                        for variant_index, variant in enumerate(benchmark_algorithm_variants_all)
+                    )
+                    run_bench = action_cols[1].button(
+                        "▶  RUN BENCHMARK",
+                        key="run_benchmark",
+                        type="primary",
+                        use_container_width=True,
+                        disabled=int(benchmark_runs) < 1 or enabled_before_run == 0 or not gml_files,
+                    )
+                    stop_bench = action_cols[2].button(
+                        "Stop benchmark",
+                        key="stop_benchmark",
+                        type="secondary",
+                        use_container_width=True,
+                        disabled=not bool(st.session_state.get("running_benchmark", False)),
+                    )
+                if not gml_files:
+                    st.warning("No scenario `.gml` files were found, so the benchmark cannot run yet.")
                 left_col, right_col = st.columns([1, 2], gap="large")
                 with right_col:
                     st.subheader("Visualization")
@@ -7878,15 +8351,6 @@ if st.session_state.active_module in {"Benchmark & Examples", "Scenario Studio"}
                     )
                     if not gml_root.exists() or not real_pairs_root.exists():
                         st.warning("Ensure .gml and real_pairs exist in data/architectures/tpc_ds.")
-                    benchmark_runs = st.number_input(
-                        "Executions per algorithm",
-                        min_value=-1000,
-                        max_value=200,
-                        value=10,
-                        key="benchmark_runs",
-                    )
-                    if int(benchmark_runs) < 1:
-                        st.warning("Executions per algorithm must be at least 1.")
                     st.markdown("**Models to run**")
                     st.caption("Select detector families for this benchmark run. GNN clusters expose routing policy here because routing affects execution.")
                     selected_variants: list[dict[str, object]] = []
@@ -7895,16 +8359,32 @@ if st.session_state.active_module in {"Benchmark & Examples", "Scenario Studio"}
                         safe_label = re.sub(r"[^A-Za-z0-9_]+", "_", label)
                         widget_suffix = f"{selected_benchmark_arch}_{variant_index}_{safe_label}"
                         row_cols = st.columns([0.55, 5.5, 0.45, 3.2], gap="small")
+                        variant_copy = dict(variant)
+                        coverage_ready = True
+                        coverage_label = ""
+                        if variant.get("kind") == "routed_gnn_cluster":
+                            covered = int(variant.get("covered", 0) or 0)
+                            total = int(variant.get("total", 0) or 0)
+                            coverage_ready = (
+                                variant.get("coverage_status") == "complete"
+                                or (total > 0 and covered == total)
+                            )
+                            coverage_label = f"{covered}/{total} scenarios have a local checkpoint"
+                        checkbox_key = f"benchmark_model_enabled_{widget_suffix}"
+                        if not coverage_ready:
+                            st.session_state[checkbox_key] = False
                         enabled = row_cols[0].checkbox(
-                            "",
-                            value=True,
-                            key=f"benchmark_model_enabled_{widget_suffix}",
+                            f"Run {label}",
+                            value=coverage_ready,
+                            key=checkbox_key,
                             label_visibility="collapsed",
+                            disabled=not coverage_ready,
                         )
-                        row_cols[1].markdown(f"**{label}**")
+                        row_cols[1].markdown(
+                            f"**{label}**" + (f"  \n`{coverage_label}`" if coverage_label else "")
+                        )
                         with row_cols[2]:
                             _info_popover(_model_help_text(label), key=f"benchmark_model_info_{widget_suffix}")
-                        variant_copy = dict(variant)
                         if variant.get("kind") == "routed_gnn_cluster":
                             route_choice = row_cols[3].selectbox(
                                 "Routing",
@@ -7916,6 +8396,7 @@ if st.session_state.active_module in {"Benchmark & Examples", "Scenario Studio"}
                                 index=0,
                                 key=f"benchmark_route_policy_{widget_suffix}",
                                 label_visibility="collapsed",
+                                disabled=not coverage_ready,
                             )
                             candidate_paths = list(variant_copy.get("candidate_paths") or [])
                             if not candidate_paths:
@@ -7952,9 +8433,8 @@ if st.session_state.active_module in {"Benchmark & Examples", "Scenario Studio"}
                         )
                         if (routing_df["status"] == "missing_model").any():
                             st.warning(
-                                "Some GNN model families do not have a mapped `.pkl` for every scenario in this benchmark. "
-                                "When the route policy is `explicit_map`, scenarios without a valid `.pkl` are skipped for that GNN family. "
-                                "Choose a best-of policy above if you want the benchmark to test candidate pickles."
+                                "Some model families do not have a local `.pkl` for every scenario and are disabled above. "
+                                "Only complete checkpoint mappings can be selected for a benchmark run."
                             )
                         with st.expander("Scenario to pickle map", expanded=False):
                             if routing_df.empty:
@@ -8027,18 +8507,10 @@ if st.session_state.active_module in {"Benchmark & Examples", "Scenario Studio"}
                         ]
                         st.table(pd.DataFrame(article_rows))
                         st.code(
-                            "PYTHONPATH=main ./.venv/bin/python main/scripts/run_article_benchmarks.py "
+                            "PYTHONPATH=main \"$HOME/Library/Application Support/Isomera/venvs/isomera_v3/bin/python\" main/scripts/run_article_benchmarks.py "
                             "--benchmark tpc_ds_genai_spec --runs 10",
                             language="bash",
                         )
-                    bench_cols = st.columns([1, 1], gap="small")
-                    run_bench = bench_cols[0].button(
-                        "Run",
-                        key="run_benchmark",
-                        disabled=int(benchmark_runs) < 1 or not benchmark_algorithm_variants,
-                    )
-                    stop_bench = bench_cols[1].button("Stop", key="stop_benchmark")
-
                 if stop_bench:
                     st.session_state.cancel_benchmark = True
                     st.session_state.benchmark_stopped = True
@@ -8049,6 +8521,7 @@ if st.session_state.active_module in {"Benchmark & Examples", "Scenario Studio"}
                     _log_action("stop_benchmark", "benchmark.tab", {"runs": int(benchmark_runs)})
                 if run_bench:
                     st.session_state.last_error = None
+                    st.session_state.benchmark_error_summary = None
                     if int(benchmark_runs) < 1:
                         bench_status_slot.error("Executions per algorithm must be at least 1.")
                         _log_event("benchmark_invalid_runs", {"runs": int(benchmark_runs)})
@@ -8059,6 +8532,12 @@ if st.session_state.active_module in {"Benchmark & Examples", "Scenario Studio"}
                     st.session_state.benchmark_completed = False
                     st.session_state.benchmark_status = "Running benchmark..."
                     st.session_state.benchmark_progress = 0.0
+                    st.session_state.benchmark_current_context = {
+                        "benchmark": selected_benchmark_arch,
+                        "scenario": "Preparing scenarios",
+                        "algorithm": "Preparing selected models",
+                        "executions_per_algorithm": int(benchmark_runs),
+                    }
                     bench_progress_slot.progress(0.01)
                     bench_status_slot.info(
                         "Initializing benchmark: validating scenario files, labels, model routing, and execution plan..."
@@ -8124,6 +8603,7 @@ if st.session_state.active_module in {"Benchmark & Examples", "Scenario Studio"}
                                     results = []
                                     exec_rows = []
                                     best_of_selection_results = []
+                                    benchmark_failures = []
                                     missing_pickles = []
                                     missing_real_pairs = []
                                     true_pairs_counts = []
@@ -8196,6 +8676,13 @@ if st.session_state.active_module in {"Benchmark & Examples", "Scenario Studio"}
                                             missing_real_pairs.append(gml_file.stem)
                                         for variant in benchmark_algorithm_variants:
                                             algo = str(variant["algorithm"])
+                                            run_context = {
+                                                "benchmark": selected_benchmark_arch,
+                                                "scenario": gml_file.stem,
+                                                "algorithm": str(variant["label"]),
+                                                "executions_per_algorithm": int(benchmark_runs),
+                                            }
+                                            st.session_state.benchmark_current_context = run_context
                                             if time.perf_counter() - bench_start > timeout_secs:
                                                 st.session_state.cancel_benchmark = True
                                                 st.session_state.benchmark_stopped = True
@@ -8278,12 +8765,42 @@ if st.session_state.active_module in {"Benchmark & Examples", "Scenario Studio"}
                                                         )
                                                         set_gnn_pickle_module(candidate_module)
                                                         candidate_start = time.perf_counter()
-                                                        candidate_df = metrics_table(
-                                                            graph,
-                                                            true_pairs,
-                                                            [algo],
-                                                            all_pairs=all_pairs,
-                                                        )
+                                                        try:
+                                                            candidate_df = metrics_table(
+                                                                graph,
+                                                                true_pairs,
+                                                                [algo],
+                                                                all_pairs=all_pairs,
+                                                            )
+                                                        except Exception as exc:  # noqa: BLE001 - isolate candidate failure
+                                                            failure_context = {
+                                                                **run_context,
+                                                                "checkpoint": str(candidate_path),
+                                                            }
+                                                            benchmark_failures.append(
+                                                                {
+                                                                    **failure_context,
+                                                                    "error": _benchmark_error_summary(exc),
+                                                                    "traceback": traceback.format_exc(),
+                                                                }
+                                                            )
+                                                            _log_exception(
+                                                                "benchmark_candidate",
+                                                                exc,
+                                                                run_context=failure_context,
+                                                                set_last_error=False,
+                                                            )
+                                                            current_step += 1
+                                                            fraction = min(current_step / total_steps, 1.0)
+                                                            status = (
+                                                                f"Candidate failed for {variant['label']} on {gml_file.stem}; "
+                                                                f"continuing with remaining models ({current_step}/{total_steps})."
+                                                            )
+                                                            st.session_state.benchmark_progress = fraction
+                                                            st.session_state.benchmark_status = status
+                                                            bench_progress_slot.progress(fraction, text=status)
+                                                            bench_status_slot.warning(status)
+                                                            continue
                                                         candidate_elapsed = time.perf_counter() - candidate_start
                                                         candidate_row = candidate_df.iloc[0].to_dict()
                                                         c_tp = int(candidate_row.get("tp", 0) or 0)
@@ -8341,6 +8858,8 @@ if st.session_state.active_module in {"Benchmark & Examples", "Scenario Studio"}
                                                         bench_progress_slot.progress(st.session_state.benchmark_progress)
                                                     if st.session_state.cancel_benchmark:
                                                         break
+                                                    if not best_of_selection_rows:
+                                                        continue
                                                     best_selection = max(
                                                         best_of_selection_rows,
                                                         key=lambda row: (
@@ -8390,14 +8909,58 @@ if st.session_state.active_module in {"Benchmark & Examples", "Scenario Studio"}
                                                     selected_pickle_module_for_row or "core.algorithms.gnn_model"
                                                 )
                                                 selected_pickle_for_row = str(pickle_path)
+                                                run_context["checkpoint"] = selected_pickle_for_row
+                                                st.session_state.benchmark_current_context = run_context
                                             if metrics_df is None:
-                                                metrics_start = time.perf_counter()
-                                                metrics_df = metrics_table(
-                                                    graph,
-                                                    true_pairs,
-                                                    [algo],
-                                                    all_pairs=all_pairs,
+                                                step_fraction = min(current_step / total_steps, 1.0)
+                                                st.session_state.benchmark_progress = step_fraction
+                                                st.session_state.benchmark_status = (
+                                                    f"Running {variant['label']} on {gml_file.stem} — "
+                                                    f"inference 1/{int(benchmark_runs)}. "
+                                                    f"Completed {current_step}/{total_steps} scenario/model steps."
                                                 )
+                                                bench_progress_slot.progress(
+                                                    step_fraction,
+                                                    text=st.session_state.benchmark_status,
+                                                )
+                                                bench_status_slot.info(st.session_state.benchmark_status)
+                                                metrics_start = time.perf_counter()
+                                                try:
+                                                    metrics_df = metrics_table(
+                                                        graph,
+                                                        true_pairs,
+                                                        [algo],
+                                                        all_pairs=all_pairs,
+                                                    )
+                                                except Exception as exc:  # noqa: BLE001 - isolate model/scenario failure
+                                                    failure_context = {
+                                                        **run_context,
+                                                        **({"checkpoint": selected_pickle_for_row} if selected_pickle_for_row else {}),
+                                                    }
+                                                    benchmark_failures.append(
+                                                        {
+                                                            **failure_context,
+                                                            "error": _benchmark_error_summary(exc),
+                                                            "traceback": traceback.format_exc(),
+                                                        }
+                                                    )
+                                                    _log_exception(
+                                                        "benchmark_model_scenario",
+                                                        exc,
+                                                        run_context=failure_context,
+                                                        set_last_error=False,
+                                                    )
+                                                    current_step += 1
+                                                    fraction = min(current_step / total_steps, 1.0)
+                                                    status = (
+                                                        f"{variant['label']} failed on {gml_file.stem}; "
+                                                        f"keeping completed results and continuing ({current_step}/{total_steps})."
+                                                    )
+                                                    st.session_state.benchmark_progress = fraction
+                                                    st.session_state.benchmark_status = status
+                                                    bench_progress_slot.progress(fraction, text=status)
+                                                    bench_status_slot.warning(status)
+                                                    continue
                                                 first_run_elapsed = time.perf_counter() - metrics_start
                                             if not st.session_state.benchmark_step2:
                                                 st.session_state.benchmark_step2 = True
@@ -8448,8 +9011,33 @@ if st.session_state.active_module in {"Benchmark & Examples", "Scenario Studio"}
                                             extra_runs = max(int(benchmark_runs) - 1, 0)
                                             times = [first_run_elapsed]
                                             if extra_runs:
+                                                def report_timing_progress(
+                                                    _algorithm: str,
+                                                    completed_repeat: int,
+                                                    total_repeats: int,
+                                                ) -> None:
+                                                    fraction = min(
+                                                        (current_step + 0.65 + 0.35 * completed_repeat / max(total_repeats, 1))
+                                                        / total_steps,
+                                                        1.0,
+                                                    )
+                                                    status = (
+                                                        f"Timing {variant['label']} on {gml_file.stem}: "
+                                                        f"execution {completed_repeat + 1}/{int(benchmark_runs)}; "
+                                                        f"step {current_step + 1}/{total_steps}."
+                                                    )
+                                                    st.session_state.benchmark_progress = fraction
+                                                    st.session_state.benchmark_status = status
+                                                    bench_progress_slot.progress(fraction, text=status)
+                                                    bench_status_slot.info(status)
+
                                                 times.extend(
-                                                    execution_times(graph, [algo], runs=extra_runs).get(algo, [])
+                                                    execution_times(
+                                                        graph,
+                                                        [algo],
+                                                        runs=extra_runs,
+                                                        progress_callback=report_timing_progress,
+                                                    ).get(algo, [])
                                                 )
                                             if times:
                                                 series = pd.Series(times)
@@ -8492,6 +9080,7 @@ if st.session_state.active_module in {"Benchmark & Examples", "Scenario Studio"}
                                     st.session_state.benchmark_results = pd.DataFrame(results)
                                     st.session_state.benchmark_exec_stats = pd.DataFrame(exec_rows)
                                     st.session_state.benchmark_best_of_selection_results = pd.DataFrame(best_of_selection_results)
+                                    st.session_state.benchmark_failures = benchmark_failures
                                     st.session_state.benchmark_plot_logged = False
                                     st.session_state.benchmark_completed = True
                                     st.session_state.benchmark_step4 = True
@@ -8568,18 +9157,30 @@ if st.session_state.active_module in {"Benchmark & Examples", "Scenario Studio"}
                                     )
                                     _finish_backend_run(
                                         backend_run_id,
-                                        status="completed" if not st.session_state.cancel_benchmark else "cancelled",
+                                        status=(
+                                            "cancelled"
+                                            if st.session_state.cancel_benchmark
+                                            else "completed_with_errors"
+                                            if benchmark_failures
+                                            else "completed"
+                                        ),
                                         summary={
                                             "rows": len(results_df),
                                             "exec_rows": len(exec_rows),
                                             "best_of_selection_rows": len(best_of_selection_results),
+                                            "model_scenario_failures": len(benchmark_failures),
                                             "missing_pickles": sorted(set(missing_pickles)),
                                             "missing_real_pairs": sorted(set(missing_real_pairs)),
                                             "benchmark_name": selected_benchmark_arch,
                                         },
                                     )
                                     if not st.session_state.cancel_benchmark:
-                                        st.session_state.benchmark_status = "Completed. See results below."
+                                        st.session_state.benchmark_status = (
+                                            f"Completed with {len(benchmark_failures)} model/scenario failure(s); "
+                                            f"{len(results)} successful result row(s) are retained."
+                                            if benchmark_failures
+                                            else "Completed. See results below."
+                                        )
                                     if st.session_state.benchmark_params:
                                         st.session_state.benchmark_params.update(
                                             {
@@ -8597,27 +9198,118 @@ if st.session_state.active_module in {"Benchmark & Examples", "Scenario Studio"}
                                             st.session_state.benchmark_params,
                                         )
                         except Exception as exc:  # noqa: BLE001 - show errors to user
+                            error_message = f"{type(exc).__name__}: {exc}"
+                            error_summary = _benchmark_error_summary(exc)
+                            current_context = locals().get("run_context")
+                            if not isinstance(current_context, dict):
+                                current_context = {
+                                    "benchmark": selected_benchmark_arch,
+                                    "executions_per_algorithm": int(benchmark_runs),
+                                }
+                            st.session_state.benchmark_error_summary = error_summary
+                            st.session_state.benchmark_current_context = current_context
+                            partial_results = locals().get("results")
+                            if isinstance(partial_results, list) and partial_results:
+                                st.session_state.benchmark_results = pd.DataFrame(partial_results)
+                                st.session_state.benchmark_exec_stats = pd.DataFrame(
+                                    locals().get("exec_rows") or []
+                                )
+                                st.session_state.benchmark_completed = True
+                            failure_list = locals().get("benchmark_failures")
+                            if isinstance(failure_list, list):
+                                failure_list.append(
+                                    {
+                                        **current_context,
+                                        "error": error_summary,
+                                        "traceback": traceback.format_exc(),
+                                    }
+                                )
+                                st.session_state.benchmark_failures = failure_list
                             _finish_backend_run(
                                 backend_run_id,
                                 status="failed",
-                                summary={"error": f"{type(exc).__name__}: {exc}"},
+                                summary={"error": error_message, "run_context": current_context},
                             )
-                            _log_exception("run_benchmark", exc)
+                            _log_exception("run_benchmark", exc, run_context=current_context)
+                            st.session_state.last_error = f"{error_summary}\n\n{traceback.format_exc()}"
+                            st.session_state.benchmark_status = error_summary
+                            bench_progress_slot.empty()
+                            bench_status_slot.error(error_summary)
                         finally:
                             st.session_state.backend_active_run_id = None
                             st.session_state.running_benchmark = False
-                            if not st.session_state.benchmark_stopped:
+                            if (
+                                not st.session_state.benchmark_stopped
+                                and not st.session_state.benchmark_completed
+                                and not st.session_state.last_error
+                            ):
                                 st.session_state.benchmark_status = ""
-                            st.session_state.benchmark_progress = 0.0
+                            if not st.session_state.last_error:
+                                st.session_state.benchmark_progress = 1.0
+                                bench_progress_slot.progress(1.0, text="Benchmark completed.")
                 if st.session_state.last_error:
-                    bench_status_slot.error("Error detected in the last execution.")
-                    bench_content_slot.text_area(
-                        "Error details",
-                        st.session_state.last_error,
-                        height=200,
-                        key="benchmark_error_details",
-                    )
-                if st.session_state.running_benchmark:
+                    summary = st.session_state.get("benchmark_error_summary") or str(
+                        st.session_state.last_error
+                    ).splitlines()[0]
+                    partial_results = st.session_state.get("benchmark_results")
+                    successful_rows = len(partial_results) if isinstance(partial_results, pd.DataFrame) else 0
+                    failure_count = len(st.session_state.get("benchmark_failures") or [])
+                    if successful_rows:
+                        bench_status_slot.warning(
+                            f"Run stopped: {summary} {successful_rows} successful result row(s) were retained; "
+                            f"{failure_count} model/scenario failure(s) are listed below."
+                        )
+                    else:
+                        bench_status_slot.error(f"Benchmark failed: {summary}")
+                    error_context = st.session_state.get("benchmark_current_context")
+                    with bench_content_slot.container():
+                        if error_context:
+                            st.caption(
+                                "Run context: "
+                                + " · ".join(f"{key}: {value}" for key, value in error_context.items())
+                            )
+                        with st.expander("Technical details and full traceback", expanded=False):
+                            st.code(st.session_state.last_error, language="pytb")
+                        partial_table = st.session_state.get("benchmark_results")
+                        if isinstance(partial_table, pd.DataFrame) and not partial_table.empty:
+                            st.markdown("**Successful results completed before the failure**")
+                            partial_columns = [
+                                col
+                                for col in ["scenario", "algorithm", "ACC", "jaccard", "ET", "SF", "tp", "fp", "fn"]
+                                if col in partial_table.columns
+                            ]
+                            st.dataframe(
+                                partial_table[partial_columns] if partial_columns else partial_table,
+                                width="stretch",
+                            )
+                        failures_df = pd.DataFrame(st.session_state.get("benchmark_failures") or [])
+                        if not failures_df.empty:
+                            st.markdown("**Models/scenarios that failed**")
+                            failure_columns = [
+                                col
+                                for col in ["benchmark", "scenario", "algorithm", "error", "checkpoint"]
+                                if col in failures_df.columns
+                            ]
+                            failure_view = failures_df[failure_columns].copy()
+                            if "checkpoint" in failure_view.columns:
+                                failure_view["checkpoint"] = failure_view["checkpoint"].map(
+                                    lambda value: Path(str(value)).name if value else ""
+                                )
+                            st.dataframe(
+                                failure_view if failure_columns else failures_df,
+                                width="stretch",
+                                hide_index=True,
+                            )
+                            st.caption("Full checkpoint paths and traces are available by expanding each failure.")
+                            for failure_index, failure in enumerate(st.session_state.benchmark_failures, start=1):
+                                with st.expander(
+                                    f"Failure {failure_index}: {failure.get('algorithm', 'model')} / "
+                                    f"{failure.get('scenario', 'scenario')}",
+                                    expanded=False,
+                                ):
+                                    st.code(failure.get("traceback", failure.get("error", "")), language="pytb")
+                    bench_progress_slot.empty()
+                elif st.session_state.running_benchmark:
                     bench_progress_slot.progress(min(max(st.session_state.benchmark_progress, 0.0), 1.0))
                     bench_status_slot.info(st.session_state.benchmark_status or "Running benchmark...")
                 elif st.session_state.benchmark_stopped:
@@ -8627,19 +9319,53 @@ if st.session_state.active_module in {"Benchmark & Examples", "Scenario Studio"}
                 else:
                     with bench_content_slot.container():
                         if st.session_state.benchmark_completed:
-                            bench_status_slot.success(
-                                st.session_state.benchmark_status or "Completed. See results below."
-                            )
+                            if st.session_state.get("benchmark_failures"):
+                                bench_status_slot.warning(
+                                    st.session_state.benchmark_status
+                                    or "Some models failed; successful results are shown below."
+                                )
+                            else:
+                                bench_status_slot.success(
+                                    st.session_state.benchmark_status or "Completed. See results below."
+                                )
                         table_df = st.session_state.benchmark_results.copy()
                         display_cols = [
                             col
                             for col in ["scenario", "algorithm", "ACC", "jaccard", "ET", "SF", "sf_accuracy", "tp", "fp", "fn"]
                             if col in table_df.columns
                         ]
-                        if display_cols:
+                        if table_df.empty:
+                            st.info("No successful model/scenario results were produced in this run.")
+                        elif display_cols:
                             st.dataframe(table_df[display_cols], width="stretch")
                         else:
                             st.dataframe(table_df, width="stretch")
+                        failures_df = pd.DataFrame(st.session_state.get("benchmark_failures") or [])
+                        if not failures_df.empty:
+                            st.markdown("**Models/scenarios that failed**")
+                            visible_failure_cols = [
+                                col
+                                for col in ["benchmark", "scenario", "algorithm", "error", "checkpoint"]
+                                if col in failures_df.columns
+                            ]
+                            failure_view = failures_df[visible_failure_cols].copy()
+                            if "checkpoint" in failure_view.columns:
+                                failure_view["checkpoint"] = failure_view["checkpoint"].map(
+                                    lambda value: Path(str(value)).name if value else ""
+                                )
+                            st.dataframe(
+                                failure_view if visible_failure_cols else failures_df,
+                                width="stretch",
+                                hide_index=True,
+                            )
+                            st.caption("Full checkpoint paths and traces are available by expanding each failure.")
+                            for failure_index, failure in enumerate(st.session_state.benchmark_failures, start=1):
+                                with st.expander(
+                                    f"Failure {failure_index}: {failure.get('algorithm', 'model')} / "
+                                    f"{failure.get('scenario', 'scenario')}",
+                                    expanded=False,
+                                ):
+                                    st.code(failure.get("traceback", failure.get("error", "")), language="pytb")
                         if st.session_state.benchmark_exec_stats is not None:
                             st.subheader("Benchmark Execution Stats")
                             st.dataframe(st.session_state.benchmark_exec_stats, width="stretch")
@@ -8900,7 +9626,7 @@ if st.session_state.active_module in {"Benchmark & Examples", "Scenario Studio"}
                         scenario_schemas = []
                         st.warning(
                             "Scenario Warehouse is unavailable in the current interpreter. "
-                            f"Current Python: `{sys.executable}`. Launch Isomera with `.venv/bin/python -m streamlit run main/ui/app.py`."
+                            f"Current Python: `{sys.executable}`. Launch Isomera with `./launch_isomera.command` so the managed environment is used."
                         )
                     else:
                         try:
@@ -10816,11 +11542,22 @@ if st.session_state.active_module == "Production Run":
                     st.caption("SF-Jaccard: Jaccard * N_pairs / ET, using the total evaluated pair count for the active graph.")
 
 if st.session_state.active_module == "Logs":
+    if st.button("Refresh logs now", key="refresh_logs_now", icon="🔄"):
+        st.rerun()
+    st.caption(
+        "Logs refresh when this page is opened or rerun. Session Log contains application exceptions and full tracebacks; "
+        "the Streamlit launch log contains process startup/output."
+    )
     left_col, right_col = st.columns([1, 2], gap="large")
     with left_col:
         st.subheader("Logs")
         logs_root = _app_path("logs")
         log_files = sorted(logs_root.glob("session_*.jsonl"), reverse=True)
+        latest_session_name = log_files[0].name if log_files else None
+        if latest_session_name and st.session_state.get("_latest_session_log_seen") != latest_session_name:
+            st.session_state._latest_session_log_seen = latest_session_name
+            st.session_state.active_log = latest_session_name
+            st.session_state.log_select_main = latest_session_name
         if not log_files:
             st.info("No logs found.")
             selected_log = None
@@ -10874,9 +11611,17 @@ if st.session_state.active_module == "Logs":
             terminal_root = _app_path("logs/terminal")
             terminal_files = sorted(terminal_root.glob("terminal_*.log"), reverse=True)
             launcher_files = sorted(_app_path("logs").glob("streamlit_launch_*.log"), reverse=True)
-            all_terminal_files = [(p.name, p) for p in terminal_files] + [
-                (f"launcher/{p.name}", p) for p in launcher_files
-            ]
+            all_terminal_files = []
+            if launcher_files:
+                current_launcher = launcher_files[0]
+                current_launcher_label = f"Current app launch · {current_launcher.name}"
+                all_terminal_files.append((current_launcher_label, current_launcher))
+                if st.session_state.get("_latest_launcher_log_seen") != current_launcher.name:
+                    st.session_state._latest_launcher_log_seen = current_launcher.name
+                    st.session_state.active_terminal_log = current_launcher_label
+                    st.session_state.terminal_log_select = current_launcher_label
+            all_terminal_files.extend((p.name, p) for p in terminal_files)
+            all_terminal_files.extend((f"Previous app launch · {p.name}", p) for p in launcher_files[1:])
             if not all_terminal_files:
                 st.info("No terminal logs found.")
             else:
@@ -10892,9 +11637,18 @@ if st.session_state.active_module == "Logs":
             if not all_terminal_files or not st.session_state.active_terminal_log:
                 st.info("No terminal log selected.")
             else:
-                term_path = dict(all_terminal_files).get(st.session_state.active_terminal_log, terminal_root / st.session_state.active_terminal_log)
+                term_path = dict(all_terminal_files).get(
+                    st.session_state.active_terminal_log,
+                    terminal_root / st.session_state.active_terminal_log,
+                )
                 term_text = term_path.read_text(encoding="utf-8", errors="replace")
-                st.text_area("Raw log (.log)", term_text, height=360)
+                st.caption(f"Viewing: {term_path.name} · modified {time.strftime('%H:%M:%S', time.localtime(term_path.stat().st_mtime))}")
+                st.text_area(
+                    "Raw log (.log)",
+                    term_text,
+                    height=360,
+                    key=f"terminal_log_contents::{term_path.name}::{term_path.stat().st_mtime_ns}::{term_path.stat().st_size}",
+                )
 
 def _vmamba_presentation_figures() -> dict[str, Path]:
     root = PROJECT_ROOT / "docs" / "presentations" / "vmamba_mesh_assets"
@@ -11808,5 +12562,5 @@ if st.session_state.active_module == "Admin":
             st.code("/opt/homebrew/opt/postgresql@16/bin/psql -d isomera_tpcds_benchmark")
             st.info(
                 "Timeouts stop long-running operations and log the reason. "
-                "Use `.venv` when launching the app so PostgreSQL drivers such as `psycopg` are available."
+                "Launch with `./launch_isomera.command` so PostgreSQL drivers such as `psycopg` are available in the managed environment."
             )

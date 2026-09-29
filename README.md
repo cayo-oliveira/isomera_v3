@@ -203,10 +203,7 @@ Jaccard measures quality over predicted duplicate pairs. SF-Jaccard combines cor
 ```bash
 git clone https://github.com/cayo-oliveira/isomera_v3.git
 cd isomera_v3
-python3.11 -m venv .venv
-.venv/bin/python -m pip install --upgrade pip
-.venv/bin/python -m pip install -r main/requirements.txt
-.venv/bin/python -m streamlit run main/ui/app.py --server.port 8501 --server.address localhost
+./launch_isomera.command
 ```
 
 Open:
@@ -221,7 +218,7 @@ On macOS, you can also use:
 ./launch_isomera.command
 ```
 
-The launcher checks the virtual environment, dependencies, Streamlit process state and local database services before opening the app.
+The macOS launcher is version 1.3.0 (the application release remains 2.5.0). It writes a full session log to `main/logs/isomera_launcher_*.log` and a Streamlit child log to `main/logs/streamlit_launch_*.log`. Its managed Python environment lives at `~/Library/Application Support/Isomera/venvs/isomera_v3`, outside the iCloud-synced repository. It reuses a healthy environment and only rebuilds its managed environment if dataless files are detected; it does not download a venv from iCloud. Dependency installation streams package lookup, byte-based download progress, installation messages, and periodic elapsed-time status to the terminal/log. A legacy repository `.venv` is removed only if dataless and verified generated, Git-ignored, and untracked. It performs nine visible startup steps, terminates only a stale Streamlit process whose absolute entrypoint belongs to this repository, selects another free local port if 8501 is occupied, and does not terminate unrelated applications or databases already running. `--check-only` performs preflight without process/database side effects or environment changes.
 
 ## Suggested first walkthrough
 

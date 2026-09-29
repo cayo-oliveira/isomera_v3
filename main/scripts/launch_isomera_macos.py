@@ -1,22 +1,34 @@
 from __future__ import annotations
 
+import json
 import os
 import re
+import selectors
 import shutil
 import socket
 import subprocess
 import sys
 import threading
 import time
+from collections import deque
 from datetime import datetime
 from pathlib import Path
 
-from isomera_identity import compact_identity_line, terminal_banner
+from isomera_identity import compact_identity_line, terminal_banner, terminal_status_banner
 
 
 REPO_ROOT = Path(__file__).resolve().parents[2]
 MAIN_ROOT = REPO_ROOT / "main"
-VENV = REPO_ROOT / ".venv"
+LEGACY_VENV = REPO_ROOT / ".venv"
+LOCAL_VENV_BASE = Path.home() / "Library" / "Application Support" / "Isomera" / "venvs"
+DEFAULT_LOCAL_VENV = LOCAL_VENV_BASE / REPO_ROOT.name
+VENV = Path(os.environ.get("ISOMERA_VENV_PATH", str(DEFAULT_LOCAL_VENV))).expanduser()
+MANAGED_LOCAL_VENV = "ISOMERA_VENV_PATH" not in os.environ
+try:
+    LAUNCHER_VERSION = str(json.loads((MAIN_ROOT / "config" / "version.json").read_text(encoding="utf-8")).get("launcher_version", "unversioned"))
+except (OSError, json.JSONDecodeError):
+    LAUNCHER_VERSION = "unversioned"
+MACOS_UF_DATALESS = 0x40000000
 APP = MAIN_ROOT / "ui" / "app.py"
 REQUIREMENTS = MAIN_ROOT / "requirements.txt"
 LOG_DIR = MAIN_ROOT / "logs"
@@ -47,6 +59,10 @@ class LaunchError(RuntimeError):
     pass
 
 
+class DatalessRuntimeError(LaunchError):
+    pass
+
+
 def _line() -> None:
     print("─" * 72, flush=True)
 
@@ -54,7 +70,7 @@ def _line() -> None:
 def _title() -> None:
     print("", flush=True)
     print(terminal_banner("BOOT"), flush=True)
-    print("macOS local bootstrap", flush=True)
+    print(f"macOS local bootstrap · launcher v{LAUNCHER_VERSION}", flush=True)
     print(compact_identity_line(), flush=True)
     _line()
 
@@ -132,20 +148,31 @@ def _find_python311() -> str:
 
 
 def _ensure_venv() -> None:
+    dataless = _dataless_site_packages(VENV)
+    if dataless:
+        if not MANAGED_LOCAL_VENV:
+            raise DatalessRuntimeError(
+                f"A venv configurada explicitamente em {VENV} contém arquivos dataless. "
+                "Não vou apagar um caminho personalizado automaticamente."
+            )
+        _remove_generated_venv(VENV, reason="a venv local gerenciada contém arquivos dataless")
     if VENV.exists() and not _python().exists():
-        raise LaunchError(f"`{VENV}` existe, mas `{_python()}` não existe. Remova/recrie a venv.")
+        raise LaunchError(f"`{VENV}` existe, mas `{_python()}` não existe. Remova/recrie apenas essa venv local.")
     if not VENV.exists():
         py = _find_python311()
-        print(f"Criando .venv com {py}", flush=True)
+        VENV.parent.mkdir(parents=True, exist_ok=True)
+        print(f"Criando ambiente Python local em {VENV} com {py}", flush=True)
         result = _run([py, "-m", "venv", str(VENV)], timeout=180)
         if result.returncode != 0:
             raise LaunchError(result.stdout)
+    else:
+        print(f"Reutilizando ambiente Python local existente: {VENV}", flush=True)
 
 
 def _validate_venv() -> None:
     pyvenv_cfg = VENV / "pyvenv.cfg"
     if not pyvenv_cfg.exists():
-        raise LaunchError(f"`{pyvenv_cfg}` nao encontrado. Recrie a .venv.")
+        raise LaunchError(f"`{pyvenv_cfg}` nao encontrado em {VENV}. O ambiente local esta incompleto.")
     cfg = pyvenv_cfg.read_text(encoding="utf-8", errors="replace")
     version = ""
     for line in cfg.splitlines():
@@ -153,22 +180,89 @@ def _validate_venv() -> None:
             version = line.split("=", 1)[1].strip()
             break
     if not version:
-        raise LaunchError("Nao consegui identificar a versao Python em .venv/pyvenv.cfg.")
+        raise LaunchError(f"Nao consegui identificar a versao Python em {VENV}/pyvenv.cfg.")
     major, minor, *_ = version.split(".")
     if int(major) != 3 or int(minor) < 11:
-        raise LaunchError(f"A .venv atual usa Python {version}. Recomendado: Python 3.11+.")
+        raise LaunchError(f"O ambiente Python em {VENV} usa Python {version}. Recomendado: Python 3.11+.")
     streamlit_script = _streamlit()
     if streamlit_script.exists():
         first_line = streamlit_script.read_text(encoding="utf-8", errors="ignore").splitlines()[0]
         if ".venv-1" in first_line:
-            raise LaunchError("O script `.venv/bin/streamlit` ainda aponta para `.venv-1`. Recrie a venv.")
+            raise LaunchError("O script Streamlit ainda aponta para `.venv-1`. Recrie o ambiente local gerenciado.")
     print(f"Python OK: {version} (validado por pyvenv.cfg, sem import pesado)", flush=True)
+
+
+def _dataless_site_packages(venv_path: Path = VENV) -> list[tuple[Path, int]]:
+    """Detect iCloud/File Provider placeholders before Python blocks importing them."""
+    if sys.platform != "darwin":
+        return []
+    candidates = sorted((venv_path / "lib").glob("python*/site-packages"))
+    if not candidates:
+        return []
+    found: list[tuple[Path, int]] = []
+    for directory, _, filenames in os.walk(candidates[0]):
+        for filename in filenames:
+            path = Path(directory) / filename
+            try:
+                info = path.stat()
+            except OSError:
+                continue
+            if info.st_flags & MACOS_UF_DATALESS:
+                found.append((path, info.st_size))
+    return found
+
+
+def _dataless_message(files: list[tuple[Path, int]], venv_path: Path = VENV) -> str:
+    total_mib = sum(size for _, size in files) / (1024 * 1024)
+    examples = "\n".join(f"  - {path}" for path, _ in files[:8])
+    if len(files) > 8:
+        examples += f"\n  - ... e mais {len(files) - 8} arquivo(s)"
+    return (
+        f"{venv_path} contém {len(files)} arquivo(s) dataless ({total_mib:.1f} MiB).\n"
+        f"Exemplos:\n{examples}\n"
+        "O launcher não vai baixar esses arquivos da nuvem. A venv gerenciada será recriada em "
+        f"{DEFAULT_LOCAL_VENV}, fora do iCloud."
+    )
+
+
+def _remove_generated_venv(path: Path, *, reason: str) -> None:
+    resolved = path.resolve()
+    is_legacy = path == LEGACY_VENV
+    is_managed_local = MANAGED_LOCAL_VENV and resolved == DEFAULT_LOCAL_VENV.resolve()
+    if path.is_symlink() or not (is_legacy or is_managed_local):
+        raise LaunchError(f"Recusa em remover caminho de ambiente fora do escopo gerenciado: {path}")
+    if not (path / "pyvenv.cfg").is_file():
+        raise LaunchError(f"Recusa em remover {path}: não foi identificado como um ambiente virtual Python.")
+    if is_legacy:
+        ignored = _run(["git", "check-ignore", "-q", ".venv"], timeout=10)
+        tracked = _run(["git", "ls-files", "--", ".venv"], timeout=10)
+        if ignored.returncode != 0 or tracked.stdout.strip():
+            raise LaunchError("A `.venv` antiga não está comprovadamente ignorada e sem arquivos rastreados; não será apagada.")
+    print(f"Removendo ambiente virtual gerado em {path}: {reason}.", flush=True)
+    shutil.rmtree(path)
+    if path.exists():
+        raise LaunchError(f"Não consegui remover completamente o ambiente virtual {path}.")
+
+
+def _remove_legacy_dataless_venv() -> None:
+    if not LEGACY_VENV.exists() or LEGACY_VENV.is_symlink():
+        return
+    if not (LEGACY_VENV / "pyvenv.cfg").is_file():
+        return
+    pending = _dataless_site_packages(LEGACY_VENV)
+    if pending:
+        print(
+            f"A `.venv` antiga dentro de Documents tem {len(pending)} arquivos dataless; "
+            "vou removê-la e usar um ambiente local fora do iCloud.",
+            flush=True,
+        )
+        _remove_generated_venv(LEGACY_VENV, reason="migração para armazenamento local fora do iCloud")
 
 
 def _site_packages() -> Path:
     candidates = sorted((VENV / "lib").glob("python*/site-packages"))
     if not candidates:
-        raise LaunchError("site-packages nao encontrado dentro da .venv. Reinstale os requirements.")
+        raise LaunchError(f"site-packages nao encontrado dentro de {VENV}. Reinstale os requirements.")
     return candidates[0]
 
 
@@ -190,15 +284,135 @@ def _missing_distributions() -> list[str]:
     missing = []
     for dist in KEY_DISTRIBUTIONS:
         if not _distribution_installed(dist):
-            missing.append(f"{dist}: not installed in .venv site-packages")
+            missing.append(f"{dist}: not installed in local environment site-packages")
     return missing
 
 
+def _run_streaming(command: list[str], *, timeout: int, env: dict[str, str]) -> subprocess.CompletedProcess[str]:
+    """Stream pip output and carriage-return progress into the terminal/log as it arrives."""
+    started = time.monotonic()
+    last_heartbeat = started
+    last_progress_print = started
+    phase = "Resolvendo dependências e aguardando resposta do índice de pacotes"
+    recent_output: deque[str] = deque(maxlen=50)
+    process = subprocess.Popen(
+        command,
+        cwd=REPO_ROOT,
+        text=False,
+        stdout=subprocess.PIPE,
+        stderr=subprocess.STDOUT,
+        bufsize=0,
+        env=env,
+    )
+    assert process.stdout is not None
+    selector = selectors.DefaultSelector()
+    selector.register(process.stdout, selectors.EVENT_READ)
+    pending = bytearray()
+    latest_progress = ""
+    stream_open = True
+
+    def emit(raw: bytes, *, progress: bool = False) -> None:
+        nonlocal phase, latest_progress, last_progress_print
+        message = raw.decode("utf-8", errors="replace").strip()
+        if not message:
+            return
+        if progress:
+            latest_progress = message
+            now = time.monotonic()
+            if now - last_progress_print < 0.75:
+                return
+            last_progress_print = now
+            label = f"[pip download] {message}"
+        else:
+            recent_output.append(message)
+            match = re.fullmatch(r"Progress\s+(\d+)\s+of\s+(\d+)", message, flags=re.IGNORECASE)
+            if match:
+                current, total = (int(value) for value in match.groups())
+                percent = min(100, round(current * 100 / total)) if total else 0
+                filled = round(percent / 100 * 24)
+                bar = "█" * filled + "░" * (24 - filled)
+                downloaded = current / (1024 * 1024)
+                size = total / (1024 * 1024)
+                latest_progress = f"[{bar}] {percent:3d}% ({downloaded:.1f}/{size:.1f} MiB)"
+                phase = "Baixando dependências"
+                print(f"[download] {latest_progress}", flush=True)
+                return
+            lower = message.lower()
+            if "looking in indexes" in lower or "collecting " in lower:
+                phase = "Buscando e resolvendo pacotes"
+            elif "downloading " in lower or "downloaded " in lower:
+                phase = "Baixando dependências"
+            elif "installing collected packages" in lower or "installing " in lower:
+                phase = "Instalando pacotes"
+            elif "successfully installed" in lower:
+                phase = "Pacotes instalados; validando o resultado"
+            elif "requirement already satisfied" in lower or "using cached" in lower:
+                phase = "Reutilizando dependências disponíveis/cache"
+            label = f"[pip] {message}"
+        print(label, flush=True)
+
+    while stream_open or process.poll() is None:
+        events = selector.select(timeout=0.25)
+        for key, _ in events:
+            try:
+                chunk = os.read(key.fd, 8192)
+            except OSError as exc:
+                recent_output.append(f"Erro lendo saída do pip: {exc}")
+                chunk = b""
+            if not chunk:
+                selector.unregister(key.fileobj)
+                stream_open = False
+                if pending:
+                    emit(bytes(pending))
+                    pending.clear()
+                continue
+            for byte in chunk:
+                if byte in (10, 13):
+                    emit(bytes(pending), progress=(byte == 13))
+                    pending.clear()
+                else:
+                    pending.append(byte)
+
+        now = time.monotonic()
+        if now - last_heartbeat >= 5 and process.poll() is None:
+            elapsed = int(now - started)
+            minutes, seconds = divmod(elapsed, 60)
+            detail = f"; {latest_progress}" if latest_progress else ""
+            print(f"[instalação {minutes:02d}:{seconds:02d}] {phase}{detail}…", flush=True)
+            last_heartbeat = now
+        if now - started > timeout and process.poll() is None:
+            try:
+                process.terminate()
+            except ProcessLookupError:
+                pass
+            try:
+                process.wait(timeout=5)
+            except subprocess.TimeoutExpired:
+                process.kill()
+                process.wait()
+            selector.close()
+            process.stdout.close()
+            detail = "\n".join(recent_output)
+            return subprocess.CompletedProcess(command, 124, detail + f"\nInstalação excedeu o limite de {timeout}s.")
+
+    selector.close()
+    returncode = process.wait()
+    process.stdout.close()
+    return subprocess.CompletedProcess(command, returncode, "\n".join(recent_output))
+
+
 def _install_requirements() -> None:
-    print("Instalando/atualizando dependências da .venv. Isso pode demorar.", flush=True)
-    result = _run([str(_python()), "-m", "pip", "install", "-r", str(REQUIREMENTS)], timeout=900, env=_base_env())
+    print(f"Instalando/atualizando dependências no ambiente local {VENV}.", flush=True)
+    print("O terminal exibirá a busca, o progresso de download e a instalação de cada pacote.", flush=True)
+    env = _base_env()
+    env["PIP_PROGRESS_BAR"] = "raw"
+    env["PIP_DISABLE_PIP_VERSION_CHECK"] = "1"
+    env["PIP_NO_INPUT"] = "1"
+    command = [str(_python()), "-m", "pip", "install", "--progress-bar", "raw", "--disable-pip-version-check", "--no-input", "-r", str(REQUIREMENTS)]
+    result = _run_streaming(command, timeout=900, env=env)
     if result.returncode != 0:
         raise LaunchError("Falha ao instalar requirements:\n" + result.stdout[-4000:])
+    print("Instalação de dependências concluída.", flush=True)
 
 
 def _base_env() -> dict[str, str]:
@@ -213,14 +427,14 @@ def _base_env() -> dict[str, str]:
     return env
 
 
-def _process_lines() -> list[str]:
+def _process_lines() -> list[str] | None:
     try:
         result = _run(["ps", "-ax"], timeout=10)
     except PermissionError:
-        print("Não foi possível executar `ps -ax` neste ambiente. Pulando limpeza automática de processos antigos.", flush=True)
-        return []
+        print("Não foi possível executar `ps -ax`.", flush=True)
+        return None
     if result.returncode != 0:
-        return []
+        return None
     return result.stdout.splitlines()
 
 
@@ -234,11 +448,15 @@ def _pid_from_ps_line(line: str) -> int | None:
         return None
 
 
-def _stale_streamlit_processes() -> list[tuple[int, str]]:
+def _stale_streamlit_processes() -> list[tuple[int, str]] | None:
     current = os.getpid()
     stale: list[tuple[int, str]] = []
-    for line in _process_lines():
-        if "streamlit" not in line or "main/ui/app.py" not in line:
+    app_path = str(APP.resolve())
+    lines = _process_lines()
+    if lines is None:
+        return None
+    for line in lines:
+        if "streamlit" not in line or app_path not in line:
             continue
         pid = _pid_from_ps_line(line)
         if pid and pid != current:
@@ -248,6 +466,8 @@ def _stale_streamlit_processes() -> list[tuple[int, str]]:
 
 def _cleanup_stale_streamlit() -> None:
     stale = _stale_streamlit_processes()
+    if stale is None:
+        raise LaunchError("Não foi possível inspecionar processos antigos; para evitar duplicidade, não vou iniciar outra instância.")
     if not stale:
         print("Nenhum Streamlit antigo encontrado.", flush=True)
         return
@@ -257,14 +477,19 @@ def _cleanup_stale_streamlit() -> None:
         subprocess.run(["kill", str(pid)], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
     time.sleep(2)
     remaining = _stale_streamlit_processes()
+    if remaining is None:
+        raise LaunchError("Não foi possível verificar a limpeza do Streamlit antigo; não vou iniciar outra instância.")
     for pid, _ in remaining:
         subprocess.run(["kill", "-9", str(pid)], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
     time.sleep(1)
     remaining = _stale_streamlit_processes()
+    if remaining is None:
+        raise LaunchError("Não foi possível confirmar que o Streamlit antigo encerrou.")
     if remaining:
         print("Atenção: ainda existem processos presos. Se o estado for U/UE, o macOS pode exigir reinicialização.", flush=True)
         for pid, line in remaining:
             print(f"  preso PID {pid}: {line}", flush=True)
+        raise LaunchError("Um processo Streamlit desta cópia continua ativo; a nova instância não será iniciada.")
     else:
         print("Processos antigos encerrados.", flush=True)
 
@@ -387,6 +612,27 @@ def _port_open() -> bool:
         return sock.connect_ex(("127.0.0.1", PORT)) == 0
 
 
+def _select_available_port() -> None:
+    """Use the requested port or the next free local port; never terminate another application."""
+    global PORT
+    requested = PORT
+    if not 1 <= requested <= 65535:
+        raise LaunchError(f"Porta inválida: {requested}. Use ISOMERA_PORT entre 1 e 65535.")
+    for candidate in range(requested, min(requested + 20, 65536)):
+        with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as sock:
+            try:
+                sock.bind(("127.0.0.1", candidate))
+            except OSError:
+                continue
+        PORT = candidate
+        if candidate != requested:
+            print(f"Porta {requested} ocupada por outro processo; Isomera usará {candidate}.", flush=True)
+        else:
+            print(f"Porta {candidate} disponível.", flush=True)
+        return
+    raise LaunchError(f"Nenhuma porta local livre entre {requested} e {min(requested + 19, 65535)}; nenhum processo externo foi encerrado.")
+
+
 def _wait_for_port(process: subprocess.Popen[bytes], log_path: Path, timeout: int = 90) -> bool:
     start = time.time()
     spinner = "|/-\\"
@@ -467,6 +713,7 @@ def _launch_streamlit() -> None:
     ready = _wait_for_port(process, log_path)
     if ready:
         url = f"http://{HOST}:{PORT}"
+        print("\n" + terminal_status_banner("READY", "ISOMERA PRONTO PARA USO · STREAMLIT ATIVO"), flush=True)
         print(f"\nIsomera disponível em {url}", flush=True)
         subprocess.run(["open", url], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
         print("O Terminal ficará aberto com logs em tempo real.", flush=True)
@@ -523,12 +770,14 @@ def main() -> int:
     _title()
     steps = [
         "Verificar raiz do projeto",
-        "Verificar/criar .venv correta",
+        "Remover .venv antiga dataless do repo, se existir",
+        "Criar ou reutilizar Python local fora do iCloud",
         "Validar Python e Streamlit",
         "Verificar dependências",
-        "Limpar Streamlit antigo",
-        "Iniciar bancos locais",
-        "Abrir Isomera",
+        "Encerrar somente Streamlit desta cópia do Isomera",
+        "Escolher uma porta livre sem fechar outros aplicativos",
+        "Iniciar apenas os bancos locais ausentes e gerenciados",
+        "Abrir Isomera e verificar a inicialização",
     ]
     postgres_started = False
     mysql_started = False
@@ -536,11 +785,30 @@ def main() -> int:
         _step(1, len(steps), steps[0])
         if not APP.exists():
             raise LaunchError(f"App não encontrado: {APP}")
+        if "--check-only" in sys.argv or os.environ.get("ISOMERA_LAUNCH_CHECK_ONLY") == "1":
+            _step(2, len(steps), "Verificar o ambiente local sem modificar arquivos")
+            print(f"Ambiente gerenciado esperado: {VENV}", flush=True)
+            if not VENV.exists():
+                print("Ambiente local ainda não existe; o launcher normal o criará e instalará requirements.", flush=True)
+                return 1
+            dataless = _dataless_site_packages(VENV)
+            if dataless:
+                print(_dataless_message(dataless, VENV), flush=True)
+                return 2
+            _validate_venv()
+            missing = _missing_distributions()
+            if missing:
+                print("Dependências ausentes:", *missing, sep="\n  - ", flush=True)
+                return 1
+            print("Check-only concluído; sem instalação, remoção, encerramento de processo, alteração de banco ou abertura do app.", flush=True)
+            return 0
         _step(2, len(steps), steps[1])
-        _ensure_venv()
+        _remove_legacy_dataless_venv()
         _step(3, len(steps), steps[2])
-        _validate_venv()
+        _ensure_venv()
         _step(4, len(steps), steps[3])
+        _validate_venv()
+        _step(5, len(steps), steps[4])
         missing = _missing_distributions()
         if missing:
             print("Dependências ausentes ou com erro:", flush=True)
@@ -552,19 +820,25 @@ def main() -> int:
                 raise LaunchError("Ainda há dependências com erro:\n" + "\n".join(missing))
         print("Observação: o launcher valida pacotes instalados por metadados, não por import pesado, para evitar atrasos de inicialização no macOS.", flush=True)
         print("Dependências OK.", flush=True)
-        _step(5, len(steps), steps[4])
-        _cleanup_stale_streamlit()
-        if "--check-only" in sys.argv or os.environ.get("ISOMERA_LAUNCH_CHECK_ONLY") == "1":
-            print("Check-only concluído. O app não foi iniciado.", flush=True)
-            return 0
+        print("\n" + terminal_status_banner("PKG READY", "PACOTES INSTALADOS E PRONTOS PARA USO"), flush=True)
         _step(6, len(steps), steps[5])
-        postgres_started, mysql_started = _start_local_databases()
+        _cleanup_stale_streamlit()
         _step(7, len(steps), steps[6])
+        _select_available_port()
+        _step(8, len(steps), steps[7])
+        postgres_started, mysql_started = _start_local_databases()
+        _step(9, len(steps), steps[8])
         _launch_streamlit()
         return 0
     except KeyboardInterrupt:
         print("\nInicialização interrompida pelo usuário.", flush=True)
         return 130
+    except DatalessRuntimeError as exc:
+        _line()
+        print("Inicialização pausada: não foi possível preparar um ambiente local íntegro.", flush=True)
+        print(str(exc), flush=True)
+        print("Nenhum ambiente personalizado será apagado automaticamente.", flush=True)
+        return 2
     except Exception as exc:
         _line()
         print("Falha ao iniciar o Isomera.", flush=True)
