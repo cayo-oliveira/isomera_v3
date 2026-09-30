@@ -281,7 +281,7 @@ def pair_auxiliary_tensor(
 ) -> Any:
     import torch
 
-    if not bool(_config_get(config, "auxiliary_features", True)):
+    if not bool(_config_get(config, "auxiliary_features", False)):
         return torch.zeros((0,), dtype=torch.float32)
     is_mesh = str(_config_get(config, "variant", "")).lower() == "vmamba_mesh_t"
     mesh_cfg = VMambaMeshConfig(
@@ -297,7 +297,7 @@ def pair_auxiliary_tensor(
         resolution=int(_config_get(config, "resolution", 32)),
     )
     features = pair_features(graph, node_a, node_b, config=mesh_cfg)
-    names = tuple(_config_get(config, "auxiliary_feature_names", tuple(DEFAULT_FEATURE_WEIGHTS)))
+    names = tuple(_config_get(config, "auxiliary_feature_names", ()))
     return torch.tensor([float(features.get(name, 0.0)) for name in names], dtype=torch.float32)
 
 
@@ -306,6 +306,12 @@ class VMambaStyleTensorEncoder:  # placeholder for type checkers; actual class b
 
 
 def _config_get(config: VMambaTrainableConfig, name: str, default: Any) -> Any:
+    # Dataclass defaults are class attributes. Older pickles may predate a
+    # field, so getattr() silently applies today's default to yesterday's
+    # serialized model. Prefer instance state to preserve the saved contract.
+    state = getattr(config, "__dict__", None)
+    if isinstance(state, dict):
+        return state.get(name, default)
     return getattr(config, name, default)
 
 
